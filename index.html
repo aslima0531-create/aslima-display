@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#020808" />
+<title>ASLIMA Premium Mosque Display</title>
+<style>
+:root{
+  --gold:#f4c873; --gold2:#b97724; --cream:#fff2d0; --muted:rgba(255,242,208,.70);
+  --green:#42ef9a; --line:rgba(244,200,115,.24); --bg:#020909; --progress:0%;
+  --aura1:rgba(17,114,99,.33); --aura2:rgba(244,200,115,.16);
+}
+*{box-sizing:border-box} html,body{height:100%;margin:0;background:#020909;color:var(--cream);overflow:hidden}
+body{font-family:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+body.fajr{--aura1:rgba(43,118,150,.31);--aura2:rgba(244,200,115,.17)}
+body.dhuhr{--aura1:rgba(174,127,58,.27);--aura2:rgba(255,235,180,.18)}
+body.asr{--aura1:rgba(207,117,30,.32);--aura2:rgba(244,200,115,.22)}
+body.maghrib{--aura1:rgba(156,55,38,.34);--aura2:rgba(246,127,67,.22)}
+body.isha{--aura1:rgba(9,72,80,.34);--aura2:rgba(61,206,144,.13)}
+.app{position:fixed;inset:0;padding:4.9vh 5.25vw 4.45vh;isolation:isolate;background:
+ radial-gradient(circle at 34% 34%, var(--aura1), transparent 34%),
+ radial-gradient(circle at 77% 68%, var(--aura2), transparent 31%),
+ linear-gradient(105deg, #020707 0%, #031110 22%, #062827 58%, #020808 100%)}
+.app:before{content:"";position:absolute;inset:3.3vh 3.15vw;border-radius:2.6vh;border:1px solid rgba(244,200,115,.18);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035), 0 3vh 9vh rgba(0,0,0,.42);z-index:4;pointer-events:none}
+.bgMosque{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}.bgMosque:before{content:"";position:absolute;right:-3vw;bottom:-11vh;width:66vw;height:68vh;background:url('assets/mosque-watermark.jpeg') center bottom/contain no-repeat;opacity:.50;filter:sepia(1) saturate(1.24) hue-rotate(350deg) brightness(.47) contrast(1.28);mix-blend-mode:screen}.bgMosque:after{content:"";position:absolute;right:-4vw;bottom:-4vh;width:72vw;height:36vh;background:linear-gradient(180deg, rgba(244,200,115,.12), rgba(244,200,115,.02) 28%, transparent 64%);filter:blur(7px);opacity:.45}
+.vignette{position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(0,0,0,.63),rgba(0,0,0,.08) 38%,rgba(0,0,0,.16) 70%,rgba(0,0,0,.55)),linear-gradient(0deg,rgba(0,0,0,.54),transparent 30%,rgba(0,0,0,.26));pointer-events:none}.stars{position:absolute;inset:0;z-index:3;opacity:.34;background-image:radial-gradient(circle at 31% 10%,rgba(255,255,255,.9) 0 1px,transparent 1.6px),radial-gradient(circle at 51% 8%,rgba(244,200,115,.85) 0 1px,transparent 1.5px),radial-gradient(circle at 64% 15%,rgba(255,255,255,.7) 0 1px,transparent 1.5px),radial-gradient(circle at 84% 20%,rgba(244,200,115,.7) 0 1px,transparent 1.5px),radial-gradient(circle at 72% 9%,rgba(255,255,255,.58) 0 1px,transparent 1.5px),radial-gradient(circle at 41% 23%,rgba(255,255,255,.45) 0 1px,transparent 1.5px);pointer-events:none}
+.content{position:relative;z-index:5;height:100%;display:grid;grid-template-columns:minmax(0,1fr) min(34.2vw,510px);grid-template-rows:auto 1fr auto;column-gap:7.2vw}.top{grid-column:1/3;display:flex;justify-content:space-between;align-items:flex-start;padding:0 .6vw}.brand{color:var(--gold);font:500 clamp(18px,2.05vh,27px)/1 Georgia,serif;letter-spacing:.31em;text-shadow:0 0 3vh rgba(244,200,115,.2)}.brand small{display:block;margin-top:.42vh;text-align:center;font-size:clamp(12px,1.38vh,18px);letter-spacing:0;color:rgba(244,200,115,.86)}.status{text-align:right;color:rgba(255,242,208,.94);font-size:clamp(13px,1.55vh,20px);font-weight:760;letter-spacing:.075em;text-transform:uppercase}.live{display:inline-flex;margin-top:1.35vh;align-items:center;gap:.45em;padding:.72vh .9vw;border:1px solid rgba(66,239,154,.27);border-radius:999px;background:rgba(3,74,55,.52);color:#48f3a1;font-size:clamp(11px,1.24vh,16px);letter-spacing:.11em;box-shadow:0 0 2.8vh rgba(66,239,154,.13)}.live:before{content:"";width:.56em;height:.56em;border-radius:50%;background:#48f3a1;box-shadow:0 0 1.4vh #48f3a1}
+.hero{align-self:center;padding-left:.6vw;margin-top:-1vh}.clock{font:500 clamp(104px,16.7vh,218px)/.82 Georgia,serif;letter-spacing:-.055em;color:var(--gold);white-space:nowrap;text-shadow:0 .35vh 0 rgba(255,255,255,.08),0 1.9vh 5.4vh rgba(0,0,0,.55),0 0 5vh rgba(244,200,115,.18)}.ampm{font-size:.19em;letter-spacing:0;margin-left:.32vw;color:var(--gold);vertical-align:baseline}.ornament{width:min(27vw,410px);height:2.8vh;margin:2.2vh 0 1.8vh;display:flex;align-items:center;gap:1vw;color:var(--gold)}.ornament:before,.ornament:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent)}.ornament span{font:400 clamp(16px,2vh,26px)/1 Georgia,serif}.nextLabel{font-size:clamp(14px,1.68vh,22px);letter-spacing:.48em;color:rgba(255,242,208,.86);font-weight:620;text-transform:uppercase}.nextName{margin-top:1.05vh;font:500 clamp(75px,10.9vh,148px)/.86 Georgia,serif;letter-spacing:.035em;color:var(--gold);text-transform:uppercase;text-shadow:0 1.6vh 4.8vh rgba(0,0,0,.55),0 0 3.4vh rgba(244,200,115,.20);animation:breathe 7s ease-in-out infinite}@keyframes breathe{50%{filter:brightness(1.11);text-shadow:0 1.6vh 4.8vh rgba(0,0,0,.55),0 0 6vh rgba(244,200,115,.33)}}.nextTime{margin-top:1.55vh;font-size:clamp(27px,4vh,56px);font-weight:480;letter-spacing:.015em;color:rgba(255,242,208,.97);font-variant-numeric:tabular-nums}.nextTime:before{content:"◷";color:var(--gold);margin-right:.72vw}.remaining{margin-top:1.55vh;font-size:clamp(22px,3vh,42px);font-weight:500;color:#42ef9a;letter-spacing:-.015em;text-shadow:0 0 2.5vh rgba(66,239,154,.24)}.progressWrap{margin-top:4.1vh;width:min(35vw,525px)}.track{position:relative;height:.74vh;border-radius:999px;background:rgba(255,242,208,.20);box-shadow:0 0 2.3vh rgba(0,0,0,.28)}.fill{position:absolute;inset:0 auto 0 0;width:var(--progress);border-radius:inherit;background:linear-gradient(90deg,#42ef9a 0%,var(--gold) 70%,rgba(244,200,115,.65));box-shadow:0 0 2.8vh rgba(244,200,115,.42)}.dot{position:absolute;top:50%;left:var(--progress);width:1.55vh;height:1.55vh;border-radius:50%;transform:translate(-50%,-50%);background:var(--gold);box-shadow:0 0 3vh rgba(244,200,115,.75)}.trackLabels{display:flex;justify-content:space-between;margin-top:1.35vh;font-size:clamp(10px,1.25vh,15px);font-weight:750;letter-spacing:.14em;text-transform:uppercase}.trackLabels span:first-child{color:#42ef9a}.trackLabels span:last-child{color:rgba(255,242,208,.60)}
+.panel{align-self:center;justify-self:end;width:100%;padding:2.25vh 1.55vw;border-radius:1.65vh;border:1px solid rgba(255,242,208,.14);background:linear-gradient(180deg,rgba(0,10,10,.68),rgba(0,7,7,.48));box-shadow:inset 0 0 0 1px rgba(244,200,115,.05),0 2.2vh 6vh rgba(0,0,0,.34);backdrop-filter:blur(12px)}.row{height:9.2vh;display:grid;grid-template-columns:2.4vw 1fr auto;align-items:center;gap:1vw;border-bottom:1px solid rgba(255,242,208,.13);color:rgba(255,242,208,.95)}.row:last-child{border-bottom:0}.icon{font-size:clamp(23px,2.9vh,39px);color:rgba(255,242,208,.84);text-align:center}.row[data-name="Fajr"] .icon,.row[data-name="Fajr"].active .icon{color:var(--gold)}.pname{font-size:clamp(22px,3.0vh,42px);font-weight:510;letter-spacing:.01em;text-transform:uppercase}.ptime{font-size:clamp(22px,2.95vh,41px);font-weight:480;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.row.active .pname,.row.active .ptime{color:var(--gold)}
+.bottom{grid-column:1/3;align-self:end;padding:0 .6vw}.jumuah{display:inline-flex;align-items:center;gap:1.25vw;padding:1.42vh 1.55vw;border:1px solid rgba(244,200,115,.25);border-radius:1.1vh;background:rgba(0,8,9,.47);color:rgba(255,242,208,.90);font-size:clamp(14px,1.65vh,22px);letter-spacing:.075em;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}.jumuah:before{content:"▣";color:var(--gold);font-size:1.25em}.jumuah b{font-weight:620;text-transform:uppercase;color:rgba(255,242,208,.98)}.jumuah .time{color:var(--gold)}
+.adminHot{position:fixed;top:0;left:0;width:20vw;height:18vh;z-index:20;background:transparent;border:0;opacity:.01}.adminPanel{position:fixed;right:4vw;bottom:4vh;z-index:30;display:none;gap:.7vw;padding:.8vh;border-radius:999px;background:rgba(0,0,0,.68);border:1px solid rgba(244,200,115,.24);backdrop-filter:blur(12px);box-shadow:0 2vh 5vh rgba(0,0,0,.45)}.adminPanel.show{display:flex}.adminPanel button{border:0;border-radius:999px;background:rgba(244,200,115,.14);color:var(--cream);padding:1vh 1.15vw;font-size:clamp(11px,1.18vh,16px);text-transform:uppercase;letter-spacing:.08em;font-weight:760}.toast{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%) translateY(3vh);z-index:40;opacity:0;transition:.25s;padding:1vh 1.2vw;border-radius:999px;background:rgba(0,0,0,.72);border:1px solid var(--line);color:var(--cream);font-weight:700}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-aspect-ratio:1/1){.app{padding:4vh 5vw}.content{grid-template-columns:1fr;grid-template-rows:auto auto auto 1fr}.top,.bottom{grid-column:1}.clock{font-size:12vh}.panel{width:100%;justify-self:stretch}.row{height:7.2vh;grid-template-columns:7vw 1fr auto}.progressWrap{width:100%}.jumuah{width:100%;justify-content:center}.bgMosque:before{width:105vw;right:-32vw;opacity:.34}.hero{margin-top:2vh}}
+
+/* ==========================================================================
+   ASLIMA V5.4 — Premium Background + Full Admin Controls
+   Uses the cinematic mosque background asset directly.
+   ========================================================================== */
+
+:root{
+  --v54-gold:#f1bd65;
+  --v54-gold2:#d89638;
+  --v54-cream:#fff1d2;
+  --v54-muted:rgba(255,241,210,.72);
+  --v54-green:#32e39a;
+  --v54-panel:rgba(0,10,11,.54);
+  --v54-border:rgba(241,189,101,.28);
+  --v54-progress:0%;
+}
+
+body.v54-premium,
+body.v5-mosque-default{
+  margin:0!important;
+  background:#020909!important;
+  overflow:hidden!important;
+}
+
+body.v54-premium .pixelShiftWrap > header,
+body.v54-premium .pixelShiftWrap > section,
+body.v54-premium .pixelShiftWrap > .footer,
+body.v5-mosque-default .pixelShiftWrap > header,
+body.v5-mosque-default .pixelShiftWrap > section,
+body.v5-mosque-default .pixelShiftWrap > .footer{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+
+.v4Mosque{
+  position:absolute!important;
+  inset:0!important;
+  z-index:39!important;
+  display:none!important;
+  padding:4.1vh 4.3vw 3.5vh!important;
+  grid-template-columns:62% 38%!important;
+  grid-template-rows:auto 1fr auto!important;
+  gap:2vh 2.4vw!important;
+  color:var(--v54-cream)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.13) 42%, rgba(0,0,0,.34) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.18) 76%, rgba(0,0,0,.42) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+
+body.v54-premium .v4Mosque,
+body.v5-mosque-default .v4Mosque{
+  display:grid!important;
+}
+
+.v4Mosque:before{
+  content:""!important;
+  position:absolute!important;
+  inset:.7vh .55vw!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:1.1vh!important;
+  box-shadow:inset 0 0 0 1px rgba(241,189,101,.08), 0 0 5vh rgba(0,0,0,.35)!important;
+  pointer-events:none!important;
+  z-index:1!important;
+}
+
+.v4Mosque:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:radial-gradient(circle at 28% 24%, rgba(241,189,101,.08), transparent 32%), radial-gradient(circle at 64% 32%, rgba(49,227,154,.08), transparent 36%)!important;
+  pointer-events:none!important;
+  z-index:0!important;
+  opacity:1!important;
+  mix-blend-mode:screen!important;
+}
+
+.v5Stars{display:none!important}
+
+.v4MosqueBrand{
+  grid-column:1/3!important;
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:flex-start!important;
+  position:relative!important;
+  z-index:2!important;
+  padding:0!important;
+}
+
+.v4Logo{
+  color:var(--v54-gold)!important;
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:clamp(24px,2.45vw,42px)!important;
+  line-height:1!important;
+  letter-spacing:.18em!important;
+  font-weight:500!important;
+  text-shadow:0 0 2.2vh rgba(241,189,101,.25)!important;
+}
+
+.v4Logo:after{
+  content:"أسليمة"!important;
+  display:block!important;
+  margin-top:.65vh!important;
+  font-size:clamp(16px,1.55vw,26px)!important;
+  letter-spacing:0!important;
+  color:rgba(241,189,101,.92)!important;
+  text-align:center!important;
+}
+
+.v4Hint{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  gap:1.15vh!important;
+  color:rgba(255,241,210,.94)!important;
+  font-size:clamp(15px,1.45vw,26px)!important;
+  font-weight:780!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+}
+
+.v4Hint:after{
+  content:"● LIVE • VRIC"!important;
+  display:block!important;
+  color:var(--v54-green)!important;
+  background:rgba(3,60,48,.62)!important;
+  border:1px solid rgba(50,227,154,.30)!important;
+  border-radius:999px!important;
+  padding:.75vh 1.15vw!important;
+  font-size:clamp(13px,1.23vw,22px)!important;
+  letter-spacing:.1em!important;
+  font-weight:700!important;
+  box-shadow:0 0 2.5vh rgba(50,227,154,.15)!important;
+}
+
+.v4Left{
+  position:relative!important;
+  z-index:2!important;
+  align-self:center!important;
+  padding:0 0 1vh 0!important;
+  min-width:0!important;
+}
+
+.v4Clock{
+  font-family:Georgia,"Times New Roman",serif!important;
+  color:var(--v54-gold)!important;
+  font-size:clamp(108px,15.8vw,224px)!important;
+  line-height:.82!important;
+  font-weight:500!important;
+  letter-spacing:-.055em!important;
+  white-space:nowrap!important;
+  font-variant-numeric:tabular-nums!important;
+  text-shadow:0 .3vh 0 rgba(255,255,255,.06), 0 2vh 6vh rgba(0,0,0,.62), 0 0 4vh rgba(241,189,101,.20)!important;
+}
+
+.v4Clock .v5AmPm,
+.v4Clock .v54AmPm{
+  display:inline-block!important;
+  font-size:.20em!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  margin-left:.28vw!important;
+  vertical-align:baseline!important;
+  color:var(--v54-gold)!important;
+  transform:none!important;
+  animation:none!important;
+}
+
+.v4Date{display:none!important}
+
+.v4Clock:after{
+  content:""!important;
+  display:block!important;
+  width:min(38vw,560px)!important;
+  height:1px!important;
+  margin:3vh 0 0!important;
+  background:linear-gradient(90deg, rgba(241,189,101,.62), rgba(241,189,101,.95) 38%, rgba(241,189,101,.14) 78%, transparent)!important;
+}
+
+.v4NextLabel{
+  margin-top:2.6vh!important;
+  color:rgba(255,241,210,.88)!important;
+  font-size:clamp(16px,1.6vw,28px)!important;
+  line-height:1!important;
+  font-weight:650!important;
+  letter-spacing:.42em!important;
+  text-transform:uppercase!important;
+}
+
+.v4NextPrayer{
+  margin-top:1.6vh!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  color:var(--v54-gold)!important;
+  font-size:clamp(92px,10.4vw,170px)!important;
+  line-height:.82!important;
+  letter-spacing:.03em!important;
+  font-weight:500!important;
+  text-transform:uppercase!important;
+  text-shadow:0 1.8vh 5vh rgba(0,0,0,.62), 0 0 3vh rgba(241,189,101,.18)!important;
+  animation:v54Breathe 8s ease-in-out infinite!important;
+}
+
+@keyframes v54Breathe{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.11)}
+}
+
+.v4NextTime{
+  margin-top:2vh!important;
+  color:rgba(255,241,210,.95)!important;
+  font-size:clamp(34px,3.6vw,62px)!important;
+  font-weight:500!important;
+  letter-spacing:.02em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+
+.v4NextTime:before{
+  content:"◷"!important;
+  color:var(--v54-gold)!important;
+  margin-right:.8vw!important;
+}
+
+.v4Remaining{
+  display:block!important;
+  margin-top:1.25vh!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  width:auto!important;
+}
+
+.v4RemainingMain{
+  color:var(--v54-green)!important;
+  font-size:clamp(28px,2.8vw,50px)!important;
+  font-weight:500!important;
+  letter-spacing:.01em!important;
+  text-shadow:0 0 3vh rgba(50,227,154,.22)!important;
+}
+
+.v4RemainingSub{display:none!important}
+
+.v4Right{
+  position:relative!important;
+  z-index:2!important;
+  align-self:center!important;
+  justify-self:end!important;
+  width:min(31.5vw,540px)!important;
+  margin-top:3vh!important;
+}
+
+.v4TodayTitle{display:none!important}
+
+.v4TimesList{
+  display:grid!important;
+  gap:0!important;
+  padding:2vh 1.6vw!important;
+  border:1px solid var(--v54-border)!important;
+  border-radius:1.6vh!important;
+  background:rgba(0,8,9,.58)!important;
+  backdrop-filter:blur(10px)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035), 0 2vh 5vh rgba(0,0,0,.36)!important;
+}
+
+.v4TimeRow{
+  display:grid!important;
+  grid-template-columns:auto 1fr auto!important;
+  align-items:center!important;
+  gap:1.2vw!important;
+  padding:1.65vh .1vw!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,241,210,.16)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:rgba(255,241,210,.96)!important;
+}
+
+.v4TimeRow:last-child{border-bottom:0!important}
+
+.v4TimeRow:before{
+  content:"☼"!important;
+  width:2.1vw!important;
+  color:rgba(255,241,210,.9)!important;
+  font-size:clamp(25px,2.25vw,40px)!important;
+  line-height:1!important;
+  text-align:center!important;
+}
+
+.v4TimeRow[data-prayer="Fajr"]:before{content:"☀"!important;color:var(--v54-gold)!important}
+.v4TimeRow[data-prayer="Isha"]:before{content:"☾"!important;color:rgba(255,241,210,.96)!important}
+
+.v4TimeRow.current .v4PName,
+.v4TimeRow.current .v4PTime,
+.v4TimeRow.current:before{
+  color:var(--v54-gold)!important;
+}
+
+.v4PName{
+  color:inherit!important;
+  font-size:clamp(27px,2.55vw,46px)!important;
+  font-weight:540!important;
+  letter-spacing:.025em!important;
+  text-transform:uppercase!important;
+}
+
+.v4PTime{
+  color:inherit!important;
+  font-size:clamp(26px,2.45vw,44px)!important;
+  font-weight:500!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:-.02em!important;
+}
+
+.v4Bottom{
+  position:relative!important;
+  z-index:2!important;
+  grid-column:1/3!important;
+  display:grid!important;
+  grid-template-columns:62% 38%!important;
+  gap:2.4vw!important;
+  align-items:end!important;
+}
+
+.v4ProgressTrack{
+  grid-column:1!important;
+  width:min(39vw,650px)!important;
+  height:.75vh!important;
+  margin-bottom:9.8vh!important;
+  background:rgba(255,241,210,.26)!important;
+  border-radius:999px!important;
+  position:relative!important;
+  overflow:visible!important;
+}
+
+.v4ProgressTrack:before,
+.v4ProgressTrack:after{
+  position:absolute!important;
+  top:1.9vh!important;
+  font-size:clamp(13px,1.15vw,22px)!important;
+  letter-spacing:.1em!important;
+  font-weight:650!important;
+  color:var(--v54-green)!important;
+  text-transform:uppercase!important;
+}
+
+.v4ProgressTrack:before{content:"FAJR"!important;left:0!important}
+.v4ProgressTrack:after{content:"ISHA"!important;right:0!important;color:rgba(255,241,210,.68)!important}
+
+.v4ProgressFill{
+  position:absolute!important;
+  inset:0 auto 0 0!important;
+  width:var(--v54-progress,var(--v5-day-progress,0%))!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,var(--v54-green),var(--v54-gold))!important;
+  box-shadow:0 0 3vh rgba(241,189,101,.45)!important;
+}
+
+.v4ProgressDot{
+  position:absolute!important;
+  top:50%!important;
+  left:var(--v54-progress,var(--v5-day-progress,0%))!important;
+  width:1.7vh!important;
+  height:1.7vh!important;
+  border-radius:999px!important;
+  transform:translate(-50%,-50%)!important;
+  background:var(--v54-gold)!important;
+  box-shadow:0 0 3.2vh rgba(241,189,101,.72)!important;
+}
+
+.v4Jumuah{
+  grid-column:1!important;
+  justify-self:start!important;
+  align-self:end!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:1.6vw!important;
+  max-width:none!important;
+  width:auto!important;
+  padding:1.7vh 1.6vw!important;
+  border:1px solid var(--v54-border)!important;
+  border-radius:1.1vh!important;
+  background:rgba(0,8,9,.50)!important;
+  color:rgba(255,241,210,.94)!important;
+  font-size:clamp(17px,1.55vw,30px)!important;
+  letter-spacing:.055em!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;
+}
+
+.v4Jumuah:before{
+  content:"▣"!important;
+  color:var(--v54-gold)!important;
+  font-size:1.25em!important;
+}
+
+.v4Jumuah b{
+  color:rgba(255,241,210,.95)!important;
+  font-size:1em!important;
+  font-weight:580!important;
+  letter-spacing:.09em!important;
+  text-transform:uppercase!important;
+}
+
+/* Premium admin menu matching requested controls */
+.v4DashboardPanel{
+  position:absolute!important;
+  right:4.3vw!important;
+  bottom:5.1vh!important;
+  z-index:95!important;
+  display:none!important;
+  width:min(31.5vw,540px)!important;
+  padding:1.45vh 1.45vw!important;
+  border:1px solid var(--v54-border)!important;
+  border-radius:1.4vh!important;
+  background:rgba(0,8,9,.66)!important;
+  backdrop-filter:blur(12px)!important;
+  box-shadow:0 2vh 6vh rgba(0,0,0,.48), inset 0 0 0 1px rgba(255,255,255,.035)!important;
+  color:var(--v54-cream)!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:1.05vh .9vw!important;
+}
+
+.v4DashboardPanel.show{
+  display:grid!important;
+}
+
+.v4DashboardPanel:before{
+  content:"ADMIN MENU"!important;
+  grid-column:1/3!important;
+  font-size:clamp(18px,1.65vw,30px)!important;
+  letter-spacing:.12em!important;
+  color:rgba(255,241,210,.85)!important;
+  margin-bottom:.4vh!important;
+}
+
+.v4DashboardPanel button{
+  appearance:none!important;
+  border:1px solid rgba(255,241,210,.12)!important;
+  border-radius:.75vh!important;
+  background:rgba(255,255,255,.065)!important;
+  color:rgba(255,241,210,.94)!important;
+  padding:1.35vh .9vw!important;
+  font-size:clamp(13px,1.18vw,22px)!important;
+  font-weight:650!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+  min-height:auto!important;
+}
+
+#v4Azaan{
+  color:rgba(255,241,210,.96)!important;
+}
+#v4Azaan:before{content:"▶ "; color:var(--v54-green)!important}
+
+#v54StopAzaan{
+  color:#ff857c!important;
+  background:rgba(120,18,18,.22)!important;
+}
+#v54StopAzaan:before{content:"■ "; color:#ff4f4f!important}
+
+#v4Refresh:before{content:"↻ "; color:var(--v54-gold)!important}
+#v4ShowDashboard:before{content:"◷ "; color:rgba(255,241,210,.82)!important}
+
+.v54Volume{
+  grid-column:1/3!important;
+  display:grid!important;
+  grid-template-columns:1fr auto auto auto!important;
+  align-items:center!important;
+  gap:.8vw!important;
+  border:1px solid rgba(255,241,210,.13)!important;
+  border-radius:.85vh!important;
+  background:rgba(0,0,0,.22)!important;
+  padding:1.1vh .95vw!important;
+}
+
+.v54VolumeLabel{
+  font-size:clamp(14px,1.22vw,22px)!important;
+  letter-spacing:.11em!important;
+  color:rgba(255,241,210,.84)!important;
+  text-transform:uppercase!important;
+}
+
+.v54Volume button{
+  width:3.2vw!important;
+  min-width:42px!important;
+  padding:1vh .5vw!important;
+  font-size:clamp(22px,2vw,36px)!important;
+  line-height:1!important;
+  text-align:center!important;
+  border-radius:.75vh!important;
+  background:rgba(255,255,255,.10)!important;
+}
+
+.v54VolumePct{
+  font-size:clamp(20px,1.85vw,34px)!important;
+  color:var(--v54-gold)!important;
+  min-width:5vw!important;
+  text-align:center!important;
+  font-variant-numeric:tabular-nums!important;
+}
+
+.v4AdminHotspot{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  z-index:100!important;
+  width:22vw!important;
+  height:18vh!important;
+  border:0!important;
+  background:transparent!important;
+  opacity:.01!important;
+  touch-action:manipulation!important;
+}
+
+.v4AdminTapHint{
+  display:none!important;
+}
+
+@media (max-aspect-ratio:1/1){
+  .v4Mosque{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto auto 1fr auto!important;
+    padding:3.4vh 5vw!important;
+  }
+  .v4MosqueBrand,.v4Bottom{grid-column:1!important}
+  .v4Right{width:100%!important;justify-self:stretch!important;margin-top:0!important}
+  .v4Bottom{grid-template-columns:1fr!important}
+  .v4ProgressTrack{width:100%!important;margin-bottom:7.5vh!important}
+  .v4DashboardPanel{width:88vw!important;right:6vw!important;bottom:4vh!important}
+  .v4Clock{font-size:14vh!important}
+}
+
+</style>
+</head>
+<body class="isha">
+<div class="app">
+  <div class="bgMosque"></div><div class="vignette"></div><div class="stars"></div>
+  <button class="adminHot" id="adminHot" aria-label="Admin"></button>
+  <main class="content">
+    <header class="top"><div class="brand">ASLIMA<small>أسليمة</small></div><div class="status"><div id="dateLine">TUESDAY, JUNE 30</div><div class="live">LIVE • VRIC</div></div></header>
+    <section class="hero">
+      <div class="clock"><span id="clockMain">11:52</span><span class="ampm" id="clockAmPm">PM</span></div>
+      <div class="ornament"><span>✧</span></div>
+      <div class="nextLabel">NEXT PRAYER</div><div class="nextName" id="nextName">FAJR</div>
+      <div class="nextTime" id="nextTime">5:01 AM</div><div class="remaining" id="remaining">5h 08m remaining</div>
+      <div class="progressWrap"><div class="track"><div class="fill"></div><div class="dot"></div></div><div class="trackLabels"><span>Fajr</span><span>Isha</span></div></div>
+    </section>
+    <aside class="panel" id="prayerPanel"></aside>
+    <footer class="bottom"><div class="jumuah" id="jumuah"><b>Jumu’ah Prayer</b><span class="time">1:45 PM</span><span>•</span><span class="time">3:00 PM</span><span>•</span><span class="time">4:00 PM</span></div></footer>
+  </main>
+  <div class="adminPanel" id="adminPanel"><button id="refreshBtn">Refresh</button><button id="testAthanBtn">Azaan</button><button id="fullscreenBtn">Fullscreen</button></div>
+  <div class="toast" id="toast">Ready</div>
+  <audio id="athan" preload="auto" crossorigin="anonymous"><source src="https://praytimes.org/audio/sunni/Adhan-Madinah.mp3" type="audio/mpeg"></audio>
+</div>
+<script>
+const CONFIG={city:'Irving',country:'United States',method:2,jumuah:['1:45 PM','3:00 PM','4:00 PM']};
+const DEMO={Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'};
+let timings={...DEMO}, lastUpdated='', fired='', demoNow=null;
+const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const ICONS={Fajr:'☀',Dhuhr:'☼',Asr:'☼',Maghrib:'☀',Isha:'☾'};
+const $=id=>document.getElementById(id);
+function now(){return demoNow?new Date(demoNow):new Date()}
+function clean(t){const m=String(t||'').match(/\d{1,2}:\d{2}/);return m?m[0]:'00:00'}
+function mins(t){let [h,m]=clean(t).split(':').map(Number);return h*60+m}
+function to12(t){let [h,m]=clean(t).split(':').map(Number);const p=h>=12?'PM':'AM';h=h%12||12;return {text:`${h}:${String(m).padStart(2,'0')}`,period:p,full:`${h}:${String(m).padStart(2,'0')} ${p}`}}
+function getNext(){const n=now(),cur=n.getHours()*60+n.getMinutes()+n.getSeconds()/60;let best=9999,name='Fajr';PRAYERS.forEach(p=>{let d=mins(timings[p])-cur;if(d>0&&d<best){best=d;name=p}});if(best===9999){best=1440-cur+mins(timings.Fajr);name='Fajr'}return {name,seconds:Math.max(0,Math.floor(best*60))}}
+function activePrayer(nextName){const i=PRAYERS.indexOf(nextName);return i<=0?'Isha':PRAYERS[i-1]}
+function remaining(s){s=Math.max(0,Math.floor(s||0));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);if(h>0)return `${h}h ${String(m).padStart(2,'0')}m remaining`;if(m>0)return `${m}m remaining`;return 'starting now'}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)}
+function updateProgress(){try{const n=now(),cur=n.getHours()*60+n.getMinutes()+n.getSeconds()/60,start=mins(timings.Fajr),end=mins(timings.Isha);let pct=((cur-start)/Math.max(1,end-start))*100;pct=Math.max(0,Math.min(100,pct));document.documentElement.style.setProperty('--progress',pct+'%')}catch(e){document.documentElement.style.setProperty('--progress','0%')}}
+function render(){const n=now(),h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0');$('clockMain').textContent=`${h%12||12}:${m}`;$('clockAmPm').textContent=h>=12?'PM':'AM';$('dateLine').textContent=n.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}).toUpperCase();const next=getNext(),nt=to12(timings[next.name]);$('nextName').textContent=next.name.toUpperCase();$('nextTime').textContent=nt.full;$('remaining').textContent=remaining(next.seconds);document.body.className=next.name.toLowerCase();const cur=activePrayer(next.name);$('prayerPanel').innerHTML=PRAYERS.map(p=>`<div class="row ${p===cur?'active':''}" data-name="${p}"><div class="icon">${ICONS[p]}</div><div class="pname">${p}</div><div class="ptime">${to12(timings[p]).full}</div></div>`).join('');$('jumuah').innerHTML='<b>Jumu’ah Prayer</b>'+CONFIG.jumuah.map(t=>`<span class="time">${t}</span>`).join('<span>•</span>');updateProgress()}
+async function loadTimes(){try{if(location.protocol!=='file:'){const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CONFIG.city)}&country=${encodeURIComponent(CONFIG.country)}&method=${CONFIG.method}`,{cache:'no-store'});const j=await r.json();if(j?.data?.timings){const t=j.data.timings;timings={Fajr:clean(t.Fajr),Sunrise:clean(t.Sunrise),Dhuhr:clean(t.Dhuhr),Asr:clean(t.Asr),Maghrib:clean(t.Maghrib),Isha:clean(t.Isha)};lastUpdated=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}}}catch(e){lastUpdated='Offline'}render()}
+async function playAthan(){try{const a=$('athan');a.currentTime=0;await a.play();toast('Azaan playing')}catch(e){toast('Tap once, then try Azaan')}}
+let taps=0,timer=null;function adminTap(e){e.preventDefault();e.stopPropagation();taps++;clearTimeout(timer);timer=setTimeout(()=>taps=0,2200);if(taps>=5){taps=0;$('adminPanel').classList.add('show');clearTimeout(adminTap.t);adminTap.t=setTimeout(()=>$('adminPanel').classList.remove('show'),12000);toast('Admin opened')}}
+$('adminHot').addEventListener('click',adminTap,{passive:false});$('adminHot').addEventListener('touchend',adminTap,{passive:false});
+$('refreshBtn').onclick=()=>{loadTimes();toast('Prayer times refreshed')};$('testAthanBtn').onclick=playAthan;$('fullscreenBtn').onclick=()=>document.documentElement.requestFullscreen?.();
+render();loadTimes();setInterval(render,1000);setInterval(loadTimes,1000*60*60);setTimeout(()=>loadTimes(),1000*60*5);
+
+/* ASLIMA V5.4 — stable premium renderer + admin audio controls */
+(function(){
+  const P=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  const $=id=>document.getElementById(id);
+
+  function forceMode(){
+    document.body.classList.remove('v5-mosque-default','v4-mosque-default');
+    document.body.classList.add('v54-premium');
+  }
+
+  function clockHTML(){
+    const d=new Date();
+    let h=d.getHours();
+    const m=String(d.getMinutes()).padStart(2,'0');
+    const ap=h>=12?'PM':'AM';
+    h=h%12||12;
+    return `${h}:${m}<span class="v54AmPm">${ap}</span>`;
+  }
+
+  function dateText(){
+    try{return new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(new Date()).toUpperCase()}
+    catch(e){return new Date().toDateString().toUpperCase()}
+  }
+
+  function timeFull(name){
+    try{return to12(timings[name]||DEMO[name]).full}catch(e){return '--:--'}
+  }
+
+  function nextSafe(){
+    try{return getNext()}catch(e){return {name:'Fajr',seconds:0}}
+  }
+
+  function remaining(seconds){
+    seconds=Math.max(0,Math.floor(Number(seconds)||0));
+    const h=Math.floor(seconds/3600);
+    const m=Math.floor((seconds%3600)/60);
+    if(h>0)return `${h}h ${String(m).padStart(2,'0')}m remaining`;
+    if(m>0)return `${m}m remaining`;
+    return 'starting now';
+  }
+
+  function active(nextName){
+    const i=P.indexOf(nextName);
+    if(i<0)return null;
+    return i===0?'Isha':P[i-1];
+  }
+
+  function progress(){
+    try{
+      const now=new Date();
+      const cur=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+      const start=mins(timings.Fajr), end=mins(timings.Isha);
+      const pct=Math.max(0,Math.min(100,((cur-start)/Math.max(1,end-start))*100));
+      document.documentElement.style.setProperty('--v54-progress',pct+'%');
+      document.documentElement.style.setProperty('--v5-day-progress',pct+'%');
+    }catch(e){
+      document.documentElement.style.setProperty('--v54-progress','0%');
+    }
+  }
+
+  function renderV54(){
+    forceMode();
+    const n=nextSafe();
+    const c=$('v4Clock'); if(c)c.innerHTML=clockHTML();
+    const h=$('v4Hint'); if(h)h.firstChild && (h.firstChild.textContent=dateText());
+    const next=$('v4NextPrayer'); if(next)next.textContent=(n.name||'Fajr').toUpperCase();
+    const nt=$('v4NextTime'); if(nt)nt.textContent=timeFull(n.name||'Fajr');
+    const rem=$('v4RemainingMain'); if(rem)rem.textContent=remaining(n.seconds);
+    P.forEach(name=>{const el=$('v4'+name); if(el)el.textContent=timeFull(name)});
+    const cur=active(n.name);
+    document.querySelectorAll('.v4TimeRow').forEach(row=>row.classList.toggle('current',row.dataset.prayer===cur));
+    const j=$('v4Jumuah');
+    if(j){
+      const times=(window.CONFIG && CONFIG.jumuah) ? CONFIG.jumuah : ['1:45 PM','3:00 PM','4:00 PM'];
+      j.innerHTML='<b>Jumu’ah Prayer</b><span>'+times.join('</span><span>•</span><span>')+'</span>';
+    }
+    progress();
+    updateVolumeLabel();
+  }
+
+  function updateVolumeLabel(){
+    const audio=document.getElementById('athan');
+    const el=$('v54VolumePct');
+    if(audio && el)el.textContent=Math.round((audio.volume||0)*100)+'%';
+  }
+
+  function setVol(delta){
+    const audio=document.getElementById('athan');
+    if(!audio)return;
+    audio.volume=Math.max(0,Math.min(1,(audio.volume||0.7)+delta));
+    audio.muted=false;
+    updateVolumeLabel();
+    try{showToast('Volume '+Math.round(audio.volume*100)+'%')}catch(e){}
+  }
+
+  function stopAzaanNow(){
+    const audio=document.getElementById('athan');
+    if(audio){
+      audio.pause();
+      audio.currentTime=0;
+    }
+    try{stopGlow()}catch(e){}
+    try{document.body.classList.remove('adhan-overlay-active')}catch(e){}
+    const overlay=document.getElementById('adhanMode');
+    if(overlay)overlay.classList.remove('show');
+    try{showToast('Azaan stopped')}catch(e){}
+  }
+
+  function showAdmin(){
+    const p=$('v4DashboardPanel');
+    if(!p)return;
+    p.classList.add('show');
+    clearTimeout(window.__v54AdminTimer);
+    window.__v54AdminTimer=setTimeout(()=>p.classList.remove('show'),15000);
+  }
+
+  function bindAdmin(){
+    let taps=0, timer=null;
+    function tap(e){
+      if(e){e.preventDefault();e.stopPropagation();}
+      taps++;
+      clearTimeout(timer);
+      timer=setTimeout(()=>taps=0,2300);
+      if(taps>=5){taps=0;showAdmin();}
+    }
+
+    ['v4AdminHotspot','v4Logo'].forEach(id=>{
+      const el=$(id);
+      if(el && !el.__v54Tap){
+        el.__v54Tap=true;
+        el.addEventListener('click',tap,{passive:false});
+        el.addEventListener('touchend',tap,{passive:false});
+      }
+    });
+
+    const test=$('v4Azaan');
+    if(test && !test.__v54){
+      test.__v54=true;
+      test.onclick=function(){try{playAzaan()}catch(e){} showAdmin();};
+    }
+
+    const stop=$('v54StopAzaan');
+    if(stop && !stop.__v54){
+      stop.__v54=true;
+      stop.onclick=function(){stopAzaanNow(); showAdmin();};
+    }
+
+    const down=$('v54VolDown');
+    if(down && !down.__v54){
+      down.__v54=true;
+      down.onclick=function(){setVol(-0.1); showAdmin();};
+    }
+
+    const up=$('v54VolUp');
+    if(up && !up.__v54){
+      up.__v54=true;
+      up.onclick=function(){setVol(0.1); showAdmin();};
+    }
+
+    const ref=$('v4Refresh');
+    if(ref && !ref.__v54){
+      ref.__v54=true;
+      ref.onclick=function(){try{loadTimes()}catch(e){} showAdmin();};
+    }
+
+    const dash=$('v4ShowDashboard');
+    if(dash && !dash.__v54){
+      dash.__v54=true;
+      dash.onclick=function(){
+        document.body.classList.remove('v54-premium');
+        const p=$('v4DashboardPanel'); if(p)p.classList.remove('show');
+        setTimeout(()=>document.body.classList.add('v54-premium'),15000);
+      };
+    }
+  }
+
+  const oldRender=typeof render==='function'?render:null;
+  if(oldRender && !window.__v54RenderWrapped){
+    window.__v54RenderWrapped=true;
+    render=function(){
+      oldRender();
+      setTimeout(renderV54,0);
+    };
+  }
+
+  bindAdmin();
+  renderV54();
+  setInterval(renderV54,1000);
+  window.addEventListener('load',()=>setTimeout(()=>{bindAdmin();renderV54()},250));
+})();
+
+</script>
+<div class="v4DashboardPanel" id="v4DashboardPanel">
+  <button type="button" id="v4Azaan">Test Azaan</button>
+  <button type="button" id="v54StopAzaan">Stop Azaan</button>
+  <div class="v54Volume">
+    <div class="v54VolumeLabel">Volume</div>
+    <button type="button" id="v54VolDown">−</button>
+    <div class="v54VolumePct" id="v54VolumePct">70%</div>
+    <button type="button" id="v54VolUp">+</button>
+  </div>
+  <button type="button" id="v4Refresh">Refresh Times</button>
+  <button type="button" id="v4ShowDashboard">Dashboard 15s</button>
+</div></body></html>
