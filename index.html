@@ -1,0 +1,1577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#020909">
+<title>ASLIMA V6.9 Burn-In Protection</title>
+<style>
+:root{
+  --gold:#f1bd65;
+  --gold2:#d99438;
+  --cream:#fff1d2;
+  --muted:rgba(255,241,210,.72);
+  --green:#34e89f;
+  --red:#ff6860;
+  --panel:rgba(0,9,10,.60);
+  --border:rgba(241,189,101,.30);
+  --progress:0%;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#020909;
+  color:var(--cream);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+button{font:inherit}
+.app{
+  position:fixed;
+  inset:0;
+  display:grid;
+  grid-template-columns:62% 38%;
+  grid-template-rows:auto 1fr auto;
+  gap:2vh 2.4vw;
+  padding:4.1vh 4.3vw 3.5vh;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.28) 0%, rgba(0,0,0,.08) 42%, rgba(0,0,0,.32) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.02) 0%, rgba(0,0,0,.10) 60%, rgba(0,0,0,.42) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat;
+}
+.app:before{
+  content:"";
+  position:absolute;
+  inset:.72vh .58vw;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:1.1vh;
+  box-shadow:inset 0 0 0 1px rgba(241,189,101,.08),0 0 5vh rgba(0,0,0,.35);
+  pointer-events:none;
+}
+.app:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(241,189,101,.08), transparent 32%),
+    radial-gradient(circle at 65% 34%, rgba(52,232,159,.07), transparent 40%);
+  mix-blend-mode:screen;
+}
+.top{
+  grid-column:1/3;
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+}
+.brand{
+  background:transparent;
+  border:0;
+  padding:0;
+  color:var(--gold);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(24px,2.45vw,42px);
+  line-height:1;
+  letter-spacing:.18em;
+  font-weight:500;
+  text-shadow:0 0 2.2vh rgba(241,189,101,.25);
+}
+.brand .arabic{
+  display:block;
+  margin-top:.65vh;
+  font-size:clamp(16px,1.55vw,26px);
+  letter-spacing:0;
+  color:rgba(241,189,101,.92);
+  text-align:center;
+}
+.status{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:1.15vh;
+}
+.date{
+  color:rgba(255,241,210,.94);
+  font-size:clamp(15px,1.45vw,26px);
+  font-weight:780;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.live{
+  color:var(--green);
+  background:rgba(3,60,48,.62);
+  border:1px solid rgba(52,232,159,.30);
+  border-radius:999px;
+  padding:.75vh 1.15vw;
+  font-size:clamp(13px,1.23vw,22px);
+  letter-spacing:.1em;
+  font-weight:700;
+  box-shadow:0 0 2.5vh rgba(52,232,159,.15);
+}
+.left{
+  position:relative;
+  z-index:2;
+  align-self:center;
+  padding-bottom:1vh;
+}
+.clock{
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--gold);
+  font-size:clamp(108px,15.8vw,224px);
+  line-height:.82;
+  font-weight:500;
+  letter-spacing:-.055em;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 .3vh 0 rgba(255,255,255,.06),0 2vh 6vh rgba(0,0,0,.62),0 0 4vh rgba(241,189,101,.20);
+}
+.clock .ampm{
+  display:inline-block;
+  font-size:.20em;
+  line-height:1;
+  letter-spacing:0;
+  margin-left:.28vw;
+  vertical-align:baseline;
+  color:var(--gold);
+  transform:none;
+  animation:none;
+}
+.divider{
+  width:min(38vw,560px);
+  height:1px;
+  margin:3vh 0 0;
+  background:linear-gradient(90deg,rgba(241,189,101,.62),rgba(241,189,101,.95) 38%,rgba(241,189,101,.14) 78%,transparent);
+  position:relative;
+}
+.divider:after{
+  content:"✧";
+  position:absolute;
+  top:50%;
+  left:46%;
+  transform:translate(-50%,-50%);
+  background:rgba(0,12,13,.5);
+  color:var(--gold);
+  padding:0 1vw;
+  font-size:clamp(18px,1.8vw,30px);
+}
+.next-label{
+  margin-top:2.6vh;
+  color:rgba(255,241,210,.88);
+  font-size:clamp(16px,1.6vw,28px);
+  line-height:1;
+  font-weight:650;
+  letter-spacing:.42em;
+  text-transform:uppercase;
+}
+.next-name{
+  margin-top:1.6vh;
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--gold);
+  font-size:clamp(92px,10.4vw,170px);
+  line-height:.82;
+  letter-spacing:.03em;
+  font-weight:500;
+  text-transform:uppercase;
+  text-shadow:0 1.8vh 5vh rgba(0,0,0,.62),0 0 3vh rgba(241,189,101,.18);
+  animation:breathe 8s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.11)}}
+.next-time{
+  margin-top:2vh;
+  color:rgba(255,241,210,.95);
+  font-size:clamp(34px,3.6vw,62px);
+  font-weight:500;
+  letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;
+}
+.next-time:before{
+  content:"◷";
+  color:var(--gold);
+  margin-right:.8vw;
+}
+.remaining{
+  margin-top:1.25vh;
+  color:var(--green);
+  font-size:clamp(28px,2.8vw,50px);
+  font-weight:500;
+  letter-spacing:.01em;
+  text-shadow:0 0 3vh rgba(52,232,159,.22);
+}
+.right{
+  position:relative;
+  z-index:2;
+  align-self:center;
+  justify-self:end;
+  width:min(31.5vw,540px);
+  margin-top:3vh;
+}
+.prayer-panel{
+  display:grid;
+  gap:0;
+  padding:2vh 1.6vw;
+  border:1px solid var(--border);
+  border-radius:1.6vh;
+  background:rgba(0,8,9,.58);
+  backdrop-filter:blur(10px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 2vh 5vh rgba(0,0,0,.36);
+}
+.row{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:1.2vw;
+  padding:1.65vh .1vw;
+  border-bottom:1px solid rgba(255,241,210,.16);
+  color:rgba(255,241,210,.96);
+}
+.row:last-child{border-bottom:0}
+.icon{
+  width:2.1vw;
+  color:rgba(255,241,210,.9);
+  font-size:clamp(25px,2.25vw,40px);
+  line-height:1;
+  text-align:center;
+}
+.row.active,.row.active .icon{color:var(--gold)}
+.pname{
+  font-size:clamp(27px,2.55vw,46px);
+  font-weight:540;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+}
+.ptime{
+  font-size:clamp(26px,2.45vw,44px);
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+}
+.bottom{
+  position:relative;
+  z-index:2;
+  grid-column:1/3;
+  display:grid;
+  grid-template-columns:62% 38%;
+  gap:2.4vw;
+  align-items:end;
+}
+.progress{
+  grid-column:1;
+  width:min(39vw,650px);
+  height:.75vh;
+  margin-bottom:9.8vh;
+  background:rgba(255,241,210,.26);
+  border-radius:999px;
+  position:relative;
+}
+.progress:before,.progress:after{
+  position:absolute;
+  top:1.9vh;
+  font-size:clamp(13px,1.15vw,22px);
+  letter-spacing:.1em;
+  font-weight:650;
+  text-transform:uppercase;
+}
+.progress:before{content:"FAJR";left:0;color:var(--green)}
+.progress:after{content:"ISHA";right:0;color:rgba(255,241,210,.68)}
+.fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:var(--progress);
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--gold));
+  box-shadow:0 0 3vh rgba(241,189,101,.45);
+}
+.dot{
+  position:absolute;
+  top:50%;
+  left:var(--progress);
+  width:1.7vh;
+  height:1.7vh;
+  border-radius:999px;
+  transform:translate(-50%,-50%);
+  background:var(--gold);
+  box-shadow:0 0 3.2vh rgba(241,189,101,.72);
+}
+.jumuah{
+  grid-column:1;
+  justify-self:start;
+  align-self:end;
+  display:flex;
+  align-items:center;
+  gap:1.6vw;
+  width:auto;
+  padding:1.7vh 1.6vw;
+  border:1px solid var(--border);
+  border-radius:1.1vh;
+  background:rgba(0,8,9,.50);
+  color:rgba(255,241,210,.94);
+  font-size:clamp(17px,1.55vw,30px);
+  letter-spacing:.055em;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
+}
+.jumuah:before{
+  content:"▣";
+  color:var(--gold);
+  font-size:1.25em;
+}
+.jumuah b{
+  color:rgba(255,241,210,.95);
+  font-weight:580;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.admin-hotspot{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:100;
+  width:22vw;
+  height:18vh;
+  border:0;
+  background:transparent;
+  opacity:.01;
+  touch-action:manipulation;
+}
+.admin{
+  position:absolute;
+  right:4.3vw;
+  bottom:5.1vh;
+  z-index:95;
+  display:none;
+  width:min(31.5vw,540px);
+  padding:1.45vh 1.45vw;
+  border:1px solid var(--border);
+  border-radius:1.4vh;
+  background:rgba(0,8,9,.66);
+  backdrop-filter:blur(12px);
+  box-shadow:0 2vh 6vh rgba(0,0,0,.48),inset 0 0 0 1px rgba(255,255,255,.035);
+  color:var(--cream);
+  grid-template-columns:1fr 1fr;
+  gap:1.05vh .9vw;
+}
+.admin.show{display:grid}
+.admin-title{
+  grid-column:1/3;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:clamp(18px,1.65vw,30px);
+  letter-spacing:.12em;
+  color:rgba(255,241,210,.85);
+  margin-bottom:.4vh;
+  text-transform:uppercase;
+}
+.admin-title span:last-child{opacity:.55}
+.admin button{
+  border:1px solid rgba(255,241,210,.12);
+  border-radius:.75vh;
+  background:rgba(255,255,255,.065);
+  color:rgba(255,241,210,.94);
+  padding:1.35vh .9vw;
+  font-size:clamp(13px,1.18vw,22px);
+  font-weight:650;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.test:before{content:"▶ ";color:var(--green)}
+.stop{
+  color:#ff857c!important;
+  background:rgba(120,18,18,.22)!important;
+}
+.stop:before{content:"■ ";color:#ff4f4f}
+.refresh:before{content:"↻ ";color:var(--gold)}
+.dash:before{content:"◷ ";color:rgba(255,241,210,.82)}
+.volume{
+  grid-column:1/3;
+  display:grid;
+  grid-template-columns:1fr auto auto auto;
+  align-items:center;
+  gap:.8vw;
+  border:1px solid rgba(255,241,210,.13);
+  border-radius:.85vh;
+  background:rgba(0,0,0,.22);
+  padding:1.1vh .95vw;
+}
+.volume-label{
+  font-size:clamp(14px,1.22vw,22px);
+  letter-spacing:.11em;
+  color:rgba(255,241,210,.84);
+  text-transform:uppercase;
+}
+.volume button{
+  width:3.2vw;
+  min-width:42px;
+  padding:1vh .5vw;
+  font-size:clamp(22px,2vw,36px);
+  line-height:1;
+  text-align:center;
+  border-radius:.75vh;
+  background:rgba(255,255,255,.10);
+}
+.volume-pct{
+  font-size:clamp(20px,1.85vw,34px);
+  color:var(--gold);
+  min-width:5vw;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.toast{
+  position:absolute;
+  left:50%;
+  bottom:2.2vh;
+  z-index:120;
+  transform:translateX(-50%) translateY(2vh);
+  opacity:0;
+  padding:1.2vh 1.8vw;
+  border-radius:999px;
+  border:1px solid rgba(241,189,101,.24);
+  background:rgba(0,8,9,.74);
+  color:var(--cream);
+  font-size:clamp(13px,1.2vw,20px);
+  letter-spacing:.08em;
+  transition:.22s ease;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.adhan-overlay{
+  position:absolute;
+  inset:0;
+  z-index:90;
+  display:none;
+  place-items:center;
+  background:rgba(0,8,9,.72);
+  backdrop-filter:blur(12px);
+}
+.adhan-overlay.show{display:grid}
+.overlay-card{
+  text-align:center;
+  color:var(--cream);
+}
+.overlay-card .small{
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-size:clamp(18px,2vw,34px);
+}
+.overlay-card .big{
+  margin-top:2vh;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(90px,11vw,180px);
+  color:var(--gold);
+}
+.overlay-card .sub{
+  margin-top:2vh;
+  color:var(--green);
+  font-size:clamp(22px,2.4vw,40px);
+}
+.overlay-card button{
+  margin-top:4vh;
+  border:1px solid rgba(255,241,210,.18);
+  border-radius:999px;
+  background:rgba(120,18,18,.32);
+  color:#ffaaa4;
+  padding:1.5vh 2vw;
+  font-size:clamp(16px,1.6vw,28px);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.azaan-card{
+  width:min(86vw,1120px);
+  padding:4vh 4vw;
+}
+.azaan-arabic{
+  margin-top:2.5vh;
+  font-family:"Amiri", "Noto Naskh Arabic", "Scheherazade New", Georgia, serif;
+  direction:rtl;
+  color:var(--gold);
+  font-size:clamp(76px,10vw,172px);
+  line-height:1.1;
+  font-weight:700;
+  text-shadow:0 0 3.6vh rgba(248,200,111,.32),0 2vh 6vh rgba(0,0,0,.62);
+  animation:azaanGlow 3.8s ease-in-out infinite;
+}
+.azaan-english{
+  margin-top:1.4vh;
+  color:rgba(255,242,214,.88);
+  font-size:clamp(24px,2.7vw,48px);
+  line-height:1.22;
+  min-height:1.22em;
+  letter-spacing:.02em;
+  text-shadow:0 1.2vh 3.2vh rgba(0,0,0,.72);
+}
+.azaan-progress{
+  margin-top:1.2vh;
+  color:rgba(248,200,111,.72);
+  font-size:clamp(14px,1.3vw,24px);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.azaan-prayer{
+  margin-top:2.8vh;
+  color:rgba(255,242,214,.90);
+  font-size:clamp(20px,2.1vw,36px);
+  letter-spacing:.26em;
+  text-transform:uppercase;
+}
+@keyframes azaanGlow{
+  0%,100%{filter:brightness(1);transform:scale(1)}
+  50%{filter:brightness(1.14);transform:scale(1.015)}
+}
+@media (max-aspect-ratio:1/1){
+  .app{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto 1fr auto;
+    padding:3.4vh 5vw;
+  }
+  .top,.bottom{grid-column:1}
+  .right{width:100%;justify-self:stretch;margin-top:0}
+  .bottom{grid-template-columns:1fr}
+  .progress{width:100%;margin-bottom:7.5vh}
+  .admin{width:88vw;right:6vw;bottom:4vh}
+  .clock{font-size:14vh}
+}
+
+/* ASLIMA V6.1 — Reference typography + admin close */
+:root{
+  --font-display:"Cinzel", Georgia, "Times New Roman", serif;
+  --font-ui:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body{font-family:var(--font-ui)!important}
+.brand,.clock,.next-name,.overlay-card .big{
+  font-family:var(--font-display)!important;
+  font-weight:500!important;
+}
+.brand{letter-spacing:.18em!important}
+.clock{
+  font-weight:400!important;
+  letter-spacing:-.045em!important;
+}
+.clock .ampm{
+  font-family:var(--font-display)!important;
+  font-weight:500!important;
+  letter-spacing:0!important;
+}
+.next-label,.date,.live,.pname,.ptime,.next-time,.remaining,.jumuah,.admin,.admin button{
+  font-family:var(--font-ui)!important;
+}
+.next-label{
+  font-weight:500!important;
+  letter-spacing:.44em!important;
+}
+.pname{
+  font-weight:500!important;
+  letter-spacing:.035em!important;
+}
+.ptime{font-weight:500!important}
+.admin-title{position:relative}
+.admin-close{
+  border:1px solid rgba(255,241,210,.14)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.06)!important;
+  color:rgba(255,241,210,.78)!important;
+  width:clamp(34px,3vw,52px)!important;
+  height:clamp(34px,3vw,52px)!important;
+  padding:0!important;
+  line-height:1!important;
+  font-size:clamp(20px,2vw,34px)!important;
+  display:grid!important;
+  place-items:center!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+
+/* ASLIMA V6.2 — Kalima header, smaller prayer name, ASLIMA bottom-right */
+.top{
+  align-items:flex-start!important;
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  gap:2vw!important;
+}
+.kalima{
+  color:rgba(241,189,101,.92)!important;
+  font-family:var(--font-display, "Cinzel", Georgia, "Times New Roman", serif)!important;
+  font-size:clamp(20px,2.05vw,36px)!important;
+  line-height:1.2!important;
+  letter-spacing:.015em!important;
+  text-shadow:0 0 2.2vh rgba(241,189,101,.20)!important;
+  white-space:nowrap!important;
+  direction:rtl!important;
+  justify-self:start!important;
+  padding-top:.15vh!important;
+}
+.live{
+  display:none!important;
+}
+.status{
+  gap:0!important;
+}
+.date{
+  color:rgba(255,241,210,.92)!important;
+}
+.next-name{
+  font-size:clamp(70px,8vw,132px)!important;
+  line-height:.86!important;
+  margin-top:1.4vh!important;
+}
+.clock{
+  font-size:clamp(112px,16.4vw,232px)!important;
+}
+.brand{
+  display:none!important;
+}
+.brand-mark{
+  position:absolute!important;
+  right:4.4vw!important;
+  bottom:2.4vh!important;
+  z-index:4!important;
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+  color:rgba(241,189,101,.72)!important;
+  font-family:var(--font-display, "Cinzel", Georgia, "Times New Roman", serif)!important;
+  font-size:clamp(15px,1.35vw,24px)!important;
+  line-height:1!important;
+  letter-spacing:.18em!important;
+  font-weight:500!important;
+  text-align:center!important;
+  text-shadow:0 0 1.8vh rgba(241,189,101,.18)!important;
+  opacity:.72!important;
+}
+.brand-mark span{
+  display:block!important;
+  margin-top:.35vh!important;
+  font-size:clamp(11px,1vw,18px)!important;
+  letter-spacing:0!important;
+  color:rgba(241,189,101,.62)!important;
+}
+.admin-hotspot{
+  width:25vw!important;
+  height:16vh!important;
+}
+@media (max-width:900px){
+  .kalima{
+    font-size:clamp(16px,2.8vw,28px)!important;
+    max-width:62vw!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .next-name{
+    font-size:clamp(58px,8.5vw,110px)!important;
+  }
+}
+
+
+/* ASLIMA V6.3 — richer gold + reference-style typography */
+:root{
+  --gold:#f8c86f!important;
+  --gold2:#d79a34!important;
+  --cream:#fff2d6!important;
+  --font-display:"Cormorant Garamond", Georgia, "Times New Roman", serif!important;
+  --font-logo:"Cinzel", Georgia, "Times New Roman", serif!important;
+  --font-ui:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif!important;
+}
+.clock,.next-name,.overlay-card .big{
+  font-family:var(--font-display)!important;
+  color:var(--gold)!important;
+  font-weight:500!important;
+  text-shadow:0 .28vh 0 rgba(255,255,255,.08),0 1.7vh 5.2vh rgba(0,0,0,.62),0 0 4.2vh rgba(248,200,111,.22)!important;
+}
+.clock{
+  font-size:clamp(116px,16.7vw,238px)!important;
+  letter-spacing:-.035em!important;
+}
+.clock .ampm{
+  font-family:var(--font-display)!important;
+  color:var(--gold)!important;
+  font-size:.19em!important;
+  font-weight:500!important;
+  margin-left:.25vw!important;
+}
+.next-name{
+  font-size:clamp(68px,7.65vw,126px)!important;
+  letter-spacing:.035em!important;
+}
+.brand-mark,.brand,.kalima{
+  font-family:var(--font-logo)!important;
+  color:var(--gold)!important;
+}
+.kalima{
+  color:rgba(248,200,111,.92)!important;
+  text-shadow:0 0 2.4vh rgba(248,200,111,.20)!important;
+}
+.next-time,.ptime,.jumuah span{
+  color:rgba(255,242,214,.96)!important;
+}
+.row.active,.row.active .icon,.row.active .pname,.row.active .ptime,.jumuah:before,.jumuah b{
+  color:var(--gold)!important;
+}
+.divider{
+  background:linear-gradient(90deg,rgba(248,200,111,.15),rgba(248,200,111,.95) 34%,rgba(248,200,111,.95) 44%,rgba(248,200,111,.15) 72%,transparent)!important;
+}
+.divider:after{
+  color:var(--gold)!important;
+  text-shadow:0 0 2vh rgba(248,200,111,.35)!important;
+}
+.fill{
+  background:linear-gradient(90deg,var(--green),var(--gold))!important;
+  box-shadow:0 0 3vh rgba(248,200,111,.48)!important;
+}
+.dot{
+  background:var(--gold)!important;
+  box-shadow:0 0 3.2vh rgba(248,200,111,.78)!important;
+}
+.prayer-panel,.jumuah,.admin{
+  border-color:rgba(248,200,111,.34)!important;
+}
+.brand-mark{
+  opacity:.82!important;
+  color:rgba(248,200,111,.80)!important;
+}
+.brand-mark span{
+  color:rgba(248,200,111,.68)!important;
+}
+
+
+
+/* ASLIMA V6.5 — layout refinements requested after Arabic visualizer */
+.left{
+  transform:translateY(-2.4vh)!important;
+}
+.clock{
+  margin-top:-1.2vh!important;
+}
+.kalima{
+  font-size:clamp(24px,2.45vw,43px)!important;
+}
+.row{
+  grid-template-columns:minmax(28px,2.1vw) minmax(0,1fr) auto!important;
+  gap:.85vw!important;
+}
+.pname{
+  white-space:nowrap!important;
+  overflow:visible!important;
+  font-size:clamp(22px,2.05vw,38px)!important;
+  letter-spacing:.018em!important;
+}
+.ptime{
+  white-space:nowrap!important;
+  font-size:clamp(24px,2.25vw,42px)!important;
+}
+.icon{
+  width:1.8vw!important;
+  min-width:28px!important;
+}
+@media (max-width:900px){
+  .kalima{font-size:clamp(20px,3.25vw,34px)!important;}
+  .left{transform:translateY(-1.6vh)!important;}
+  .pname{font-size:clamp(18px,4.3vw,32px)!important;}
+}
+
+
+/* ASLIMA V6.7 — corrected hero alignment reset
+   Removes the V6.6 right-shift. The clock, divider, prayer label,
+   prayer name, time, countdown, progress, and Jumu’ah bar all share
+   the same left origin again. */
+.left{
+  transform:translateY(-2.4vh)!important;
+  padding-left:0!important;
+  margin-left:0!important;
+  justify-self:start!important;
+}
+.clock,
+.divider,
+.next-label,
+.next-name,
+.next-time,
+.remaining,
+.progress,
+.jumuah{
+  margin-left:0!important;
+}
+.clock{
+  margin-top:-1.2vh!important;
+}
+.divider{
+  width:min(38vw,560px)!important;
+}
+@media (max-width:900px){
+  .left{
+    transform:translateY(-1.6vh)!important;
+    padding-left:0!important;
+    margin-left:0!important;
+  }
+  .clock,
+  .divider,
+  .next-label,
+  .next-name,
+  .next-time,
+  .remaining,
+  .progress,
+  .jumuah{
+    margin-left:0!important;
+  }
+  .divider{width:min(44vw,500px)!important;}
+}
+
+
+
+/* ASLIMA V6.8 — dynamic prayer-time background color themes
+   The mosque image stays the same; the cinematic color wash changes by the
+   active prayer period: Fajr, Dhuhr, Asr, Maghrib, Isha, After Isha, or Jumu’ah. */
+.app{
+  transition:filter 900ms ease, background 900ms ease!important;
+}
+.app:after{
+  opacity:.96!important;
+  transition:background 900ms ease, opacity 900ms ease!important;
+}
+body[data-theme="fajr"] .app{
+  background:
+    linear-gradient(90deg, rgba(0,20,38,.52) 0%, rgba(0,58,78,.18) 44%, rgba(0,8,20,.48) 100%),
+    linear-gradient(180deg, rgba(0,9,26,.10) 0%, rgba(0,28,44,.20) 56%, rgba(0,0,0,.52) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="fajr"] .app:after{
+  background:
+    radial-gradient(circle at 28% 20%, rgba(80,190,255,.16), transparent 34%),
+    radial-gradient(circle at 62% 42%, rgba(52,232,159,.10), transparent 38%),
+    radial-gradient(circle at 78% 64%, rgba(248,200,111,.13), transparent 31%)!important;
+}
+body[data-theme="dhuhr"] .app{
+  background:
+    linear-gradient(90deg, rgba(33,18,0,.45) 0%, rgba(104,58,10,.28) 45%, rgba(10,8,0,.42) 100%),
+    linear-gradient(180deg, rgba(100,58,8,.16) 0%, rgba(42,22,0,.24) 60%, rgba(0,0,0,.50) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="dhuhr"] .app:after{
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,194,92,.20), transparent 35%),
+    radial-gradient(circle at 62% 40%, rgba(255,143,43,.14), transparent 42%)!important;
+}
+body[data-theme="asr"] .app{
+  background:
+    linear-gradient(90deg, rgba(48,20,0,.52) 0%, rgba(124,48,4,.30) 45%, rgba(20,6,0,.45) 100%),
+    linear-gradient(180deg, rgba(185,85,10,.12) 0%, rgba(84,28,0,.24) 58%, rgba(0,0,0,.52) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="asr"] .app:after{
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,165,64,.18), transparent 36%),
+    radial-gradient(circle at 70% 45%, rgba(255,91,28,.16), transparent 40%)!important;
+}
+body[data-theme="maghrib"] .app{
+  background:
+    linear-gradient(90deg, rgba(48,4,10,.55) 0%, rgba(120,25,20,.30) 45%, rgba(18,0,7,.48) 100%),
+    linear-gradient(180deg, rgba(154,34,28,.14) 0%, rgba(70,8,16,.25) 60%, rgba(0,0,0,.54) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="maghrib"] .app:after{
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,92,78,.18), transparent 36%),
+    radial-gradient(circle at 70% 46%, rgba(255,148,66,.15), transparent 40%)!important;
+}
+body[data-theme="isha"] .app{
+  background:
+    linear-gradient(90deg, rgba(0,32,25,.54) 0%, rgba(0,78,62,.24) 45%, rgba(0,8,11,.50) 100%),
+    linear-gradient(180deg, rgba(0,70,56,.10) 0%, rgba(0,34,35,.20) 60%, rgba(0,0,0,.56) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="isha"] .app:after{
+  background:
+    radial-gradient(circle at 28% 20%, rgba(52,232,159,.14), transparent 36%),
+    radial-gradient(circle at 70% 45%, rgba(0,188,180,.13), transparent 42%)!important;
+}
+body[data-theme="after-isha"] .app{
+  background:
+    linear-gradient(90deg, rgba(4,12,38,.58) 0%, rgba(10,28,68,.24) 45%, rgba(0,5,22,.54) 100%),
+    linear-gradient(180deg, rgba(10,28,70,.10) 0%, rgba(0,12,44,.20) 60%, rgba(0,0,0,.58) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="after-isha"] .app:after{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(105,144,255,.16), transparent 34%),
+    radial-gradient(circle at 70% 45%, rgba(64,220,255,.10), transparent 42%)!important;
+}
+body[data-theme="jumuah"] .app{
+  background:
+    linear-gradient(90deg, rgba(32,4,52,.58) 0%, rgba(78,18,106,.26) 45%, rgba(7,0,20,.54) 100%),
+    linear-gradient(180deg, rgba(92,28,124,.12) 0%, rgba(28,8,52,.24) 60%, rgba(0,0,0,.58) 100%),
+    url("assets/aslima-premium-bg.png") center center / cover no-repeat!important;
+}
+body[data-theme="jumuah"] .app:after{
+  background:
+    radial-gradient(circle at 30% 20%, rgba(184,100,255,.16), transparent 36%),
+    radial-gradient(circle at 70% 45%, rgba(248,200,111,.13), transparent 42%)!important;
+}
+body[data-theme="jumuah"] .jumuah{
+  box-shadow:0 0 3vh rgba(184,100,255,.13), inset 0 0 0 1px rgba(255,255,255,.045)!important;
+}
+
+
+/* ASLIMA V6.9 — burn-in protection
+   Soft pixel-shift moves persistent UI together so alignment stays intact.
+   The scale keeps the background from exposing edge gaps during movement. */
+:root{
+  --burn-x:0px;
+  --burn-y:0px;
+  --burn-bg-x:50%;
+  --burn-bg-y:50%;
+}
+.app{
+  background-position:var(--burn-bg-x) var(--burn-bg-y)!important;
+  transition:background-position 1400ms ease-in-out;
+}
+.top,
+.left,
+.right,
+.bottom,
+.brand-mark{
+  transform:translate3d(var(--burn-x),var(--burn-y),0);
+  transition:transform 1400ms ease-in-out;
+  will-change:transform;
+}
+.adhan-overlay .overlay-card,
+.admin{
+  transform:translate3d(calc(var(--burn-x) * .35),calc(var(--burn-y) * .35),0);
+  transition:transform 1400ms ease-in-out;
+}
+@media (prefers-reduced-motion: reduce){
+  .top,.left,.right,.bottom,.brand-mark,.admin,.adhan-overlay .overlay-card{transition:none}
+}
+
+</style>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Cinzel:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu"></button>
+
+<main class="app" id="app">
+  <header class="top">
+    <div class="kalima" id="kalima">لا إله إلا الله محمد رسول الله</div>
+    <div class="status">
+      <div class="date" id="dateLine">TODAY</div>
+    </div>
+  </header>
+
+  <section class="left">
+    <div class="clock" id="clock">--:--<span class="ampm">--</span></div>
+    <div class="divider"></div>
+    <div class="next-label">Next Prayer</div>
+    <div class="next-name" id="nextName">--</div>
+    <div class="next-time" id="nextTime">--:--</div>
+    <div class="remaining" id="remaining">-- remaining</div>
+  </section>
+
+  <section class="right">
+    <div class="prayer-panel" id="prayerPanel">
+      <div class="row" data-prayer="Fajr"><div class="icon">☀</div><div class="pname">Fajr</div><div class="ptime" id="timeFajr">--</div></div>
+      <div class="row" data-prayer="Dhuhr"><div class="icon">☼</div><div class="pname">Dhuhr</div><div class="ptime" id="timeDhuhr">--</div></div>
+      <div class="row" data-prayer="Asr"><div class="icon">☼</div><div class="pname">Asr</div><div class="ptime" id="timeAsr">--</div></div>
+      <div class="row" data-prayer="Maghrib"><div class="icon">☀</div><div class="pname">Maghrib</div><div class="ptime" id="timeMaghrib">--</div></div>
+      <div class="row" data-prayer="Isha"><div class="icon">☾</div><div class="pname">Isha</div><div class="ptime" id="timeIsha">--</div></div>
+    </div>
+  </section>
+
+  <section class="bottom">
+    <div>
+      <div class="progress"><div class="fill"></div><div class="dot"></div></div>
+      <div class="jumuah" id="jumuah"><b>Jumu’ah Prayer</b><span>1:45 PM</span><span>•</span><span>3:00 PM</span><span>•</span><span>4:00 PM</span></div>
+    </div>
+  </section>
+  <button class="brand-mark" id="brand" type="button">ASLIMA<span>أسليمة</span></button>
+</main>
+
+<section class="admin" id="admin">
+  <div class="admin-title"><span>Admin Menu</span><button class="admin-close" id="closeAdmin" type="button" aria-label="Close admin menu">×</button></div>
+  <button class="test" id="testAzaan" type="button">Test Azaan</button>
+  <button class="stop" id="stopAzaan" type="button">Stop Azaan</button>
+  <div class="volume">
+    <div class="volume-label">Volume</div>
+    <button id="volDown" type="button">−</button>
+    <div class="volume-pct" id="volumePct">70%</div>
+    <button id="volUp" type="button">+</button>
+  </div>
+  <button class="refresh" id="refreshTimes" type="button">Refresh Times</button>
+  <button class="dash" id="dashboard15" type="button">Dashboard 15s</button>
+</section>
+
+<div class="toast" id="toast">Ready</div>
+
+<section class="adhan-overlay" id="adhanOverlay">
+  <div class="overlay-card azaan-card">
+    <div class="small" id="overlayPrayerLabel">Azaan for Prayer</div>
+    <div class="azaan-arabic" id="azaanArabic">الله أكبر</div>
+    <div class="azaan-english" id="azaanEnglish">Allah is the Greatest</div>
+    <div class="azaan-progress" id="azaanProgress">1 / 15</div>
+    <div class="azaan-prayer" id="overlayPrayer">Prayer</div>
+    <div class="sub">May Allah accept your prayer</div>
+    <button type="button" id="overlayStop">Stop Azaan</button>
+  </div>
+</section>
+
+<audio id="athan" preload="auto" crossorigin="anonymous">
+  <source src="https://praytimes.org/audio/sunni/Adhan-Madinah.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const CONFIG={
+  city:'Irving',
+  country:'United States',
+  method:2,
+  vricUrl:'https://vric.org/prayertimes/',
+  vricSyncMinutes:360,
+  jumuah:['1:45 PM','3:00 PM','4:00 PM']
+};
+
+const DEMO={
+  Fajr:'05:01',
+  Sunrise:'06:23',
+  Dhuhr:'13:32',
+  Asr:'17:14',
+  Maghrib:'20:40',
+  Isha:'22:02'
+};
+
+let timings={...DEMO};
+let lastFired='';
+let lastVricSyncStatus='Not synced yet';
+let audioUnlocked=false;
+let activeAzaanPrayer='';
+let azaanVisualTimer=null;
+let azaanVisualIndex=0;
+let burnInIndex=0;
+const BURN_IN_OFFSETS=[
+  {x:0,y:0,bx:'50%',by:'50%'},
+  {x:-7,y:4,bx:'49.7%',by:'50.2%'},
+  {x:6,y:-5,bx:'50.3%',by:'49.8%'},
+  {x:-4,y:-7,bx:'49.8%',by:'49.7%'},
+  {x:8,y:3,bx:'50.4%',by:'50.1%'},
+  {x:3,y:8,bx:'50.2%',by:'50.4%'},
+  {x:-8,y:-2,bx:'49.6%',by:'49.9%'},
+  {x:5,y:6,bx:'50.3%',by:'50.3%'}
+];
+
+
+const $=id=>document.getElementById(id);
+const audio=$('athan');
+audio.volume=.70;
+
+function applyBurnInShift(){
+  burnInIndex=(burnInIndex+1)%BURN_IN_OFFSETS.length;
+  const o=BURN_IN_OFFSETS[burnInIndex];
+  document.documentElement.style.setProperty('--burn-x',o.x+'px');
+  document.documentElement.style.setProperty('--burn-y',o.y+'px');
+  document.documentElement.style.setProperty('--burn-bg-x',o.bx);
+  document.documentElement.style.setProperty('--burn-bg-y',o.by);
+}
+
+function showToast(text){
+  const t=$('toast');
+  t.textContent=text;
+  t.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function clean(t){
+  const m=String(t||'').match(/\d{1,2}:\d{2}/);
+  return m?m[0]:'00:00';
+}
+
+function to12(t){
+  let [h,m]=clean(t).split(':').map(Number);
+  const p=h>=12?'PM':'AM';
+  h=h%12||12;
+  return {
+    text:`${h}:${String(m).padStart(2,'0')}`,
+    period:p,
+    full:`${h}:${String(m).padStart(2,'0')} ${p}`
+  };
+}
+
+function mins(t){
+  const [h,m]=clean(t).split(':').map(Number);
+  return h*60+m;
+}
+
+function to24(timeText){
+  const raw=String(timeText||'').trim();
+  const m=raw.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+  if(!m)return null;
+  let h=parseInt(m[1],10);
+  const min=m[2];
+  const ap=(m[3]||'').toUpperCase();
+  if(ap==='PM' && h<12)h+=12;
+  if(ap==='AM' && h===12)h=0;
+  return String(h).padStart(2,'0')+':'+min;
+}
+
+function normalizePrayerSource(text){
+  return String(text||'')
+    .replace(/<script[\s\S]*?<\/script>/gi,' ')
+    .replace(/<style[\s\S]*?<\/style>/gi,' ')
+    .replace(/<[^>]+>/g,' ')
+    .replace(/&nbsp;/gi,' ')
+    .replace(/&#8217;|&rsquo;/gi,'’')
+    .replace(/&amp;/gi,'&')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+async function fetchTextWithFallback(url){
+  const urls=[
+    url,
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    'https://corsproxy.io/?'+encodeURIComponent(url)
+  ];
+  let lastErr=null;
+  for(const u of urls){
+    try{
+      const r=await fetch(u,{cache:'no-store'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const text=await r.text();
+      if(text && text.length>80)return text;
+    }catch(e){
+      lastErr=e;
+    }
+  }
+  throw lastErr||new Error('Unable to fetch VRIC');
+}
+
+function parseVricPrayerTimes(sourceText){
+  const text=normalizePrayerSource(sourceText);
+  const out={};
+  const names=[
+    ['Fajr',['Fajr']],
+    ['Dhuhr',['Dhuhr','Zuhr','Zuhur','Dhuhur']],
+    ['Asr',['Asr']],
+    ['Maghrib',['Maghrib','Magrib']],
+    ['Isha',['Isha','Isha’a','Isha’a']]
+  ];
+
+  names.forEach(([key,aliases])=>{
+    for(const alias of aliases){
+      const re=new RegExp('(?:^|\\s|;|,|>)'+alias+'(?:\\s|,|:|-|–|—)+([0-9]{1,2}:[0-9]{2}\\s*(?:AM|PM|am|pm)?)','i');
+      const m=text.match(re);
+      const v=m && to24(m[1]);
+      if(v){out[key]=v;break;}
+    }
+  });
+
+  const jumuah=[];
+  const jumRe=/(?:Jummah|Jumu[’'`]?ah)(?:\s*\d+|\s*Prayer)?(?:\s|,|:|-|–|—){0,10}([0-9]{1,2}:[0-9]{2}\s*(?:AM|PM|am|pm))/gi;
+  let jm;
+  while((jm=jumRe.exec(text))!==null){
+    const pretty=to12(to24(jm[1])).full;
+    if(!jumuah.includes(pretty))jumuah.push(pretty);
+  }
+
+  // Fallback: VRIC pages sometimes mention "three Jummah prayers: 1:45, 3:00, & 4:00 PM".
+  if(jumuah.length===0){
+    const loose=text.match(/(?:Jummah|Jumu[’'`]?ah)[^.;]{0,160}/i);
+    if(loose){
+      const times=[...loose[0].matchAll(/([0-9]{1,2}:[0-9]{2}\s*(?:AM|PM|am|pm)?)/g)].map(x=>x[1]);
+      const hasPm=/PM/i.test(loose[0]);
+      times.forEach(t=>{
+        const fixed=/AM|PM/i.test(t)?t:(hasPm?t+' PM':t);
+        const v=to24(fixed);
+        if(v){
+          const pretty=to12(v).full;
+          if(!jumuah.includes(pretty))jumuah.push(pretty);
+        }
+      });
+    }
+  }
+
+  return {timings:out,jumuah:jumuah.slice(0,4),sourceText:text};
+}
+
+async function syncVricTimes(showSuccess){
+  const raw=await fetchTextWithFallback(CONFIG.vricUrl);
+  const parsed=parseVricPrayerTimes(raw);
+  const found=parsed.timings||{};
+  const required=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  const validPrayers=required.filter(k=>found[k]);
+
+  if(validPrayers.length>=4){
+    timings={...timings,...found};
+  }
+  if(parsed.jumuah && parsed.jumuah.length){
+    CONFIG.jumuah=parsed.jumuah;
+  }
+
+  if(validPrayers.length<4 && (!parsed.jumuah || !parsed.jumuah.length)){
+    throw new Error('VRIC page loaded but times were not found');
+  }
+
+  const stamp=new Date().toLocaleString();
+  lastVricSyncStatus='VRIC live sync: '+stamp;
+  try{
+    localStorage.setItem('aslima_vric_cache',JSON.stringify({timings,jumuah:CONFIG.jumuah,stamp}));
+  }catch(e){}
+  if(showSuccess)showToast('VRIC live timings synced');
+  return true;
+}
+
+function loadCachedVricTimes(){
+  try{
+    const cached=JSON.parse(localStorage.getItem('aslima_vric_cache')||'null');
+    if(cached && cached.timings){
+      timings={...timings,...cached.timings};
+      if(cached.jumuah && cached.jumuah.length)CONFIG.jumuah=cached.jumuah;
+      lastVricSyncStatus='Using last VRIC sync: '+(cached.stamp||'saved');
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+function getNext(){
+  const n=new Date();
+  const cur=n.getHours()*60+n.getMinutes()+n.getSeconds()/60;
+  let best=9999;
+  let name='Fajr';
+  ['Fajr','Dhuhr','Asr','Maghrib','Isha'].forEach(p=>{
+    let d=mins(timings[p])-cur;
+    if(d>0 && d<best){
+      best=d;
+      name=p;
+    }
+  });
+  if(best===9999){
+    best=1440-cur+mins(timings.Fajr);
+    name='Fajr';
+  }
+  return {name,seconds:Math.max(0,Math.floor(best*60))};
+}
+
+function activePrayer(nextName){
+  const order=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  const i=order.indexOf(nextName);
+  if(i<0)return null;
+  return i===0?'Isha':order[i-1];
+}
+
+function isFriday(){
+  return new Date().getDay()===5;
+}
+
+function currentPrayerTheme(nextName){
+  const n=new Date();
+  const now=n.getHours()*60+n.getMinutes()+n.getSeconds()/60;
+  const fajr=mins(timings.Fajr);
+  const dhuhr=mins(timings.Dhuhr);
+  const asr=mins(timings.Asr);
+  const maghrib=mins(timings.Maghrib);
+  const isha=mins(timings.Isha);
+
+  if(isFriday() && now>=fajr && now<asr)return 'jumuah';
+  if(now<fajr || now>=isha)return 'after-isha';
+  if(now<dhuhr)return 'fajr';
+  if(now<asr)return 'dhuhr';
+  if(now<maghrib)return 'asr';
+  if(now<isha)return 'maghrib';
+  return 'isha';
+}
+
+function applyPrayerTheme(nextName){
+  const theme=currentPrayerTheme(nextName);
+  if(document.body.dataset.theme!==theme){
+    document.body.dataset.theme=theme;
+  }
+}
+
+function remainingHuman(seconds){
+  seconds=Math.max(0,Math.floor(seconds||0));
+  const h=Math.floor(seconds/3600);
+  const m=Math.floor((seconds%3600)/60);
+  if(h>0)return `${h}h ${String(m).padStart(2,'0')}m remaining`;
+  if(m>0)return `${m}m remaining`;
+  return 'starting now';
+}
+
+function updateClock(){
+  const d=new Date();
+  let h=d.getHours();
+  const m=String(d.getMinutes()).padStart(2,'0');
+  const ap=h>=12?'PM':'AM';
+  h=h%12||12;
+  $('clock').innerHTML=`${h}:${m}<span class="ampm">${ap}</span>`;
+  try{
+    $('dateLine').textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(d).toUpperCase();
+  }catch(e){
+    $('dateLine').textContent=d.toDateString().toUpperCase();
+  }
+}
+
+function updateProgress(){
+  const d=new Date();
+  const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+  const start=mins(timings.Fajr);
+  const end=mins(timings.Isha);
+  const pct=Math.max(0,Math.min(100,((now-start)/Math.max(1,end-start))*100));
+  document.documentElement.style.setProperty('--progress',pct+'%');
+}
+
+function render(){
+  updateClock();
+  const next=getNext();
+  applyPrayerTheme(next.name);
+  const nextTime=to12(timings[next.name]);
+
+  $('nextName').textContent=next.name.toUpperCase();
+  $('nextTime').textContent=nextTime.full;
+  $('remaining').textContent=remainingHuman(next.seconds);
+
+  ['Fajr','Dhuhr','Asr','Maghrib','Isha'].forEach(p=>{
+    $('time'+p).textContent=to12(timings[p]).full;
+  });
+
+  const current=activePrayer(next.name);
+  document.querySelectorAll('.row').forEach(row=>{
+    row.classList.toggle('active',row.dataset.prayer===current);
+  });
+
+  $('jumuah').innerHTML='<b>Jumu’ah Prayer</b><span>'+CONFIG.jumuah.join('</span><span>•</span><span>')+'</span>';
+  updateProgress();
+  updateVolumeLabel();
+}
+
+async function loadTimes(){
+  let synced=false;
+  try{
+    synced=await syncVricTimes(true);
+  }catch(e){
+    loadCachedVricTimes();
+    try{
+      const url=`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CONFIG.city)}&country=${encodeURIComponent(CONFIG.country)}&method=${CONFIG.method}`;
+      const r=await fetch(url,{cache:'no-store'});
+      const j=await r.json();
+      if(j && j.data && j.data.timings){
+        const t=j.data.timings;
+        timings={
+          Fajr:clean(t.Fajr),
+          Sunrise:clean(t.Sunrise),
+          Dhuhr:clean(t.Dhuhr),
+          Asr:clean(t.Asr),
+          Maghrib:clean(t.Maghrib),
+          Isha:clean(t.Isha)
+        };
+        lastVricSyncStatus='VRIC unavailable; using AlAdhan fallback';
+        showToast('VRIC unavailable — fallback times loaded');
+      }
+    }catch(err){
+      lastVricSyncStatus='Offline mode — using saved/demo times';
+      showToast('Offline mode');
+    }
+  }
+  render();
+}
+
+function updateVolumeLabel(){
+  $('volumePct').textContent=Math.round(audio.volume*100)+'%';
+}
+
+function setVolume(v){
+  audio.volume=Math.max(0,Math.min(1,v));
+  audio.muted=false;
+  updateVolumeLabel();
+  showToast('Volume '+Math.round(audio.volume*100)+'%');
+}
+
+async function unlockAudio(){
+  if(audioUnlocked)return;
+  try{
+    await audio.play();
+    audio.pause();
+    audio.currentTime=0;
+    audioUnlocked=true;
+  }catch(e){}
+}
+
+const AZAAN_BASE_SEQUENCE=[
+  {ar:'الله أكبر', en:'Allah is the Greatest', repeat:4, weight:1.00},
+  {ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah', repeat:2, weight:1.35},
+  {ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah', repeat:2, weight:1.45},
+  {ar:'حي على الصلاة', en:'Come to prayer', repeat:2, weight:1.25},
+  {ar:'حي على الفلاح', en:'Come to success', repeat:2, weight:1.25},
+  {ar:'الله أكبر', en:'Allah is the Greatest', repeat:2, weight:.95},
+  {ar:'لا إله إلا الله', en:'There is no god but Allah', repeat:1, weight:1.45}
+];
+const FAJR_EXTRA_SEQUENCE={ar:'الصلاة خير من النوم', en:'Prayer is better than sleep', repeat:2, weight:1.25};
+
+function getAzaanSequence(prayerName){
+  const sequence=[];
+  for(const item of AZAAN_BASE_SEQUENCE){
+    if(item.ar==='الله أكبر' && item.repeat===2 && String(prayerName).toLowerCase()==='fajr'){
+      for(let i=0;i<FAJR_EXTRA_SEQUENCE.repeat;i++){
+        sequence.push({...FAJR_EXTRA_SEQUENCE, currentRepeat:i+1});
+      }
+    }
+    for(let i=0;i<item.repeat;i++){
+      sequence.push({...item, currentRepeat:i+1});
+    }
+  }
+  return sequence;
+}
+
+function startAzaanVisual(prayerName){
+  const sequence=getAzaanSequence(prayerName);
+  clearInterval(azaanVisualTimer);
+  azaanVisualIndex=-1;
+
+  function paint(item,index){
+    if(index===azaanVisualIndex)return;
+    azaanVisualIndex=index;
+    $('azaanArabic').textContent=item.ar;
+    $('azaanEnglish').textContent=item.en;
+    $('azaanProgress').textContent=(index+1)+' / '+sequence.length;
+  }
+
+  function frame(){
+    const fallbackDuration=String(prayerName).toLowerCase()==='fajr'?190:170;
+    const duration=(Number.isFinite(audio.duration)&&audio.duration>20)?audio.duration:fallbackDuration;
+    const totalWeight=sequence.reduce((sum,item)=>sum+item.weight,0);
+    const elapsed=Math.max(0,Math.min(duration,audio.currentTime||0));
+    let cursor=0;
+    let index=sequence.length-1;
+    for(let i=0;i<sequence.length;i++){
+      cursor+=duration*(sequence[i].weight/totalWeight);
+      if(elapsed<=cursor){index=i;break;}
+    }
+    paint(sequence[index],index);
+  }
+
+  frame();
+  azaanVisualTimer=setInterval(frame,250);
+}
+
+function resolveAzaanPrayer(prayerName){
+  if(prayerName)return prayerName;
+  const next=getNext();
+  return activePrayer(next.name)||next.name;
+}
+
+async function playAzaan(prayerName){
+  const prayer=resolveAzaanPrayer(prayerName);
+  activeAzaanPrayer=prayer;
+  try{
+    $('overlayPrayer').textContent=prayer.toUpperCase();
+    $('overlayPrayerLabel').textContent='Azaan for '+prayer;
+    startAzaanVisual(prayer);
+    $('adhanOverlay').classList.add('show');
+    audio.currentTime=0;
+    await audio.play();
+    showToast('Azaan playing for '+prayer);
+  }catch(e){
+    showToast('Tap once to allow audio');
+  }
+}
+
+function hideAzaanOverlay(){
+  clearInterval(azaanVisualTimer);
+  azaanVisualTimer=null;
+  $('adhanOverlay').classList.remove('show');
+}
+
+function stopAzaan(){
+  audio.pause();
+  audio.currentTime=0;
+  hideAzaanOverlay();
+  showToast('Azaan stopped');
+}
+
+audio.onended=()=>hideAzaanOverlay();
+audio.onerror=()=>showToast('Internet needed for Azaan');
+
+function showAdmin(){
+  $('admin').classList.add('show');
+  clearTimeout(showAdmin.timer);
+  showAdmin.timer=setTimeout(()=>$('admin').classList.remove('show'),15000);
+}
+
+let taps=0,tapTimer=null;
+function adminTap(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  taps++;
+  clearTimeout(tapTimer);
+  tapTimer=setTimeout(()=>taps=0,2300);
+  if(taps>=5){
+    taps=0;
+    showAdmin();
+  }
+}
+
+$('adminHotspot').addEventListener('click',adminTap,{passive:false});
+$('adminHotspot').addEventListener('touchend',adminTap,{passive:false});
+$('brand').addEventListener('click',adminTap,{passive:false});
+$('brand').addEventListener('touchend',adminTap,{passive:false});
+
+$('testAzaan').onclick=()=>{playAzaan();showAdmin();};
+$('stopAzaan').onclick=()=>{stopAzaan();showAdmin();};
+$('overlayStop').onclick=stopAzaan;
+$('volDown').onclick=()=>{setVolume(audio.volume-.1);showAdmin();};
+$('volUp').onclick=()=>{setVolume(audio.volume+.1);showAdmin();};
+$('refreshTimes').onclick=()=>{loadTimes();showAdmin();};
+$('dashboard15').onclick=()=>{showToast('Clean premium display active');showAdmin();};
+
+document.addEventListener('pointerdown',unlockAudio,{once:true,passive:true});
+
+function autoFireAzaan(){
+  const n=new Date();
+  const stamp=n.toDateString();
+  const now=n.getHours()*60+n.getMinutes();
+  ['Fajr','Dhuhr','Asr','Maghrib','Isha'].forEach(p=>{
+    const key=stamp+'-'+p;
+    if(now===mins(timings[p]) && lastFired!==key){
+      lastFired=key;
+      playAzaan(p);
+    }
+  });
+}
+
+loadTimes();
+render();
+setInterval(render,1000);
+setInterval(autoFireAzaan,30000);
+setInterval(loadTimes,6*60*60*1000);
+setInterval(applyBurnInShift,60000);
+setTimeout(applyBurnInShift,12000);
+
+/* ASLIMA V6.1 — admin close control */
+(function(){
+  function bindClose(){
+    const close=document.getElementById('closeAdmin');
+    const admin=document.getElementById('admin');
+    if(close && admin && !close.__aslimaCloseBound){
+      close.__aslimaCloseBound=true;
+      close.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        admin.classList.remove('show');
+      },{passive:false});
+      close.addEventListener('touchend',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        admin.classList.remove('show');
+      },{passive:false});
+    }
+  }
+  bindClose();
+  window.addEventListener('load',bindClose);
+})();
+
+</script>
+</body>
+</html>
