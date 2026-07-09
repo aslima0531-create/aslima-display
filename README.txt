@@ -1,7 +1,6 @@
-ASLIMA V6.3 Premium Prayer Display
+ASLIMA V8.7 — Persistent Drag Handle
 
-Changes:
-- Richer gold palette closer to the reference image
-- Updated hero clock/prayer typography to Cormorant Garamond for a more elegant premium serif look
-- Kept Kalima header, ASLIMA bottom-right, hidden admin, Stop Azaan, and Volume controls
-- Uses only assets/aslima-premium-bg.png as background
+- Adds a guaranteed independent global drag handle outside the drawer.
+- Old conflicting drawer handles are hidden.
+- Handle always appears on the right edge unless timing modal or Azaan overlay is open.
+- Tap opens/closes the drawer; swipe left opens; swipe right closes.
