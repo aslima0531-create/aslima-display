@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aslima Remote</title>
+<style>
+:root{--bg:#05080b;--card:rgba(255,255,255,.075);--line:rgba(255,255,255,.13);--gold:#f5c86b;--green:#49e6a4;--red:#ff6075;--text:#f6f1e8;--muted:rgba(246,241,232,.62)}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 20% -10%,rgba(245,200,107,.22),transparent 36%),radial-gradient(circle at 100% 10%,rgba(73,230,164,.13),transparent 35%),linear-gradient(145deg,#061018,#020304 70%);padding:calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 28px)}
+.shell{max-width:560px;margin:0 auto}.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:18px}.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800}.title{font-size:34px;line-height:1.02;font-weight:850;margin:6px 0 8px}.sub{color:var(--muted);font-size:15px;line-height:1.35}.status{border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:999px;padding:9px 12px;font-size:13px;color:var(--muted);white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#777;margin-right:7px;box-shadow:0 0 0 rgba(0,0,0,0)}.ok .dot{background:var(--green);box-shadow:0 0 14px rgba(73,230,164,.75)}.bad .dot{background:var(--red)}
+.card{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.055));box-shadow:0 24px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);padding:18px;margin:14px 0;backdrop-filter:blur(22px)}.card h2{font-size:17px;margin:0 0 14px}.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode button,.primary,.ghost,.danger{appearance:none;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.07);color:var(--text);font-weight:800;font-size:15px;padding:14px 12px}.mode button.active{border-color:rgba(245,200,107,.78);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.07));box-shadow:0 0 25px rgba(245,200,107,.14)}
+.grid{display:grid;gap:11px}.row{display:grid;grid-template-columns:1fr 138px;gap:12px;align-items:center;border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:12px;background:rgba(0,0,0,.18)}.name{font-size:16px;font-weight:800}.hint{font-size:12px;color:var(--muted);margin-top:3px}input[type=time],input[type=text]{width:100%;border:1px solid rgba(255,255,255,.15);border-radius:15px;background:rgba(0,0,0,.32);color:var(--text);font-size:16px;font-weight:800;padding:11px;color-scheme:dark}input[type=range]{width:100%;accent-color:var(--gold)}.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}.switch{position:relative;width:56px;height:32px;flex:0 0 auto}.switch input{display:none}.track{position:absolute;inset:0;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.13);transition:.2s}.thumb{position:absolute;width:26px;height:26px;left:3px;top:2px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+.track{background:rgba(73,230,164,.42);border-color:rgba(73,230,164,.65)}.switch input:checked+.track .thumb{transform:translateX(24px)}.actions{display:grid;gap:10px}.primary{background:linear-gradient(135deg,#f8d37d,#b9832f);color:#120b02;border-color:rgba(255,226,151,.8);box-shadow:0 13px 35px rgba(245,200,107,.22)}.danger{background:linear-gradient(135deg,rgba(180,28,50,.92),rgba(89,12,27,.9));border-color:rgba(255,96,117,.5)}.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 18px);transform:translateX(-50%) translateY(20px);opacity:0;transition:.2s;z-index:5;background:rgba(8,13,17,.94);border:1px solid rgba(245,200,107,.35);border-radius:999px;padding:12px 16px;box-shadow:0 16px 50px rgba(0,0,0,.55);font-weight:800}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.lock{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(18px);padding:22px}.lockbox{max-width:420px;width:100%;border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));padding:22px}.lockbox h1{margin:0 0 8px;font-size:26px}.lockbox p{color:var(--muted);line-height:1.4}.small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="lock" id="lock"><div class="lockbox"><div class="eyebrow">Aslima Remote</div><h1>Enter admin PIN</h1><p>This keeps random people in your house from changing times from your phone shortcut.</p><input id="pin" inputmode="numeric" autocomplete="off" placeholder="PIN" type="text"><div style="height:12px"></div><button class="primary" id="unlock" style="width:100%">Unlock Remote</button><div class="small">Default PIN is <b>7860</b>. We can change this later.</div></div></div>
+<div class="shell">
+  <div class="top"><div><div class="eyebrow">Aslima Admin</div><div class="title">Azaan Remote</div><div class="sub">Change prayer times from your phone. The tablet updates live through Firebase.</div></div><div class="status" id="status"><span class="dot"></span>Connecting</div></div>
+  <section class="card"><h2>Timing Mode</h2><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeManual">Manual Times</button></div><div class="small">Use manual only when you need to override a time. Use VRIC Live for normal daily operation.</div></section>
+  <section class="card"><h2>Prayer Times</h2><div class="grid" id="timeGrid"></div></section>
+  <section class="card"><h2>Jumu’ah Times</h2><div class="grid"><div class="row"><div><div class="name">Jumu’ah 1</div></div><input type="text" id="jum1" placeholder="1:45 PM"></div><div class="row"><div><div class="name">Jumu’ah 2</div></div><input type="text" id="jum2" placeholder="3:00 PM"></div><div class="row"><div><div class="name">Jumu’ah 3</div></div><input type="text" id="jum3" placeholder="4:00 PM"></div></div></section>
+  <section class="card"><h2>Azaan Settings</h2><div class="grid" id="azaanGrid"></div><div style="height:12px"></div><div class="row"><div><div class="name">Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div></section>
+  <section class="card actions"><button class="primary" id="save">Save to Tablet</button><button class="ghost" id="test">Test Azaan on Tablet</button><button class="danger" id="stop">Stop Azaan</button></section>
+</div>
+<div class="toast" id="toast">Saved</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyBqe4PHKA3ZaiZuGuX65G9sh-I40yz_aOI",authDomain:"aslima-azaan.firebaseapp.com",databaseURL:"https://aslima-azaan-default-rtdb.firebaseio.com",projectId:"aslima-azaan",storageBucket:"aslima-azaan.firebasestorage.app",messagingSenderId:"282650902479",appId:"1:282650902479:web:75149538ae561dbbaedcba"};
+const PATH='aslima/devices/home/settings';
+const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.70};
+let state=JSON.parse(JSON.stringify(DEFAULT));
+const $=id=>document.getElementById(id); function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000)}
+function setStatus(txt,cls){const s=$('status');s.className='status '+(cls||'');s.innerHTML='<span class="dot"></span>'+txt}
+function command(type,extra){return {type,id:String(Date.now())+'-'+Math.random().toString(16).slice(2),...(extra||{})}}
+function render(){
+ $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeManual').classList.toggle('active',state.mode==='manual');
+ PRAYERS.forEach(p=>{const el=$('time_'+p); if(el)el.value=state.timings[p]||''});
+ $('jum1').value=state.jumuah[0]||''; $('jum2').value=state.jumuah[1]||''; $('jum3').value=state.jumuah[2]||'';
+ AZAAN.forEach(p=>{const el=$('az_'+p); if(el)el.checked=state.azaanEnabled[p]!==false});
+ $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
+}
+function build(){
+ $('timeGrid').innerHTML=PRAYERS.map(p=>`<div class="row"><div><div class="name">${p}</div><div class="hint">${p==='Sunrise'?'Shown only, no Azaan':'24-hour time'}</div></div><input id="time_${p}" type="time" step="60"></div>`).join('');
+ $('azaanGrid').innerHTML=AZAAN.map(p=>`<div class="row toggle"><div><div class="name">${p} Azaan</div><div class="hint">${p==='Fajr'?'Morning Azaan':'Auto-play at prayer time'}</div></div><label class="switch"><input id="az_${p}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
+}
+function collect(){
+ state.mode=$('modeManual').classList.contains('active')?'manual':'vric';
+ PRAYERS.forEach(p=>{state.timings[p]=$('time_'+p).value||state.timings[p]||DEFAULT.timings[p]});
+ state.jumuah=[$('jum1').value,$('jum2').value,$('jum3').value].map(x=>x.trim()).filter(Boolean);
+ AZAAN.forEach(p=>{state.azaanEnabled[p]=$('az_'+p).checked});
+ state.volume=parseInt($('volume').value,10)/100; state.updatedAt=new Date().toISOString();
+ return state;
+}
+build(); render();
+$('modeVric').onclick=()=>{state.mode='vric';render()}; $('modeManual').onclick=()=>{state.mode='manual';render()}; $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%'};
+$('unlock').onclick=()=>{if($('pin').value.trim()==='7860'){localStorage.setItem('aslima_admin_unlocked','1');$('lock').style.display='none'}else toast('Wrong PIN')}; if(localStorage.getItem('aslima_admin_unlocked')==='1')$('lock').style.display='none';
+try{firebase.initializeApp(firebaseConfig); const ref=firebase.database().ref(PATH); ref.on('value',snap=>{setStatus('Live','ok'); const v=snap.val(); if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}}; render();}},err=>setStatus('Error','bad'));
+ $('save').onclick=()=>{ref.update(collect()).then(()=>toast('Saved to tablet')).catch(e=>toast('Save failed'))};
+ $('test').onclick=()=>{ref.update({...collect(),command:command('testAzaan')}).then(()=>toast('Test sent'))};
+ $('stop').onclick=()=>{ref.update({...collect(),command:command('stopAzaan')}).then(()=>toast('Stop sent'))};
+}catch(e){setStatus('Offline','bad');toast('Firebase failed')}
+</script>
+</body>
+</html>
