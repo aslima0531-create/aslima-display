@@ -1,0 +1,5 @@
+0faa59e2028bbb2f60a670b53ec89ffcf628f3c195b43fb41d9bdbc99000c1b3  audio/sunnah-style.mp3
+2163ceafb8a05064a5ea5e1e0a7fac5fff958a21fcf830844d557d496b9b23c3  audio/full-adhan.ogg
+c1530b7c66bfe2fe90f9e54741384ed80678d9888dc5257a91659c0aeafe95e9  audio/madinah-short.ogg
+35fe06b08fe80505c550c33fed8a783fa9901ddc81ac884958b4be048f5b2a79  audio/serene-adhan.ogg
+b42b66fd80c1c2fc9d53f5ee561e0761912e51d762ba1d22d7d909b5966a913e  audio/short-adhan.ogg
