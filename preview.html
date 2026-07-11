@@ -3726,15 +3726,7 @@ function applyAslimaRemoteSettings(data){
       (window.setAzaanVoice||setAzaanVoice)(remoteVoice,{quiet:true,preload:false,source:'firebase'});
       forceMuezzinUiSync(remoteVoice);
     }
-    if(data.command && data.command.id){
-      if(aslimaRemoteInitialSnapshot){
-        aslimaRemoteLastCommand=data.command.id;
-      }else if(data.command.id!==aslimaRemoteLastCommand){
-        aslimaRemoteLastCommand=data.command.id;
-        if(data.command.type==='testAzaan')playAzaan(data.command.prayer||null,{force:true});
-        if(data.command.type==='stopAzaan')stopAzaan();
-      }
-    }
+    // Commands are handled by the dedicated Firebase child listener.
     aslimaRemoteInitialSnapshot=false;
     render();
   }catch(e){console.warn('Aslima remote apply failed',e);}
@@ -3744,6 +3736,20 @@ function initAslimaFirebaseRemote(){
     if(!window.firebase || !window.ASLIMA_REMOTE || !window.ASLIMA_REMOTE.config)return;
     if(!firebase.apps.length)firebase.initializeApp(window.ASLIMA_REMOTE.config);
     const ref=firebase.database().ref(window.ASLIMA_REMOTE.path);
+    window.aslimaRemoteRef=ref;
+    let commandListenerReady=false;
+    let commandBaselineId='';
+    ref.child('command').once('value').then(snap=>{const c=snap.val();commandBaselineId=c&&c.id?String(c.id):'';commandListenerReady=true;}).catch(()=>{commandListenerReady=true;});
+    ref.child('command').on('value',snap=>{
+      const c=snap.val();if(!commandListenerReady||!c||!c.id)return;const id=String(c.id);
+      if(id===commandBaselineId){commandBaselineId='';return;}
+      let persisted='';try{persisted=localStorage.getItem('aslima_last_remote_command')||'';}catch(e){}
+      const now=Date.now();const fresh=(!c.expiresAt||Number(c.expiresAt)>=now)&&(!c.createdAt||now-Number(c.createdAt)<=120000);
+      if(!fresh||id===aslimaRemoteLastCommand||id===persisted)return;
+      aslimaRemoteLastCommand=id;try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
+      if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command'});
+      if(c.type==='stopAzaan'&&typeof window.stopAzaan==='function')window.stopAzaan();
+    });
     ref.on('value',snap=>{
       aslimaRemoteReady=true;
       applyAslimaRemoteSettings(snap.val());

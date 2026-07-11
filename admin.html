@@ -60,7 +60,7 @@
     <section class="card"><h2>Jumu’ah Times</h2><div class="sectionHint">These display on the tablet as Friday prayer options.</div><div class="grid"><div class="row"><div><div class="name">Jumu’ah 1</div></div><input type="text" id="jum1" placeholder="1:45 PM"></div><div class="row"><div><div class="name">Jumu’ah 2</div></div><input type="text" id="jum2" placeholder="3:00 PM"></div><div class="row"><div><div class="name">Jumu’ah 3</div></div><input type="text" id="jum3" placeholder="4:00 PM"></div></div></section>
   </section>
 </div>
-<div class="bottomBar"><div class="bottomInner"><button class="primary" id="save">Save to Tablet</button><button class="ghost" id="goTimes">Edit Times</button></div></div>
+<div class="bottomBar"><div class="bottomInner"><button class="ghost" id="goTimes">Edit Times</button></div></div>
 <div class="toast" id="toast">Saved</div>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -80,7 +80,6 @@ function render(){
  const manualMode=state.mode==='manual';
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
  const lock=$('timeLockNote'); if(lock)lock.classList.toggle('show',!manualMode);
- const save=$('save'); if(save)save.textContent=manualMode?'Save Manual Times':'Save Settings';
  $('jum1').value=state.jumuah[0]||''; $('jum2').value=state.jumuah[1]||''; $('jum3').value=state.jumuah[2]||'';
  AZAAN.forEach(p=>{const el=$('az_'+p); if(el)el.checked=state.azaanEnabled[p]!==false});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
@@ -129,9 +128,15 @@ function saveRemote(label){
 $('modeVric').onclick=()=>{state.mode='vric';render(); if(window.ref)saveRemote('VRIC Live sent to tablet')}; $('modeLocation').onclick=()=>{state.mode='calculated-location';render(); if(window.ref)saveRemote('Location mode sent to tablet')}; $('modeManual').onclick=()=>{state.mode='manual';render(); if(window.ref)saveRemote('Manual mode sent to tablet')}; $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%'};
 $('unlock').onclick=()=>{if($('pin').value.trim()==='7860'){localStorage.setItem('aslima_admin_unlocked','1');$('lock').style.display='none'}else toast('Wrong PIN')}; if(localStorage.getItem('aslima_admin_unlocked')==='1')$('lock').style.display='none';
 try{firebase.initializeApp(firebaseConfig); const ref=firebase.database().ref(PATH); window.ref=ref; ref.child('muezzin').on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}}); ref.on('value',snap=>{setStatus('Live','ok'); const v=snap.val(); if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}}; render();}},err=>setStatus('Error','bad'));
- $('save').onclick=()=>saveRemote('Saved to tablet');
- $('test').onclick=()=>{ref.update({...collect(),command:command('testAzaan')}).then(()=>toast('Test sent'))};
- $('stop').onclick=()=>{ref.update({...collect(),command:command('stopAzaan')}).then(()=>toast('Stop sent'))};
+ const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
+ const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
+ $('test').onclick=()=>{ref.child('command').set(command('testAzaan')).then(()=>toast('Test sent to tablet')).catch(()=>toast('Test command failed'))};
+ $('stop').onclick=()=>{ref.child('command').set(command('stopAzaan')).then(()=>toast('Stop sent to tablet')).catch(()=>toast('Stop command failed'))};
+ AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.onchange=()=>{state.azaanEnabled[p]=el.checked;pushPatch({azaanEnabled:state.azaanEnabled},p+' updated')}});
+ const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
+ $('volume').addEventListener('input',pushVolume);
+ PRAYERS.forEach(p=>{const el=$('time_'+p);if(el)el.onchange=()=>{if(state.mode!=='manual')return;state.timings[p]=el.value||state.timings[p];pushPatch({timings:state.timings},p+' time updated')}});
+ ['jum1','jum2','jum3'].forEach((id,i)=>{const el=$(id);if(el)el.onchange=()=>{const j=[$('jum1').value,$('jum2').value,$('jum3').value].map(x=>x.trim()).filter(Boolean);state.jumuah=j;pushPatch({jumuah:j},'Jumu’ah times updated')}});
 }catch(e){setStatus('Offline','bad');toast('Firebase failed')}
 </script>
 </body>
