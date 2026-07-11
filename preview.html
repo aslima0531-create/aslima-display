@@ -103,6 +103,16 @@ button{font:inherit}
   letter-spacing:.08em;
   text-transform:uppercase;
 }
+.hijri-date{
+  margin-top:.42vh;
+  color:rgba(241,189,101,.86);
+  font-size:clamp(12px,1.08vw,20px);
+  font-weight:650;
+  letter-spacing:.045em;
+  line-height:1.15;
+  text-align:right;
+  white-space:nowrap;
+}
 .live{
   color:var(--green);
   background:rgba(3,60,48,.62);
@@ -2578,6 +2588,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
     <div class="kalima" id="kalima">لا إله إلا الله محمد رسول الله</div>
     <div class="status">
       <div class="date" id="dateLine">TODAY</div>
+      <div class="hijri-date" id="hijriDateLine" aria-label="Islamic date">--</div>
     </div>
   </header>
 
@@ -3595,6 +3606,36 @@ function remainingHuman(seconds){
   return 'starting now';
 }
 
+function formatAslimaHijriDate(now){
+  const shifted=new Date(now.getTime());
+  try{
+    const maghribMinutes=mins(timings.Maghrib);
+    const currentMinutes=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+    if(Number.isFinite(maghribMinutes) && currentMinutes>=maghribMinutes){
+      shifted.setDate(shifted.getDate()+1);
+    }
+  }catch(e){}
+
+  const calendars=['islamic-umalqura','islamic'];
+  for(const calendar of calendars){
+    try{
+      const formatter=new Intl.DateTimeFormat('en-US-u-ca-'+calendar,{
+        day:'numeric',month:'long',year:'numeric',era:'short'
+      });
+      const resolved=formatter.resolvedOptions();
+      if(!resolved.calendar || !resolved.calendar.startsWith('islamic'))continue;
+      const parts=formatter.formatToParts(shifted);
+      const value=type=>{const part=parts.find(item=>item.type===type);return part?part.value:'';};
+      const day=value('day');
+      const month=value('month');
+      const year=value('year');
+      const era=value('era')||'AH';
+      if(day&&month&&year)return `${day} ${month} ${year} ${era}`;
+    }catch(e){}
+  }
+  return '';
+}
+
 function updateClock(){
   const d=new Date();
   let h=d.getHours();
@@ -3606,6 +3647,12 @@ function updateClock(){
     $('dateLine').textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(d).toUpperCase();
   }catch(e){
     $('dateLine').textContent=d.toDateString().toUpperCase();
+  }
+  const hijriLine=$('hijriDateLine');
+  if(hijriLine){
+    const hijri=formatAslimaHijriDate(d);
+    hijriLine.textContent=hijri||'ISLAMIC DATE UNAVAILABLE';
+    hijriLine.hidden=!hijri;
   }
 }
 

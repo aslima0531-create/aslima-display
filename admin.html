@@ -8,11 +8,11 @@
 :root{--bg:#04070b;--card:rgba(255,255,255,.075);--card2:rgba(255,255,255,.045);--line:rgba(255,255,255,.13);--gold:#f5c86b;--gold2:#b9832f;--green:#49e6a4;--red:#ff6075;--text:#f8f3e9;--muted:rgba(248,243,233,.62);--shadow:0 22px 70px rgba(0,0,0,.46)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:#020304}body{margin:0;min-height:100svh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at 15% -5%,rgba(245,200,107,.24),transparent 34%),radial-gradient(circle at 105% 5%,rgba(73,230,164,.12),transparent 34%),linear-gradient(145deg,#061019,#020304 72%);padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 92px)}
 .shell{max-width:560px;margin:0 auto}.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:16px}.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:900}.title{font-size:32px;line-height:1.02;font-weight:900;margin:6px 0 7px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:14px;line-height:1.35}.status{border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:999px;padding:8px 11px;font-size:12px;color:var(--muted);white-space:nowrap;margin-top:2px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#777;margin-right:7px}.ok .dot{background:var(--green);box-shadow:0 0 14px rgba(73,230,164,.75)}.bad .dot{background:var(--red)}
-.hero{border:1px solid rgba(245,200,107,.20);border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.045));box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.10);padding:18px;margin:14px 0 16px;backdrop-filter:blur(24px)}.heroTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(245,200,107,.25);border-radius:999px;background:rgba(245,200,107,.10);padding:8px 10px;color:var(--gold);font-weight:900;font-size:12px}.heroTitle{font-size:25px;font-weight:900;letter-spacing:-.035em;margin:12px 0 2px}.heroSub{font-size:13px;color:var(--muted)}.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.quickCard{border:1px solid rgba(255,255,255,.11);border-radius:21px;background:rgba(0,0,0,.18);padding:13px}.quickLabel{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:900}.quickValue{font-size:21px;font-weight:900;margin-top:4px;color:var(--text)}
+.hero{border:1px solid rgba(245,200,107,.20);border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.045));box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.10);padding:18px;margin:14px 0 16px;backdrop-filter:blur(24px)}.heroTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(245,200,107,.25);border-radius:999px;background:rgba(245,200,107,.10);padding:8px 10px;color:var(--gold);font-weight:900;font-size:12px}.heroTitle{font-size:25px;font-weight:900;letter-spacing:-.035em;margin:12px 0 2px}.heroSub{font-size:13px;color:var(--muted)}.nextPrayer{margin-top:15px;border:1px solid rgba(255,255,255,.11);border-radius:22px;background:rgba(0,0,0,.20);padding:15px}.nextLabel{font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);font-weight:950}.nextMain{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:5px}.nextName{font-size:27px;font-weight:950;letter-spacing:-.035em}.nextTime{font-size:20px;font-weight:900;color:var(--gold);white-space:nowrap}.nextMeta{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:var(--muted);font-size:12px}.nextCountdown{font-weight:900;color:var(--text)}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;position:sticky;top:calc(env(safe-area-inset-top) + 8px);z-index:4}.tabBtn{appearance:none;border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(255,255,255,.06);color:var(--muted);font-weight:900;font-size:12px;padding:11px 6px;backdrop-filter:blur(16px)}.tabBtn.active{color:#160f04;background:linear-gradient(135deg,#f8d37d,#b9832f);border-color:rgba(255,226,151,.75);box-shadow:0 12px 30px rgba(245,200,107,.18)}
 .page{display:none}.page.active{display:block;animation:rise .22s ease-out}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.card{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.048));box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);padding:17px;margin:14px 0;backdrop-filter:blur(22px)}.card h2{font-size:17px;margin:0 0 13px;letter-spacing:-.015em}.sectionHint{font-size:13px;color:var(--muted);line-height:1.35;margin:-5px 0 13px}.mode{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.mode button,.primary,.ghost,.danger,.miniAction{appearance:none;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.07);color:var(--text);font-weight:900;font-size:15px;padding:14px 12px}.mode button.active{border-color:rgba(245,200,107,.78);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.07));box-shadow:0 0 25px rgba(245,200,107,.14)}
 .grid{display:grid;gap:11px}.row{display:grid;grid-template-columns:1fr 138px;gap:12px;align-items:center;border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:12px;background:rgba(0,0,0,.18)}.name{font-size:16px;font-weight:900}.hint{font-size:12px;color:var(--muted);margin-top:3px}input[type=time],input[type=text]{width:100%;border:1px solid rgba(255,255,255,.15);border-radius:15px;background:rgba(0,0,0,.32);color:var(--text);font-size:16px;font-weight:900;padding:11px;color-scheme:dark}input[type=range]{width:100%;accent-color:var(--gold)}input:disabled{opacity:.45;filter:saturate(.45);cursor:not-allowed}.row.locked{opacity:.72}.row.locked input{background:rgba(255,255,255,.045);border-color:rgba(245,200,107,.18)}.lockNote{display:none;margin-top:12px;border:1px solid rgba(245,200,107,.28);background:rgba(245,200,107,.085);color:#f8d37d;border-radius:18px;padding:12px;font-size:13px;line-height:1.35;font-weight:800}.lockNote.show{display:block}.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}.switch{position:relative;width:56px;height:32px;flex:0 0 auto}.switch input{display:none}.track{position:absolute;inset:0;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.13);transition:.2s}.thumb{position:absolute;width:26px;height:26px;left:3px;top:2px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+.track{background:rgba(73,230,164,.42);border-color:rgba(73,230,164,.65)}.switch input:checked+.track .thumb{transform:translateX(24px)}
-.bottomBar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(180deg,transparent,rgba(2,3,4,.86) 25%,rgba(2,3,4,.96));backdrop-filter:blur(18px)}.bottomInner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary{background:linear-gradient(135deg,#f8d37d,#b9832f);color:#120b02;border-color:rgba(255,226,151,.8);box-shadow:0 13px 35px rgba(245,200,107,.22)}.danger{background:linear-gradient(135deg,rgba(180,28,50,.92),rgba(89,12,27,.9));border-color:rgba(255,96,117,.5)}.ghost{background:rgba(255,255,255,.06)}.miniRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 82px);transform:translateX(-50%) translateY(20px);opacity:0;transition:.2s;z-index:8;background:rgba(8,13,17,.94);border:1px solid rgba(245,200,107,.35);border-radius:999px;padding:12px 16px;box-shadow:0 16px 50px rgba(0,0,0,.55);font-weight:900;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.lock{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(18px);padding:22px}.lockbox{max-width:420px;width:100%;border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));padding:22px}.lockbox h1{margin:0 0 8px;font-size:26px}.lockbox p{color:var(--muted);line-height:1.4}.small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}a{color:var(--gold)}
+.bottomBar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);background:linear-gradient(180deg,transparent,rgba(2,3,4,.86) 25%,rgba(2,3,4,.96));backdrop-filter:blur(18px)}.bottomInner{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:10px}.primary{background:linear-gradient(135deg,#f8d37d,#b9832f);color:#120b02;border-color:rgba(255,226,151,.8);box-shadow:0 13px 35px rgba(245,200,107,.22)}.danger{background:linear-gradient(135deg,rgba(180,28,50,.92),rgba(89,12,27,.9));border-color:rgba(255,96,117,.5)}.ghost{background:rgba(255,255,255,.06)}.miniRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 82px);transform:translateX(-50%) translateY(20px);opacity:0;transition:.2s;z-index:8;background:rgba(8,13,17,.94);border:1px solid rgba(245,200,107,.35);border-radius:999px;padding:12px 16px;box-shadow:0 16px 50px rgba(0,0,0,.55);font-weight:900;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.lock{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(18px);padding:22px}.lockbox{max-width:420px;width:100%;border:1px solid var(--line);border-radius:30px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));padding:22px}.lockbox h1{margin:0 0 8px;font-size:26px}.lockbox p{color:var(--muted);line-height:1.4}.small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}a{color:var(--gold)}
 @media(max-width:390px){body{padding-left:12px;padding-right:12px}.title{font-size:29px}.row{grid-template-columns:1fr 124px}.tabs{gap:6px}.tabBtn{font-size:11px}}
 
 .voiceGrid{display:grid;gap:10px}.voiceCard{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.055);padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.voiceCard.active{border-color:rgba(245,200,107,.80);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.06));box-shadow:0 0 28px rgba(245,200,107,.12)}.voiceCard .voiceName{font-weight:950;font-size:16px}.voiceCard .voiceMeta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}.voiceBadge{border:1px solid rgba(245,200,107,.44);color:var(--gold);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950;letter-spacing:.04em}.voiceCard button{appearance:none;border:0;background:transparent;color:inherit;text-align:left;width:100%;padding:0}
@@ -25,35 +25,34 @@
 
   <section class="hero">
     <div class="heroTop"><div class="pill" id="modePill">● VRIC Live</div><div class="pill" id="syncPill">Synced</div></div>
-    <div class="heroTitle" id="heroTitle">Home prayer display</div>
-    <div class="heroSub" id="heroSub">Use the tabs below. Nothing is buried, and the save button stays within reach.</div>
-    <div class="quick"><div class="quickCard"><div class="quickLabel">Asr</div><div class="quickValue" id="quickAsr">--:--</div></div><div class="quickCard"><div class="quickLabel">Volume</div><div class="quickValue" id="quickVol">70%</div></div></div>
+    <div class="heroTitle">Tablet prayer status</div>
+    <div class="heroSub">See what is coming next without opening the timing controls.</div>
+    <div class="nextPrayer" aria-live="polite">
+      <div class="nextLabel">Next prayer</div>
+      <div class="nextMain"><div class="nextName" id="nextPrayerName">—</div><div class="nextTime" id="nextPrayerTime">--:--</div></div>
+      <div class="nextMeta"><span class="nextCountdown" id="nextPrayerCountdown">Calculating…</span><span id="heroVoice">Azaan 1 selected</span></div>
+    </div>
   </section>
 
   <nav class="tabs" aria-label="Admin sections">
-    <button class="tabBtn active" data-tab="modePage">Mode</button>
-    <button class="tabBtn" data-tab="timesPage">Times</button>
+    <button class="tabBtn active" data-tab="timesPage">Times</button>
     <button class="tabBtn" data-tab="azaanPage">Azaan</button><button class="tabBtn" data-tab="voicePage">Voice</button>
     <button class="tabBtn" data-tab="jumuahPage">Jumu’ah</button>
   </nav>
 
-  <section class="page active" id="modePage">
-    <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
-    <section class="card"><h2>Quick Commands</h2><div class="miniRow"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button></div><div class="small">These commands send directly to the tablet through Firebase.</div></section>
-  </section>
-
-  <section class="page" id="timesPage">
+  <section class="page active" id="timesPage">
     <section class="card"><h2>Prayer Times</h2><div class="sectionHint" id="timeHint">Manual overrides are only editable in Manual mode. VRIC and Location modes control timings automatically.</div><div class="lockNote" id="timeLockNote">Timing edits are locked because automatic timing mode is active. Switch to Manual if you intentionally want to override the tablet.</div><div class="grid" id="timeGrid"></div></section>
+    <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
   </section>
 
   <section class="page" id="azaanPage">
     <section class="card"><h2>Azaan Toggles</h2><div class="sectionHint">Control which prayers play Azaan on the tablet.</div><div class="grid" id="azaanGrid"></div></section>
-    <section class="card"><h2>Volume</h2><div class="row"><div><div class="name">Tablet Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div></section>
   </section>
 
 
   <section class="page" id="voicePage">
-    <section class="card"><h2>Azaan Voice</h2><div class="sectionHint">Choose the Azaan recording used by the tablet. Selection now syncs immediately. Use Test Azaan to preview it on the tablet.</div><div class="voiceGrid" id="voiceGrid"></div></section>
+    <section class="card"><h2>Azaan Voice</h2><div class="sectionHint">Choose the Azaan recording used by the tablet. Selection syncs immediately.</div><div class="voiceGrid" id="voiceGrid"></div></section>
+    <section class="card"><h2>Volume & Quick Commands</h2><div class="row"><div><div class="name">Tablet Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div><div style="height:11px"></div><div class="miniRow"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button></div><div class="small">Commands are sent directly to the tablet through Firebase.</div></section>
   </section>
 
   <section class="page" id="jumuahPage">
@@ -75,6 +74,16 @@ let state=JSON.parse(JSON.stringify(DEFAULT));
 const $=id=>document.getElementById(id); function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000)}
 function setStatus(txt,cls){const s=$('status');s.className='status '+(cls||'');s.innerHTML='<span class="dot"></span>'+txt}
 function command(type,extra){const now=Date.now();return {type,id:String(now)+'-'+Math.random().toString(16).slice(2),createdAt:now,expiresAt:now+120000,...(extra||{})}}
+function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
+function updateNextPrayer(){
+ const names=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+ const now=new Date(); let next=null;
+ for(const name of names){const raw=state.timings&&state.timings[name];if(!/^\d{2}:\d{2}$/.test(raw||''))continue;const [h,m]=raw.split(':').map(Number);const at=new Date(now);at.setHours(h,m,0,0);if(at>now){next={name,at};break;}}
+ if(!next){const raw=(state.timings&&state.timings.Fajr)||DEFAULT.timings.Fajr;const [h,m]=raw.split(':').map(Number);const at=new Date(now);at.setDate(at.getDate()+1);at.setHours(h,m,0,0);next={name:'Fajr',at};}
+ const mins=Math.max(0,Math.ceil((next.at-now)/60000));const hours=Math.floor(mins/60);const rem=mins%60;
+ $('nextPrayerName').textContent=next.name;$('nextPrayerTime').textContent=formatClock(next.at);$('nextPrayerCountdown').textContent=hours?`in ${hours}h ${rem}m`:`in ${rem}m`;
+ const voice=AZAAN_VOICES[state.muezzin||'azaan1'];$('heroVoice').textContent=(voice?voice.name:'Azaan 1')+' selected';
+}
 function render(){
  $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeLocation').classList.toggle('active',state.mode==='calculated-location'); $('modeManual').classList.toggle('active',state.mode==='manual');
  const manualMode=state.mode==='manual';
@@ -83,10 +92,8 @@ function render(){
  $('jum1').value=state.jumuah[0]||''; $('jum2').value=state.jumuah[1]||''; $('jum3').value=state.jumuah[2]||'';
  AZAAN.forEach(p=>{const el=$('az_'+p); if(el)el.checked=state.azaanEnabled[p]!==false});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
- $('quickAsr').textContent=state.timings.Asr||'--:--'; $('quickVol').textContent=$('volume').value+'%';
  $('modePill').textContent=(state.mode==='manual'?'● Manual':(state.mode==='calculated-location'?'● Location':'● VRIC Live'));
- $('heroTitle').textContent=state.mode==='manual'?'Manual timing override':(state.mode==='calculated-location'?'Location timings enabled':'Live timings enabled');
- $('heroSub').textContent=state.mode==='manual'?'Tablet is using the times set in this admin panel.':(state.mode==='calculated-location'?'Tablet calculates timings from its own location. Manual edits stay locked.':'Tablet uses official VRIC live timings. Manual edits stay locked.');
+ updateNextPrayer();
  document.querySelectorAll('.voiceCard').forEach(card=>card.classList.toggle('active',card.id==='voice_'+(state.muezzin||'azaan1')));
 }
 function build(){
@@ -117,7 +124,7 @@ function collect(){
  state.volume=parseInt($('volume').value,10)/100; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
  return state;
 }
-build(); render();
+build(); render(); setInterval(updateNextPrayer,30000);
 
 function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('goTimes').onclick=()=>switchTab('timesPage');

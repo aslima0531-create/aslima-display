@@ -1,4 +1,4 @@
-const CACHE='aslima-v919-local-audio';
+const CACHE='aslima-v923-admin-layout';
 const CORE=[
   './','./index.html','./preview.html','./admin.html',
   './assets/aslima-premium-bg.png',
