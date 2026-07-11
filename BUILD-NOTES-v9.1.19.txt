@@ -1,0 +1,8 @@
+ASLIMA v9.1.19
+
+- Replaced all previous recordings with five owner-supplied MP3 files.
+- Voice labels are Azaan 1 through Azaan 5.
+- Phone voice selection writes directly to Firebase as soon as the card is tapped.
+- Tablet has both full-settings and dedicated muezzin listeners.
+- Tablet playback controller receives the new voice immediately; Save Settings is not required.
+- All audio is local and available offline after deployment.
