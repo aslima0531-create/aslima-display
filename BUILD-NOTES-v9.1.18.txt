@@ -1,8 +1,0 @@
-ASLIMA v9.1.18 local-audio production build
-- Five licensed audio files physically bundled under assets/audio.
-- Local playback only.
-- Firebase voice IDs and visual cards synchronized.
-- Unified stop handler and overlay/drag-handle state.
-- Service worker precaches app shell and all audio.
-- Removed obsolete standalone script.js and all stale PrayTimes audio mappings.
-- Preview audio element now uses the same source-free local controller as production.
