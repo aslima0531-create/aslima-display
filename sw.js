@@ -1,4 +1,4 @@
-const CACHE='aslima-v923-admin-layout';
+const CACHE='aslima-v924-hijri-month-fix';
 const CORE=[
   './','./index.html','./preview.html','./admin.html',
   './assets/aslima-premium-bg.png',

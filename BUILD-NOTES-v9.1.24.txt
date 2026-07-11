@@ -1,0 +1,19 @@
+ASLIMA v9.1.24 — Hijri month reliability fix
+
+Changes:
+- Prevented Gregorian month names (for example, January) from appearing on the Islamic date line.
+- Intl now supplies numeric Islamic date fields only; ASLIMA maps month 1–12 to Islamic month names internally.
+- Added strict validation for Hijri day, month, and year values.
+- Added a deterministic offline Hijri conversion fallback for incomplete Android WebView Intl implementations.
+- Preserved Maghrib-based Islamic day rollover.
+- Service-worker cache bumped to aslima-v924-hijri-month-fix.
+
+Validation:
+- JavaScript syntax passed for index.html, preview.html, admin.html, and sw.js.
+- Hijri formatter tested before and after Maghrib.
+- Simulated broken browser returning Gregorian fields was rejected and fallback produced an Islamic month.
+- No duplicate HTML IDs.
+- All local references resolved.
+- All five Azaan recordings decoded successfully.
+- Audio SHA-256 manifest passed.
+- ZIP extraction and integrity passed.

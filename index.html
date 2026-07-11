@@ -3606,6 +3606,31 @@ function remainingHuman(seconds){
   return 'starting now';
 }
 
+const ASLIMA_HIJRI_MONTHS=[
+  'Muharram','Safar','Rabi al-Awwal','Rabi al-Thani',
+  'Jumada al-Awwal','Jumada al-Thani','Rajab','Sha’ban',
+  'Ramadan','Shawwal','Dhul Qi’dah','Dhul Hijjah'
+];
+
+function aslimaCivilHijri(date){
+  // Deterministic offline fallback for WebViews whose Intl implementation
+  // incorrectly returns Gregorian month names for Islamic calendars.
+  let y=date.getFullYear();
+  let m=date.getMonth()+1;
+  const d=date.getDate();
+  if(m<=2){y-=1;m+=12;}
+  const century=Math.floor(y/100);
+  const correction=2-century+Math.floor(century/4);
+  const jd=Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+correction-1524.5;
+  const epoch=1948439.5;
+  const normalized=Math.floor(jd)+0.5;
+  const hijriYear=Math.floor((30*(normalized-epoch)+10646)/10631);
+  const islamicToJd=(hy,hm,hd)=>hd+Math.ceil(29.5*(hm-1))+(hy-1)*354+Math.floor((3+11*hy)/30)+epoch-1;
+  const hijriMonth=Math.min(12,Math.max(1,Math.ceil((normalized-(29+islamicToJd(hijriYear,1,1)))/29.5)+1));
+  const hijriDay=Math.floor(normalized-islamicToJd(hijriYear,hijriMonth,1)+1);
+  return {day:hijriDay,month:hijriMonth,year:hijriYear};
+}
+
 function formatAslimaHijriDate(now){
   const shifted=new Date(now.getTime());
   try{
@@ -3616,23 +3641,34 @@ function formatAslimaHijriDate(now){
     }
   }catch(e){}
 
+  // Ask Intl only for numeric fields and map the month ourselves. Some
+  // Android WebViews report an Islamic calendar but render a Gregorian month
+  // name such as "January" when month:'long' is requested.
   const calendars=['islamic-umalqura','islamic'];
   for(const calendar of calendars){
     try{
       const formatter=new Intl.DateTimeFormat('en-US-u-ca-'+calendar,{
-        day:'numeric',month:'long',year:'numeric',era:'short'
+        day:'numeric',month:'numeric',year:'numeric'
       });
       const resolved=formatter.resolvedOptions();
       if(!resolved.calendar || !resolved.calendar.startsWith('islamic'))continue;
       const parts=formatter.formatToParts(shifted);
       const value=type=>{const part=parts.find(item=>item.type===type);return part?part.value:'';};
-      const day=value('day');
-      const month=value('month');
-      const year=value('year');
-      const era=value('era')||'AH';
-      if(day&&month&&year)return `${day} ${month} ${year} ${era}`;
+      const day=parseInt(value('day'),10);
+      const month=parseInt(value('month'),10);
+      const year=parseInt(value('year'),10);
+      if(day>=1&&day<=30&&month>=1&&month<=12&&year>=1300&&year<=1700){
+        return `${day} ${ASLIMA_HIJRI_MONTHS[month-1]} ${year} AH`;
+      }
     }catch(e){}
   }
+
+  try{
+    const fallback=aslimaCivilHijri(shifted);
+    if(fallback.day>=1&&fallback.day<=30&&fallback.month>=1&&fallback.month<=12&&fallback.year>=1300&&fallback.year<=1700){
+      return `${fallback.day} ${ASLIMA_HIJRI_MONTHS[fallback.month-1]} ${fallback.year} AH`;
+    }
+  }catch(e){}
   return '';
 }
 
