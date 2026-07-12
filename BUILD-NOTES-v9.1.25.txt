@@ -1,0 +1,30 @@
+ASLIMA v9.1.25 — Exact Azaan phrase synchronization
+
+Root cause fixed:
+- The v9.1.19 controller had an empty CUE_SECONDS table.
+- It therefore divided every recording into equal-duration slices, which cannot match real recitation pacing.
+
+Changes:
+- Added a dedicated timestamp cue sheet for each of the five bundled MP3 recordings.
+- Cue selection now reads the audio element's real currentTime on every animation frame.
+- Removed duration-percentage scaling from visual phrase changes.
+- Modeled the 12 actual audible recitation groups in each supplied recording.
+- Repeated phrases retain the same Arabic/English text while the internal cue advances at the next recitation group.
+- Seeking backward or forward recalculates the correct phrase immediately.
+- Voice changes made during playback remain queued for the next Azaan.
+- Routed drawer testing, admin testing, remote testing, and automatic scheduled playback through the same exact-cue controller.
+- Updated index.html and preview.html identically.
+- Bumped the service-worker cache to aslima-v925-exact-azaan-cues.
+
+Validation completed:
+- JavaScript syntax passed for index.html, preview.html, admin.html, and sw.js.
+- No duplicate HTML IDs.
+- All local references resolved.
+- All five Azaan recordings decoded successfully with ffmpeg.
+- Audio SHA-256 manifest passed.
+- Every cue sheet contains 12 strictly increasing cue starts plus the exact file end.
+- Cue-sheet end times match ffprobe duration within 0.001 seconds.
+- Waveform validation confirmed every cue is located on an audio onset; the smallest measured post-cue rise was 2.06 dB and the typical rise was much larger.
+- A DOM/media controller harness passed 115 before/after cue-boundary checks across all five voices.
+- Backward seeking, stop-button behavior, overlay state, and voice-change queuing passed.
+- Only README.txt, index.html, preview.html, sw.js, and this build note differ from v9.1.24; all audio and image assets are unchanged.

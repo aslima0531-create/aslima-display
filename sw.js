@@ -1,4 +1,4 @@
-const CACHE='aslima-v924-hijri-month-fix';
+const CACHE='aslima-v925-exact-azaan-cues';
 const CORE=[
   './','./index.html','./preview.html','./admin.html',
   './assets/aslima-premium-bg.png',

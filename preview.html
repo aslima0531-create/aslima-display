@@ -4101,7 +4101,7 @@ function bindAzaanAudioControls(){
   const drawerVolDown=$('drawerVolDown');
   const drawerVolUp=$('drawerVolUp');
 
-  if(test)test.onclick=()=>{playAzaan(null,{force:true});showAdmin();};
+  if(test)test.onclick=()=>{window.playAzaan(null,{force:true});showAdmin();};
   if(stop)stop.onclick=()=>{stopAzaan();showAdmin();};
   if(overlayStop)overlayStop.onclick=stopAzaan;
   if(volDown)volDown.onclick=()=>{setVolume(audio.volume-.1);showAdmin();};
@@ -4109,7 +4109,7 @@ function bindAzaanAudioControls(){
 
   if(drawerTest)drawerTest.onclick=(e)=>{
     if(e){e.preventDefault();e.stopPropagation();}
-    playAzaan(null,{force:true});
+    window.playAzaan(null,{force:true});
   };
   if(drawerStop)drawerStop.onclick=(e)=>{
     if(e){e.preventDefault();e.stopPropagation();}
@@ -4148,7 +4148,7 @@ function autoFireAzaan(){
     if(now===mins(timings[p]) && lastFired!==key && persisted!==key){
       lastFired=key;
       try{localStorage.setItem(persistedKey,key);}catch(e){}
-      playAzaan(p);
+      window.playAzaan(p);
     }
   });
 }
@@ -5142,16 +5142,54 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
 }
 </style>
 
-<script id="aslima-v919-local-audio-controller">
-/* ASLIMA v9.1.19 — local-audio playback, visual sync, stop, and Firebase UI controller */
+<script id="aslima-v925-exact-audio-cue-controller">
+/* ASLIMA v9.1.25 — exact per-recording Azaan cue synchronization.
+   The visual phrase is selected from the media element's real currentTime.
+   Cue starts were measured from the bundled MP3 waveforms; they are not
+   percentages and are never stretched to fit another recording. */
 (function(){
   'use strict';
   const a=document.getElementById('athan');
   if(!a)return;
   const VOICES=window.AZAAN_VOICES||{};
-  const CUE_SECONDS={};
-  const state={phase:'idle',token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'azaan1'),prayer:'',raf:0,lastStopAt:0};
+
+  const COPY={
+    takbir:{ar:'الله أكبر',en:'Allah is the Greatest'},
+    shahadaAllah:{ar:'أشهد أن لا إله إلا الله',en:'I bear witness that there is no god but Allah'},
+    shahadaMuhammad:{ar:'أشهد أن محمدًا رسول الله',en:'I bear witness that Muhammad is the Messenger of Allah'},
+    hayyaSalah:{ar:'حي على الصلاة',en:'Come to prayer'},
+    hayyaFalah:{ar:'حي على الفلاح',en:'Come to success'},
+    finalShahada:{ar:'لا إله إلا الله',en:'There is no god but Allah'}
+  };
+
+  /* The recordings contain 12 audible recitation groups. Some groups contain
+     paired Takbirs, so the displayed copy remains the same while that paired
+     group is recited. Duplicate entries preserve exact repeat boundaries. */
+  const VISUAL_SEQUENCE=[
+    'takbir','takbir',
+    'shahadaAllah','shahadaAllah',
+    'shahadaMuhammad','shahadaMuhammad',
+    'hayyaSalah','hayyaSalah',
+    'hayyaFalah','hayyaFalah',
+    'takbir','finalShahada'
+  ];
+
+  /* Seconds from the beginning of each exact bundled MP3. Each array contains
+     12 cue starts plus the measured file end. Start times deliberately remain
+     absolute; scaling them by duration was the source of the previous drift. */
+  const CUE_SECONDS=Object.freeze({
+    azaan1:Object.freeze([0.00,8.05,22.34,30.36,42.75,51.64,65.93,72.94,90.58,97.50,112.64,121.97,133.3284]),
+    azaan2:Object.freeze([0.00,16.68,34.94,48.41,65.03,79.39,96.22,107.37,132.65,143.59,163.49,174.31,186.2640]),
+    azaan3:Object.freeze([0.00,15.17,32.54,44.22,61.05,73.38,94.10,105.98,136.03,149.24,177.92,193.73,200.6466]),
+    azaan4:Object.freeze([0.00,9.68,26.83,40.67,60.75,77.71,100.02,114.76,151.73,170.49,205.84,224.04,237.0350]),
+    azaan5:Object.freeze([0.00,6.33,27.57,37.17,57.51,71.22,96.42,109.35,147.61,163.66,192.92,197.58,211.7746])
+  });
+
+  const state={phase:'idle',token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'azaan1'),prayer:'',raf:0,lastStopAt:0,lastCue:-1};
   window.aslimaPlaybackState=state;
+  window.ASLIMA_AZAAN_CUES=CUE_SECONDS;
+  window.ASLIMA_AZAAN_VISUAL_SEQUENCE=VISUAL_SEQUENCE.slice();
+
   function normalize(v){return window.normalizeAzaanVoiceId?window.normalizeAzaanVoiceId(v):(VOICES[v]?v:'azaan1');}
   function voice(id){return VOICES[normalize(id)]||VOICES.azaan1;}
   function setPhase(v){state.phase=v;document.documentElement.dataset.azaanPlayback=v;}
@@ -5162,34 +5200,46 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     document.body.classList.toggle('adhan-overlay-active',!!show);
     const handle=document.getElementById('azaanDrawerTab');if(handle){handle.style.opacity=show?'0':'';handle.style.visibility=show?'hidden':'';handle.style.pointerEvents=show?'none':'';}
   }
-  function clearVisual(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;}
-  function visualLines(prayer,id){
-    const v=voice(id);
-    if(v.visualMode==='takbeer')return [{ar:'الله أكبر',en:'Allah is the Greatest'}];
-    const base=((typeof AZAAN_BASE_SEQUENCE!=='undefined'?AZAAN_BASE_SEQUENCE:[])||[]).map(x=>({ar:x.ar,en:x.en}));
-    // Only add Fajr-specific lines when using a full recording that actually includes them.
-    // The bundled full recordings are standard non-Fajr recordings, so no fabricated Fajr lines are inserted.
-    return base;
-  }
+  function clearVisual(){if(state.raf)cancelAnimationFrame(state.raf);state.raf=0;state.lastCue=-1;}
+  function visualLines(){return VISUAL_SEQUENCE.map(key=>({key,...COPY[key]}));}
   function boundaries(id,count,duration){
-    const raw=CUE_SECONDS[id];
-    if(raw&&raw.length===count+1){const end=raw[raw.length-1]||duration||1;const scale=(duration>0?duration:end)/end;return raw.map(x=>x*scale);}
-    return Array.from({length:count+1},(_,i)=>(duration||1)*i/count);
+    const normalized=normalize(id);
+    const raw=CUE_SECONDS[normalized];
+    if(!raw||raw.length!==count+1)throw new Error('Invalid Azaan cue sheet for '+normalized);
+    const out=raw.slice();
+    /* Browser MP3 duration can differ by a few milliseconds because of encoder
+       padding. Only the final boundary follows browser metadata; cue starts do
+       not move. */
+    if(Number.isFinite(duration)&&duration>out[count])out[count]=duration;
+    return out;
   }
-  function renderLine(line){
+  function renderLine(line,cueIndex){
     const ar=document.getElementById('azaanArabic'),en=document.getElementById('azaanEnglish');
-    if(ar)ar.textContent=line.ar;if(en)en.textContent=line.en;
+    if(ar){ar.textContent=line.ar;ar.dataset.azaanCue=String(cueIndex);}
+    if(en){en.textContent=line.en;en.dataset.azaanCue=String(cueIndex);}
+    document.documentElement.dataset.azaanCue=String(cueIndex);
+  }
+  function cueIndexAt(boundaryList,time){
+    const t=Math.max(0,Number(time)||0);
+    let low=0,high=boundaryList.length-2,result=0;
+    while(low<=high){
+      const mid=(low+high)>>1;
+      if(t>=boundaryList[mid]){result=mid;low=mid+1;}else high=mid-1;
+    }
+    return Math.min(boundaryList.length-2,result);
   }
   function startVisual(prayer,id){
-    clearVisual();const lines=visualLines(prayer,id);let last=-1;
+    clearVisual();
+    const lines=visualLines();
+    let schedule;
+    try{schedule=boundaries(id,lines.length,a.duration);}catch(err){console.error(err);renderLine(lines[0],0);return;}
     const tick=()=>{
       if(state.phase!=='playing')return;
-      const d=Number.isFinite(a.duration)&&a.duration>0?a.duration:1;
-      const b=boundaries(id,lines.length,d);const t=Math.max(0,Math.min(d,a.currentTime));
-      let i=lines.length-1;for(let n=0;n<lines.length;n++){if(t<b[n+1]){i=n;break;}}
-      if(i!==last&&lines[i]){last=i;renderLine(lines[i]);}
+      const i=cueIndexAt(schedule,a.currentTime);
+      if(i!==state.lastCue&&lines[i]){state.lastCue=i;renderLine(lines[i],i);}
       state.raf=requestAnimationFrame(tick);
-    };tick();
+    };
+    tick();
   }
   function load(id,token){return new Promise((resolve,reject)=>{
     let done=false,timer=0;const v=voice(id);
@@ -5227,7 +5277,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   const sel=document.getElementById('drawerMuezzinSelect');if(sel){const n=sel.cloneNode(true);sel.replaceWith(n);n.addEventListener('change',()=>window.setAzaanVoice(n.value,{pushRemote:true}));}
   document.querySelectorAll('[data-muezzin-card]').forEach(btn=>{const n=btn.cloneNode(true);btn.replaceWith(n);n.addEventListener('click',()=>window.setAzaanVoice(n.dataset.muezzinCard,{pushRemote:true}));});
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=919').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=925').catch(console.warn);
   overlay(false);setPhase('idle');
 })();
 </script>
