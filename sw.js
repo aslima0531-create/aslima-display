@@ -1,6 +1,6 @@
-const CACHE='aslima-v925-exact-azaan-cues';
+const CACHE='aslima-v928-prayer-warning-banners';
 const CORE=[
-  './','./index.html','./preview.html','./admin.html',
+  './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
   './assets/audio/azaan-1.mp3','./assets/audio/azaan-2.mp3',
   './assets/audio/azaan-3.mp3','./assets/audio/azaan-4.mp3',

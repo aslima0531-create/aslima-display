@@ -5277,10 +5277,13 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   const sel=document.getElementById('drawerMuezzinSelect');if(sel){const n=sel.cloneNode(true);sel.replaceWith(n);n.addEventListener('change',()=>window.setAzaanVoice(n.value,{pushRemote:true}));}
   document.querySelectorAll('[data-muezzin-card]').forEach(btn=>{const n=btn.cloneNode(true);btn.replaceWith(n);n.addEventListener('click',()=>window.setAzaanVoice(n.dataset.muezzinCard,{pushRemote:true}));});
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=925').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=928').catch(console.warn);
   overlay(false);setPhase('idle');
 })();
 </script>
 
+
+<!-- ASLIMA_PRAYER_WARNING_BANNERS_V928 -->
+<script src="./assets/js/prayer-warning-banners.js?v=928"></script>
 </body>
 </html>
