@@ -1,7 +1,0 @@
-ASLIMA V9.1.35
-
-- Added Ishraq as a separate supplementary-prayer visual and beep reminder.
-- Ishraq begins 20 minutes after sunrise and ends at the midpoint between sunrise and Dhuhr.
-- Duha / Chasht begins at that mid-morning midpoint and ends 10 minutes before Dhuhr.
-- Moved all supplementary-prayer visuals into a compact lower-left strip to avoid the prayer-warning banner and ASLIMA logo.
-- No Azaan audio or Azaan overlay is used for Tahajjud, Ishraq, or Duha / Chasht.
