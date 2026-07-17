@@ -1,13 +1,13 @@
-/* ASLIMA V9.1.33 — compact expandable prayer-guidance banner.
+/* ASLIMA V9.1.39 — compact expandable prayer-guidance banner with dock-safe placement.
    Collapsed by default with concise warning text; expands on tap for full details.
    Isolated display add-on: does not modify prayer times, Azaan audio, Firebase,
    timing-source selection, the controls drawer, or the animated background. */
 (function(){
   'use strict';
 
-  var ADDON_ID='aslima-prayer-warning-banners-v933';
-  if(window.__ASLIMA_PRAYER_WARNINGS_V933__)return;
-  window.__ASLIMA_PRAYER_WARNINGS_V933__=true;
+  var ADDON_ID='aslima-prayer-warning-banners-v939';
+  if(window.__ASLIMA_PRAYER_WARNINGS_V939__)return;
+  window.__ASLIMA_PRAYER_WARNINGS_V939__=true;
 
   var defaults={
     sunriseProhibitedMinutes:18,
@@ -457,6 +457,7 @@
       banner.style.left='';
       banner.style.top='';
       banner.style.width='';
+      document.body.classList.remove('aslima-warning-brand-suppressed');
       return;
     }
     var panel=document.getElementById('prayerPanel')||document.querySelector('.prayer-panel');
@@ -464,6 +465,7 @@
       banner.style.left='';
       banner.style.top='';
       banner.style.width='';
+      document.body.classList.remove('aslima-warning-brand-suppressed');
       return;
     }
 
@@ -471,36 +473,53 @@
     var margin=16;
     var gap=window.innerHeight<=650?10:12;
     var width=Math.round(rect.width);
-    var left=Math.round(rect.left);
+    var left=Math.max(margin,Math.min(Math.round(rect.left),window.innerWidth-margin-width));
 
     banner.style.width=Math.max(280,Math.min(width,window.innerWidth-margin*2))+'px';
-    banner.style.left=Math.max(margin,Math.min(left,window.innerWidth-margin-banner.offsetWidth))+'px';
+    left=Math.max(margin,Math.min(left,window.innerWidth-margin-banner.offsetWidth));
 
     var minTop=Math.round(rect.bottom+8);
     var desiredTop=Math.round(rect.bottom+gap);
     var maxTop=window.innerHeight-banner.offsetHeight-margin;
+    var safeBottom=window.innerHeight-margin;
 
-    var jumuah=document.getElementById('jumuah');
-    if(jumuah){
-      var jRect=jumuah.getBoundingClientRect();
-      var overlapsHorizontally=!(left+banner.offsetWidth<=jRect.left||left>=jRect.right);
-      if(overlapsHorizontally&&jRect.top>0)maxTop=Math.min(maxTop,Math.floor(jRect.top-banner.offsetHeight-10));
+    var dock=document.getElementById('bottomDock');
+    if(dock){
+      var dockRect=dock.getBoundingClientRect();
+      if(dockRect.top>0)safeBottom=Math.min(safeBottom,dockRect.top-10);
     }
 
     var brand=document.getElementById('brand');
-    var suppressBrand=false;
     if(brand){
-      var bRect=brand.getBoundingClientRect();
-      suppressBrand=uiState.expanded&&bRect.top>0&&(minTop+banner.offsetHeight+14>bRect.top);
-      document.body.classList.toggle('aslima-warning-brand-suppressed',suppressBrand);
-      if(!suppressBrand&&bRect.top>0)maxTop=Math.min(maxTop,Math.floor(bRect.top-banner.offsetHeight-12));
-    }else{
-      document.body.classList.remove('aslima-warning-brand-suppressed');
+      var brandRect=brand.getBoundingClientRect();
+      if(brandRect.top>0)safeBottom=Math.min(safeBottom,brandRect.top-10);
     }
 
+    var jumuahPanel=document.getElementById('jumuahPanel');
+    if(jumuahPanel&&!jumuahPanel.hidden){
+      var jPanelRect=jumuahPanel.getBoundingClientRect();
+      var defaultRight=left+banner.offsetWidth;
+      var wouldOverlapJumuah=!(defaultRight<=jPanelRect.left||left>=jPanelRect.right);
+      if(wouldOverlapJumuah&&jPanelRect.top>0)safeBottom=Math.min(safeBottom,jPanelRect.top-10);
+    }
+
+    maxTop=Math.min(maxTop,Math.floor(safeBottom-banner.offsetHeight));
     var top=Math.max(minTop,Math.min(desiredTop,maxTop));
+
+    // On short landscape screens, an expanded banner cannot fit below the
+    // prayer panel without covering the dock/logo. Move it above the dock and
+    // to the open space immediately left of the prayer panel instead.
+    if(uiState.expanded&&maxTop<minTop){
+      top=Math.max(margin,maxTop);
+      var leftOfPanel=Math.round(rect.left-banner.offsetWidth-12);
+      if(leftOfPanel>=margin)left=leftOfPanel;
+    }
+
     top=Math.max(margin,Math.min(top,window.innerHeight-banner.offsetHeight-margin));
+    left=Math.max(margin,Math.min(left,window.innerWidth-banner.offsetWidth-margin));
+    banner.style.left=left+'px';
     banner.style.top=top+'px';
+    document.body.classList.remove('aslima-warning-brand-suppressed');
   }
 
   var lastPaintKey='';
@@ -560,7 +579,7 @@
   }
 
   window.ASLIMAPrayerWarnings={
-    version:'9.1.33',
+    version:'9.1.39',
     config:config,
     parseMinutes:parseMinutes,
     normalizeSchedule:normalizeSchedule,
