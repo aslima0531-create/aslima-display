@@ -1,12 +1,12 @@
-/* ASLIMA V9.1.28 — compact Hanafi prayer-restriction warning banners.
+/* ASLIMA V9.1.29 — aligned Hanafi prayer-restriction warning banners.
    Isolated display add-on: does not modify prayer times, Azaan audio, Firebase,
    timing-source selection, the controls drawer, or the animated background. */
 (function(){
   'use strict';
 
-  var ADDON_ID='aslima-prayer-warning-banners-v928';
-  if(window.__ASLIMA_PRAYER_WARNINGS_V928__)return;
-  window.__ASLIMA_PRAYER_WARNINGS_V928__=true;
+  var ADDON_ID='aslima-prayer-warning-banners-v929';
+  if(window.__ASLIMA_PRAYER_WARNINGS_V929__)return;
+  window.__ASLIMA_PRAYER_WARNINGS_V929__=true;
 
   var defaults={
     sunriseProhibitedMinutes:18,
@@ -30,18 +30,16 @@
         --warn-accent:#efb94f;
         --warn-soft:rgba(239,185,79,.17);
         position:fixed;
-        top:auto;
-        left:auto;
-        right:4.3vw;
-        bottom:clamp(82px,12vh,108px);
-        z-index:78;
+        left:16px;
+        top:16px;
         width:min(520px,42vw);
-        min-height:64px;
+        max-width:calc(100vw - 32px);
+        min-height:66px;
         display:grid;
-        grid-template-columns:auto minmax(0,1fr) auto;
-        align-items:center;
-        gap:14px;
-        padding:11px 14px;
+        grid-template-columns:auto minmax(0,1fr);
+        align-items:start;
+        gap:12px 14px;
+        padding:12px 14px;
         border:1px solid rgba(239,185,79,.60);
         border-radius:18px;
         background:linear-gradient(145deg,rgba(18,16,10,.92),rgba(3,10,11,.89));
@@ -55,6 +53,7 @@
         transition:opacity .26s ease,transform .26s ease,visibility 0s linear .26s;
         pointer-events:none;
         contain:layout style;
+        box-sizing:border-box;
       }
       #aslimaPrayerWarning.aslima-warning-visible{
         opacity:1;
@@ -70,6 +69,7 @@
       }
       #aslimaPrayerWarning .aslima-warning-icon{
         width:40px;
+        min-width:40px;
         height:40px;
         display:grid;
         place-items:center;
@@ -80,41 +80,52 @@
         font:800 25px/1 Inter,system-ui,sans-serif;
         text-shadow:0 0 14px var(--warn-soft);
       }
-      #aslimaPrayerWarning .aslima-warning-copy{min-width:0}
+      #aslimaPrayerWarning .aslima-warning-copy{
+        min-width:0;
+        display:grid;
+        grid-template-columns:minmax(0,1fr) auto;
+        grid-template-areas:"title countdown" "detail detail";
+        align-items:start;
+        gap:4px 12px;
+      }
       #aslimaPrayerWarning .aslima-warning-title{
-        overflow:hidden;
+        grid-area:title;
+        min-width:0;
         color:#fff8e9;
-        font-size:clamp(15px,1.34vw,21px);
+        font-size:clamp(15px,1.2vw,21px);
         line-height:1.12;
         font-weight:780;
-        letter-spacing:.045em;
-        text-overflow:ellipsis;
-        white-space:nowrap;
+        letter-spacing:.03em;
+        white-space:normal;
+        overflow-wrap:anywhere;
       }
       #aslimaPrayerWarning .aslima-warning-detail{
-        margin-top:4px;
-        overflow:hidden;
-        color:rgba(255,248,233,.80);
-        font-size:clamp(11px,1.02vw,16px);
-        line-height:1.25;
+        grid-area:detail;
+        min-width:0;
+        color:rgba(255,248,233,.82);
+        font-size:clamp(11px,.94vw,15px);
+        line-height:1.23;
         font-weight:520;
         letter-spacing:.01em;
+        white-space:normal;
         display:-webkit-box;
         -webkit-box-orient:vertical;
         -webkit-line-clamp:2;
-        white-space:normal;
+        overflow:hidden;
       }
       #aslimaPrayerWarning .aslima-warning-countdown{
-        min-width:104px;
+        grid-area:countdown;
+        align-self:start;
+        min-width:100px;
         padding:8px 10px;
         border:1px solid color-mix(in srgb,var(--warn-accent) 48%,transparent);
         border-radius:999px;
         background:rgba(0,0,0,.25);
         color:var(--warn-accent);
-        font-size:clamp(11px,.94vw,15px);
+        font-size:clamp(11px,.86vw,14px);
         line-height:1;
         font-weight:760;
-        letter-spacing:.055em;
+        letter-spacing:.04em;
         text-align:center;
         white-space:nowrap;
         font-variant-numeric:tabular-nums;
@@ -126,16 +137,30 @@
         #aslimaPrayerWarning[data-level="red"] .aslima-warning-countdown{border-color:rgba(255,116,106,.44)}
       }
       @media (max-width:900px){
-        #aslimaPrayerWarning{width:min(460px,48vw);right:3vw;gap:10px;padding:10px 12px;border-radius:16px}
-        #aslimaPrayerWarning .aslima-warning-icon{width:36px;height:36px;border-radius:11px;font-size:22px}
-        #aslimaPrayerWarning .aslima-warning-countdown{min-width:70px;padding:7px 8px}
+        #aslimaPrayerWarning{gap:10px 12px;padding:10px 12px;border-radius:16px}
+        #aslimaPrayerWarning .aslima-warning-icon{width:36px;min-width:36px;height:36px;border-radius:11px;font-size:22px}
+        #aslimaPrayerWarning .aslima-warning-copy{gap:3px 10px}
+        #aslimaPrayerWarning .aslima-warning-countdown{min-width:88px;padding:7px 8px}
+      }
+      @media (max-width:720px){
+        #aslimaPrayerWarning .aslima-warning-copy{
+          grid-template-columns:1fr;
+          grid-template-areas:"title" "detail" "countdown";
+        }
+        #aslimaPrayerWarning .aslima-warning-countdown{justify-self:start}
       }
       @media (max-height:650px){
-        #aslimaPrayerWarning{bottom:100px;min-height:54px;padding:8px 11px}
-        #aslimaPrayerWarning .aslima-warning-detail{margin-top:2px}
+        #aslimaPrayerWarning{min-height:58px;padding:9px 11px}
       }
       @media (max-aspect-ratio:1/1){
-        #aslimaPrayerWarning{top:clamp(70px,8vh,96px);bottom:auto;left:16px;right:16px;width:auto;transform:translateY(-10px) scale(.985)}
+        #aslimaPrayerWarning{
+          left:16px!important;
+          right:16px!important;
+          width:auto!important;
+          max-width:none!important;
+          top:clamp(70px,8vh,96px)!important;
+          transform:translateY(-10px) scale(.985);
+        }
         #aslimaPrayerWarning.aslima-warning-visible{transform:translateY(0) scale(1)}
       }
       @media (prefers-reduced-motion:reduce){#aslimaPrayerWarning{transition:none!important}}
@@ -164,26 +189,34 @@
     title.className='aslima-warning-title';
     var detail=document.createElement('div');
     detail.className='aslima-warning-detail';
-    copy.appendChild(title);
-    copy.appendChild(detail);
-
     var countdown=document.createElement('div');
     countdown.className='aslima-warning-countdown';
 
+    copy.appendChild(title);
+    copy.appendChild(detail);
+    copy.appendChild(countdown);
+
     banner.appendChild(icon);
     banner.appendChild(copy);
-    banner.appendChild(countdown);
     document.body.appendChild(banner);
     return banner;
   }
 
   function parseMinutes(value){
     if(typeof value!=='string'&&typeof value!=='number')return NaN;
-    var match=String(value).trim().match(/^(\d{1,2}):(\d{2})/);
+    var match=String(value).trim().match(/^(\d{1,2}):(\d{2})(?:\s*([AaPp][Mm]))?$/);
     if(!match)return NaN;
     var hours=Number(match[1]);
     var minutes=Number(match[2]);
-    if(!Number.isInteger(hours)||!Number.isInteger(minutes)||hours<0||hours>23||minutes<0||minutes>59)return NaN;
+    var meridiem=(match[3]||'').toUpperCase();
+    if(!Number.isInteger(hours)||!Number.isInteger(minutes)||minutes<0||minutes>59)return NaN;
+    if(meridiem){
+      if(hours<1||hours>12)return NaN;
+      if(hours===12)hours=0;
+      if(meridiem==='PM')hours+=12;
+    }else if(hours<0||hours>23){
+      return NaN;
+    }
     return hours*60+minutes;
   }
 
@@ -222,7 +255,6 @@
     var zawalStart=Math.max(schedule.Sunrise, schedule.Dhuhr-config.zawalLeadMinutes);
     var sunsetStart=Math.max(schedule.Asr, schedule.Maghrib-config.sunsetProhibitedMinutes);
 
-    // The three red windows override broader amber guidance.
     if(now>=schedule.Sunrise&&now<sunriseEnd){
       return makeState('sunrise','red','Prayer Prohibited During Sunrise','Please wait until the sun has fully risen.',sunriseEnd,now);
     }
@@ -232,13 +264,11 @@
     if(now>=sunsetStart&&now<schedule.Maghrib){
       return makeState('sunset','red','Sunset Prayer Restriction','Avoid voluntary and make-up prayers. If today’s Asr is still due, pray it now.',schedule.Maghrib,now);
     }
-    // The app knows the prayer time, not whether the person has completed the fard.
-    // Conditional language prevents the banner from blocking an obligatory prayer.
     if(now>=schedule.Fajr&&now<schedule.Sunrise){
-      return makeState('after-fajr','amber','After-Fajr Prayer Guidance','After completing Fajr, avoid voluntary prayer until sunrise. If Fajr is still due, pray it now.',schedule.Sunrise,now);
+      return makeState('after-fajr','amber','After Fajr: Avoid Voluntary Prayer','If Fajr is still due, pray it now. Voluntary prayer should wait until sunrise.',schedule.Sunrise,now);
     }
     if(now>=schedule.Asr&&now<sunsetStart){
-      return makeState('after-asr','amber','After-Asr Prayer Guidance','After completing Asr, avoid voluntary prayer until Maghrib. If Asr is still due, pray it now.',sunsetStart,now);
+      return makeState('after-asr','amber','After Asr: Avoid Voluntary Prayer','If Asr is still due, pray it now. Voluntary prayer should wait until Maghrib.',sunsetStart,now);
     }
     return null;
   }
@@ -260,6 +290,46 @@
     var hours=Math.floor(minutes/60);
     var remainder=minutes%60;
     return 'Ends in '+hours+'h'+(remainder?' '+remainder+'m':'');
+  }
+
+  function applyAnchoredLayout(banner){
+    if(!banner)return;
+    if(window.matchMedia && window.matchMedia('(max-aspect-ratio:1/1)').matches){
+      banner.style.left='';
+      banner.style.top='';
+      banner.style.width='';
+      return;
+    }
+    var panel=document.getElementById('prayerPanel')||document.querySelector('.prayer-panel');
+    if(!panel){
+      banner.style.left='';
+      banner.style.top='';
+      banner.style.width='';
+      return;
+    }
+    var rect=panel.getBoundingClientRect();
+    var margin=16;
+    var gap=window.innerHeight<=650?10:14;
+    var width=Math.round(rect.width);
+    var left=Math.round(rect.left);
+    // Set width before measuring height-sensitive placement.
+    banner.style.width=Math.max(280, Math.min(width, window.innerWidth - margin*2))+'px';
+    banner.style.left=Math.max(margin, Math.min(left, window.innerWidth - margin - banner.offsetWidth))+'px';
+
+    var desiredTop=Math.round(rect.bottom + gap);
+    var maxTop=window.innerHeight - banner.offsetHeight - margin;
+    var jumuah=document.getElementById('jumuah');
+    if(jumuah){
+      var jRect=jumuah.getBoundingClientRect();
+      if(jRect.top>0){
+        maxTop=Math.min(maxTop, Math.floor(jRect.top - banner.offsetHeight - 10));
+      }
+    }
+    var minTop=Math.round(rect.bottom + 8);
+    var top=Math.max(minTop, Math.min(desiredTop, maxTop));
+    // If space is impossibly tight, clamp without letting the banner float off-screen.
+    top=Math.max(margin, Math.min(top, window.innerHeight - banner.offsetHeight - margin));
+    banner.style.top=top+'px';
   }
 
   var lastPaintKey='';
@@ -289,6 +359,7 @@
       banner.querySelector('.aslima-warning-countdown').textContent=countdownText;
       lastPaintKey=paintKey;
     }
+    applyAnchoredLayout(banner);
     banner.classList.add('aslima-warning-visible');
     banner.setAttribute('aria-hidden','false');
     return state;
@@ -299,15 +370,18 @@
     createBanner();
     update();
     window.setInterval(update,Math.max(500,config.updateIntervalMs));
+    window.addEventListener('resize',function(){update();},{passive:true});
+    window.addEventListener('orientationchange',function(){window.setTimeout(update,120);},{passive:true});
   }
 
   window.ASLIMAPrayerWarnings={
-    version:'9.1.28',
+    version:'9.1.29',
     config:config,
     parseMinutes:parseMinutes,
     normalizeSchedule:normalizeSchedule,
     getState:getState,
-    update:update
+    update:update,
+    applyAnchoredLayout:applyAnchoredLayout
   };
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
