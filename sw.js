@@ -1,4 +1,4 @@
-const CACHE='aslima-v929-prayer-warning-banners-aligned';
+const CACHE='aslima-v930-prayer-warning-banner-redesign';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
