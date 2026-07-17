@@ -2892,6 +2892,394 @@ body.adhan-overlay-active .aslima-persistent-handle{
 body.azaan-playing #azaanDrawerTab,body.adhan-playing #azaanDrawerTab,body.adhan-overlay-active #azaanDrawerTab{visibility:hidden!important;pointer-events:none!important}
 body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-drawer-open #azaanDrawerTab{visibility:visible!important;pointer-events:auto!important}
 </style>
+
+<style id="aslima-v940-dock-jumuah-expansion">
+/* ASLIMA V9.1.40 — Jumu'ah expands inside the unified bottom dock. */
+.bottom-dock{
+  padding:1.45vh 1vw .9vh!important;
+  transition:padding .24s ease,box-shadow .24s ease,background .24s ease;
+}
+.dock-progress-row{
+  padding-top:.16vh;
+  margin-bottom:.92vh;
+}
+.dock-content-row{
+  margin-top:0!important;
+}
+.bottom-dock.jumuah-expanded{
+  padding:1.45vh 1.05vw 1.02vh!important;
+  background:linear-gradient(180deg,rgba(3,12,15,.78),rgba(0,7,9,.88))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 1.8vh 5vh rgba(0,0,0,.37)!important;
+}
+.bottom-dock.jumuah-expanded .dock-content-row{display:none!important}
+.jumuah-panel{
+  position:static!important;
+  inset:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:.88vh 0 0!important;
+  padding:1.0vh 0 .08vh!important;
+  border:0!important;
+  border-top:1px solid rgba(248,200,111,.19)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+  z-index:auto!important;
+  animation:aslimaJumuahDockReveal .22s ease both;
+}
+.jumuah-panel[hidden]{display:none!important}
+@keyframes aslimaJumuahDockReveal{
+  from{opacity:0;transform:translateY(7px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.jumuah-panel-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:1.2vw!important;
+  margin:0 0 .72vh!important;
+}
+.jumuah-panel-heading{
+  display:flex;
+  align-items:center;
+  min-width:0;
+  gap:.75vw;
+}
+.jumuah-panel-heading .jumuah-icon{
+  width:24px;
+  height:24px;
+  color:var(--gold);
+}
+.jumuah-panel-title{
+  color:var(--gold)!important;
+  font-size:clamp(14px,1.05vw,18px)!important;
+  font-weight:650!important;
+  letter-spacing:.14em!important;
+  text-transform:uppercase!important;
+}
+.jumuah-panel-subtitle{
+  margin-top:.18vh;
+  color:rgba(255,241,210,.58)!important;
+  font-size:clamp(9px,.70vw,12px)!important;
+  letter-spacing:.035em!important;
+}
+.jumuah-collapse-button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.35vw!important;
+  min-width:auto!important;
+  border:1px solid rgba(255,241,210,.15)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.035)!important;
+  color:rgba(255,241,210,.82)!important;
+  padding:.48vh .72vw!important;
+  font-size:clamp(10px,.78vw,13px)!important;
+  font-weight:570!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+.jumuah-collapse-button:active{color:var(--gold)!important;background:rgba(255,255,255,.06)!important}
+.jumuah-panel-list{
+  --jumuah-count:3;
+  display:grid!important;
+  grid-template-columns:repeat(var(--jumuah-count),minmax(0,1fr))!important;
+  gap:0!important;
+  margin:0!important;
+}
+.jumuah-row{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  min-width:0!important;
+  gap:.32vh!important;
+  padding:.74vh .75vw!important;
+  border:0!important;
+  border-left:1px solid rgba(255,255,255,.085)!important;
+  text-align:center!important;
+}
+.jumuah-row:first-child{border-left:0!important}
+.jumuah-row-label{
+  color:rgba(255,241,210,.66)!important;
+  font-size:clamp(10px,.76vw,13px)!important;
+  font-weight:560!important;
+  letter-spacing:.045em!important;
+  white-space:nowrap!important;
+}
+.jumuah-row-time{
+  color:#fff4d9!important;
+  font-size:clamp(19px,1.48vw,25px)!important;
+  font-weight:570!important;
+  line-height:1!important;
+  font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;
+}
+.jumuah-dock-source{
+  margin-top:.72vh;
+  padding-top:.58vh;
+  border-top:1px solid rgba(255,255,255,.065);
+  color:rgba(255,241,210,.48);
+  font-size:clamp(9px,.66vw,11px);
+  letter-spacing:.035em;
+}
+.jumuah-dock-source strong{color:rgba(255,241,210,.72);font-weight:580}
+@media (max-width:1100px),(max-height:650px){
+  .bottom-dock{padding:1.35vh .82vw .72vh!important}
+  .dock-progress-row{padding-top:.12vh;margin-bottom:.72vh}
+  .bottom-dock.jumuah-expanded{padding:1.35vh .88vw .8vh!important}
+  .jumuah-panel{margin-top:.72vh!important;padding-top:.75vh!important}
+  .jumuah-panel-head{margin-bottom:.48vh!important}
+  .jumuah-panel-heading .jumuah-icon{width:20px;height:20px}
+  .jumuah-row{padding:.56vh .55vw!important}
+  .jumuah-row-label{font-size:clamp(9px,.70vw,11px)!important}
+  .jumuah-row-time{font-size:clamp(16px,1.34vw,21px)!important}
+  .jumuah-dock-source{margin-top:.5vh;padding-top:.42vh}
+}
+@media (max-width:700px){
+  .jumuah-panel-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;row-gap:.5vh!important}
+  .jumuah-row:nth-child(odd){border-left:0!important}
+  .jumuah-row:nth-child(n+3){border-top:1px solid rgba(255,255,255,.085)!important}
+}
+@media (max-aspect-ratio:1/1){
+  .bottom-dock.jumuah-expanded .dock-content-row{display:none!important}
+  .jumuah-panel{position:static!important;width:100%!important;margin-top:.75vh!important}
+}
+@media (prefers-reduced-motion:reduce){.jumuah-panel{animation:none!important}.bottom-dock{transition:none!important}}
+</style>
+
+
+<style id="aslima-v941-persistent-dock-details">
+/* ASLIMA V9.1.41 — fixed progress header + persistent utility row + shared detail area. */
+.bottom-dock{
+  padding:1.9vh 1vw .92vh!important;
+  transform:translateY(.72vh);
+  transition:padding .22s ease,box-shadow .22s ease,background .22s ease!important;
+}
+.dock-progress-row{
+  padding:0!important;
+  margin:0 0 1.0vh!important;
+}
+.dock-detail-area{
+  display:block;
+  min-width:0;
+  margin:0 0 .72vh;
+  padding:.72vh 0 .62vh;
+  border-top:1px solid rgba(248,200,111,.18);
+  border-bottom:1px solid rgba(255,255,255,.065);
+  animation:aslimaDockDetailReveal .18s ease both;
+}
+.dock-detail-area[hidden]{display:none!important}
+@keyframes aslimaDockDetailReveal{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.bottom-dock.detail-open{
+  padding:1.9vh 1.05vw .95vh!important;
+  background:linear-gradient(180deg,rgba(3,12,15,.80),rgba(0,7,9,.90))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 1.8vh 5vh rgba(0,0,0,.38)!important;
+}
+.bottom-dock.jumuah-expanded .dock-content-row,
+.bottom-dock.supplementary-expanded .dock-content-row{display:grid!important}
+.dock-content-row{
+  margin:0!important;
+  min-height:3.45vh;
+}
+.supp-ticker{
+  grid-template-columns:auto auto auto auto auto minmax(0,1fr) auto auto!important;
+  gap:.56vw!important;
+  padding:.42vh .34vw!important;
+}
+.supp-reminder-status{
+  display:inline-flex;
+  align-items:center;
+  gap:.32vw;
+  color:rgba(52,232,159,.83);
+  font-size:clamp(9px,.69vw,12px);
+  font-weight:570;
+  white-space:nowrap;
+}
+.supp-reminder-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+  box-shadow:0 0 8px rgba(52,232,159,.28);
+}
+.supp-ticker-bell{display:none!important}
+.supp-ticker-view-text{display:inline!important}
+.supp-ticker-view{
+  min-width:50px;
+  justify-content:center;
+  padding:.34vh .54vw;
+  border:1px solid rgba(255,241,210,.13);
+  border-radius:999px;
+  background:rgba(255,255,255,.028);
+  color:rgba(255,241,210,.80)!important;
+  text-transform:uppercase;
+  letter-spacing:.045em;
+}
+.supp-ticker[aria-expanded="true"] .supp-ticker-view{
+  border-color:rgba(241,189,101,.25);
+  background:rgba(241,189,101,.06);
+  color:var(--gold)!important;
+}
+.supp-ticker-chevron,.jumuah-chevron{font-size:1.08em;line-height:1;color:var(--gold)}
+.jumuah-pill{padding:.46vh .52vw!important}
+.jumuah-chevron{margin-left:.05vw}
+.supp-context-panel,.jumuah-panel{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+  animation:none!important;
+}
+.supp-context-panel[hidden],.jumuah-panel[hidden]{display:none!important}
+.dock-detail-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1vw;
+  min-height:2.45vh;
+  margin:0 0 .45vh;
+}
+.dock-detail-title{
+  color:var(--gold);
+  font-size:clamp(11px,.88vw,15px);
+  font-weight:660;
+  letter-spacing:.14em;
+  line-height:1;
+  text-transform:uppercase;
+}
+.dock-detail-subtitle{
+  margin-top:.2vh;
+  color:rgba(255,241,210,.52);
+  font-size:clamp(8px,.62vw,10px);
+  letter-spacing:.035em;
+  line-height:1;
+}
+.dock-detail-actions{display:flex;align-items:center;gap:.55vw}
+.dock-source-badge{
+  color:rgba(255,241,210,.47);
+  font-size:clamp(8px,.61vw,10px);
+  white-space:nowrap;
+}
+.dock-source-badge strong{color:rgba(255,241,210,.70);font-weight:590}
+.dock-collapse-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.28vw;
+  border:1px solid rgba(255,241,210,.14);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:rgba(255,241,210,.78);
+  padding:.35vh .6vw;
+  font-size:clamp(9px,.70vw,12px);
+  font-weight:570;
+  line-height:1;
+  white-space:nowrap;
+}
+.dock-collapse-button:active{color:var(--gold);background:rgba(255,255,255,.06)}
+.jumuah-panel-heading{display:flex;align-items:center;gap:.58vw;min-width:0}
+.jumuah-panel-heading .jumuah-icon{width:19px;height:19px;color:var(--gold)}
+.jumuah-panel-list{
+  --jumuah-count:3;
+  display:grid!important;
+  grid-template-columns:repeat(var(--jumuah-count),minmax(0,1fr))!important;
+  gap:0!important;
+  margin:0!important;
+}
+.jumuah-row{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.18vh!important;
+  min-width:0!important;
+  padding:.34vh .55vw!important;
+  border:0!important;
+  border-left:1px solid rgba(255,255,255,.085)!important;
+  text-align:center!important;
+}
+.jumuah-row:first-child{border-left:0!important}
+.jumuah-row-label{font-size:clamp(9px,.69vw,11px)!important;line-height:1!important}
+.jumuah-row-time{font-size:clamp(16px,1.28vw,21px)!important;line-height:1!important}
+.jumuah-dock-source{display:none!important}
+.supp-context-list{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:0!important;
+}
+.supp-context-item{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  grid-template-areas:"icon name" "icon time"!important;
+  column-gap:.5vw!important;
+  row-gap:.1vh!important;
+  align-items:center!important;
+  min-width:0!important;
+  padding:.3vh .65vw!important;
+  border:0!important;
+  border-left:1px solid rgba(255,255,255,.085)!important;
+}
+.supp-context-item:first-child{border-left:0!important;padding-top:.3vh!important}
+.supp-context-item-icon{grid-area:icon;width:auto!important;min-width:18px!important;font-size:clamp(16px,1.18vw,20px)!important}
+.supp-context-item>div:nth-child(2){display:contents}
+.supp-context-item-name{grid-area:name;font-size:clamp(10px,.78vw,13px)!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.supp-context-item-meta{display:none!important}
+.supp-context-item-time{grid-area:time;font-size:clamp(10px,.78vw,13px)!important;line-height:1!important;text-align:left!important}
+@media (max-width:1100px),(max-height:650px){
+  .bottom{padding-right:clamp(112px,15vw,170px)!important}
+  .bottom-dock{padding:2.0vh .82vw .78vh!important;transform:translateY(.78vh)}
+  .bottom-dock.detail-open{padding:2.0vh .88vw .8vh!important}
+  .dock-progress-row{margin-bottom:.85vh!important}
+  .dock-detail-area{margin-bottom:.55vh;padding:.55vh 0 .48vh}
+  .dock-detail-head{min-height:2.2vh;margin-bottom:.32vh}
+  .dock-content-row{min-height:3.25vh}
+  .supp-ticker{gap:.4vw!important;padding:.32vh .2vw!important}
+  .supp-ticker-icon{min-width:23px!important;width:1.8vw!important;height:1.8vw!important;min-height:23px!important;font-size:clamp(16px,1.3vw,20px)!important}
+  .supp-ticker-name{font-size:clamp(13px,1.12vw,17px)!important}
+  .supp-ticker-time{font-size:clamp(10px,.83vw,13px)!important}
+  .supp-ticker-status{font-size:clamp(9px,.7vw,11px)!important}
+  .supp-reminder-status{font-size:clamp(8px,.63vw,10px)!important}
+  .supp-ticker-view{font-size:clamp(9px,.7vw,11px)!important;padding:.28vh .46vw!important}
+  .jumuah-pill{font-size:clamp(10px,.82vw,13px)!important}
+  .jumuah-icon{width:18px;height:18px}
+  .jumuah-row{padding:.28vh .42vw!important}
+  .jumuah-row-time{font-size:clamp(14px,1.16vw,18px)!important}
+  .supp-context-item{padding:.24vh .5vw!important}
+}
+@media (max-width:850px){
+  .supp-ticker-separator{display:none!important}
+  .supp-ticker-status{max-width:12vw}
+  .supp-reminder-status{font-size:0!important;gap:0!important}
+  .supp-reminder-dot{width:7px;height:7px}
+  .dock-source-badge{display:none}
+}
+@media (max-aspect-ratio:1/1){
+  .bottom{padding-right:0!important}
+  .bottom-dock{transform:none}
+  .dock-content-row{grid-template-columns:1fr auto!important}
+  .dock-separator{display:none!important}
+  .supp-context-list,.jumuah-panel-list{grid-template-columns:1fr!important}
+  .supp-context-item,.jumuah-row{border-left:0!important;border-top:1px solid rgba(255,255,255,.08)!important}
+  .supp-context-item:first-child,.jumuah-row:first-child{border-top:0!important}
+}
+@media (prefers-reduced-motion:reduce){.dock-detail-area{animation:none!important}.bottom-dock{transition:none!important}}
+</style>
+
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -2931,6 +3319,37 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
         <div class="progress"><div class="fill"></div><div class="dot"></div></div>
         <span class="dock-progress-label dock-progress-end">ISHA</span>
       </div>
+
+      <div class="dock-detail-area" id="dockDetailArea" hidden>
+        <div class="supp-context-panel" id="suppAllPanel" hidden>
+          <div class="dock-detail-head">
+            <div>
+              <div class="dock-detail-title">Supplementary Prayers</div>
+              <div class="dock-detail-subtitle">Beep reminders only · no Azaan</div>
+            </div>
+            <button class="dock-collapse-button" id="suppAllClose" type="button" aria-label="Collapse supplementary prayers">Collapse <span aria-hidden="true">⌄</span></button>
+          </div>
+          <div class="supp-context-list" id="suppAllList"></div>
+        </div>
+
+        <div class="jumuah-panel" id="jumuahPanel" hidden>
+          <div class="dock-detail-head">
+            <div class="jumuah-panel-heading">
+              <svg class="jumuah-icon" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><path d="M3 25h22M5 25V14h18v11M9 14V9h10v5M14 3c-2 2-2 4 0 6 2-2 2-4 0-6M9 18v7M14 18v7M19 18v7"/></svg>
+              <div>
+                <div class="dock-detail-title">Jumu’ah Prayer</div>
+                <div class="dock-detail-subtitle" id="jumuahPanelSubtitle">Available anytime</div>
+              </div>
+            </div>
+            <div class="dock-detail-actions">
+              <span class="dock-source-badge">Source: <strong id="jumuahSourceLabel">VRIC</strong></span>
+              <button class="dock-collapse-button" id="jumuahClose" type="button" aria-label="Collapse Jumu’ah schedule">Collapse <span aria-hidden="true">⌄</span></button>
+            </div>
+          </div>
+          <div class="jumuah-panel-list" id="jumuah"></div>
+        </div>
+      </div>
+
       <div class="dock-content-row">
         <div class="supp-ticker-wrap" id="specialPrayers" aria-label="Supplementary prayer guidance">
           <button class="supp-ticker" id="suppViewAllBtn" type="button" aria-expanded="false" aria-controls="suppAllPanel">
@@ -2940,19 +3359,10 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
             <span class="supp-ticker-separator" aria-hidden="true">•</span>
             <span class="supp-ticker-time" id="suppPrimaryTime">--</span>
             <span class="supp-ticker-status"><span class="supp-status-prefix" id="suppStatusPrefix">Starts in</span> <span id="suppPrimaryStatus">--</span></span>
-            <span class="supp-ticker-bell" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-            </span>
+            <span class="supp-reminder-status" aria-hidden="true"><span class="supp-reminder-dot"></span>Beep</span>
             <span class="sr-only" id="specialPrayerNote">Beep enabled</span>
-            <span class="supp-ticker-view"><span class="supp-ticker-view-text">View</span><span aria-hidden="true">›</span></span>
+            <span class="supp-ticker-view"><span class="supp-ticker-view-text" id="suppViewText">All 3</span><span class="supp-ticker-chevron" id="suppViewChevron" aria-hidden="true">›</span></span>
           </button>
-          <div class="supp-context-panel" id="suppAllPanel" hidden>
-            <div class="supp-context-panel-head">
-              <div class="supp-context-panel-title">Supplementary Prayers</div>
-              <button class="supp-context-panel-close" id="suppAllClose" type="button" aria-label="Close supplementary prayers">×</button>
-            </div>
-            <div class="supp-context-list" id="suppAllList"></div>
-          </div>
         </div>
         <div class="dock-separator" aria-hidden="true"></div>
         <div class="bottom-right-actions" id="jumuahZone">
@@ -2960,17 +3370,8 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
             <svg class="jumuah-icon" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><path d="M3 25h22M5 25V14h18v11M9 14V9h10v5M14 3c-2 2-2 4 0 6 2-2 2-4 0-6M9 18v7M14 18v7M19 18v7"/></svg>
             <span class="jumuah-pill-label" id="jumuahPillLabel">Jumu’ah</span>
             <span class="jumuah-pill-badge" id="jumuahPillBadge" hidden>Today</span>
+            <span class="jumuah-chevron" id="jumuahChevron" aria-hidden="true">›</span>
           </button>
-          <div class="jumuah-panel" id="jumuahPanel" hidden>
-            <div class="jumuah-panel-head">
-              <div>
-                <div class="jumuah-panel-title">Jumu’ah Prayer</div>
-                <div class="jumuah-panel-subtitle" id="jumuahPanelSubtitle">Available anytime</div>
-              </div>
-              <button class="jumuah-panel-close" id="jumuahClose" type="button" aria-label="Close Jumu’ah schedule">×</button>
-            </div>
-            <div class="jumuah-panel-list" id="jumuah"></div>
-          </div>
         </div>
       </div>
     </div>
@@ -4082,11 +4483,23 @@ function syncFridayJumuahState(){
   else jumuahPanelOpen=false;
 }
 
+function syncDockDetailState(){
+  const dock=$('bottomDock');
+  const detail=$('dockDetailArea');
+  if(!dock||!detail)return;
+  const open=supplementaryListOpen||jumuahPanelOpen;
+  dock.classList.toggle('detail-open',open);
+  dock.classList.toggle('supplementary-expanded',supplementaryListOpen);
+  dock.classList.toggle('jumuah-expanded',jumuahPanelOpen);
+  detail.hidden=!open;
+}
+
 function setSupplementaryListOpen(force){
   supplementaryListOpen=typeof force==='boolean'?force:!supplementaryListOpen;
   if(supplementaryListOpen)jumuahPanelOpen=false;
   renderSupplementaryPrayers();
   renderJumuahPanel();
+  syncDockDetailState();
 }
 
 function setJumuahPanelOpen(force){
@@ -4099,6 +4512,14 @@ function setJumuahPanelOpen(force){
   }
   renderJumuahPanel();
   renderSupplementaryPrayers();
+  syncDockDetailState();
+}
+
+function jumuahTimingSourceLabel(){
+  const mode=CONFIG&&CONFIG.timingSource?CONFIG.timingSource:'vric';
+  if(mode==='manual')return 'Manual';
+  if(mode==='calculated-location'||mode==='device-location')return 'Calculated location';
+  return 'VRIC';
 }
 
 function renderJumuahPanel(){
@@ -4107,15 +4528,21 @@ function renderJumuahPanel(){
   if(!list||!panel||!pill||!label||!zone)return;
   const entries=(CONFIG.jumuah||[]).filter(Boolean);
   const ordinals=['1st','2nd','3rd','4th'];
-  list.innerHTML=entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join('');
+  list.style.setProperty('--jumuah-count',String(Math.max(1,entries.length)));
+  list.innerHTML=entries.length?entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join(''):'<div class="jumuah-row"><span class="jumuah-row-label">Schedule</span><span class="jumuah-row-time">Unavailable</span></div>';
   const friday=isFriday();
   zone.classList.toggle('is-friday',friday);
   label.textContent='Jumu’ah';
   const badge=$('jumuahPillBadge');
   if(badge)badge.hidden=!friday;
-  if(subtitle)subtitle.textContent=friday?'Visible today · tap to collapse':'Available anytime';
+  const chevron=$('jumuahChevron');
+  if(chevron)chevron.textContent=jumuahPanelOpen?'⌄':'›';
+  if(subtitle)subtitle.textContent=friday?'Today’s prayer schedule':'Available anytime';
+  const source=$('jumuahSourceLabel');
+  if(source)source.textContent=jumuahTimingSourceLabel();
   panel.hidden=!jumuahPanelOpen;
   pill.setAttribute('aria-expanded',String(jumuahPanelOpen));
+  syncDockDetailState();
 }
 
 function bindBottomPanels(){
@@ -4127,18 +4554,30 @@ function bindBottomPanels(){
   if(jBtn)jBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen();});
   if(jClose)jClose.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen(false);});
   document.addEventListener('click',e=>{
-    const suppWrap=$('specialPrayers'), jZone=$('jumuahZone');
-    if(supplementaryListOpen && suppWrap && !suppWrap.contains(e.target))setSupplementaryListOpen(false);
-    if(jumuahPanelOpen && jZone && !jZone.contains(e.target))setJumuahPanelOpen(false);
+    const dock=$('bottomDock');
+    if((supplementaryListOpen||jumuahPanelOpen)&&dock&&!dock.contains(e.target)){
+      if(supplementaryListOpen)setSupplementaryListOpen(false);
+      if(jumuahPanelOpen)setJumuahPanelOpen(false);
+    }
   },true);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(supplementaryListOpen)setSupplementaryListOpen(false);if(jumuahPanelOpen)setJumuahPanelOpen(false);}});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if(supplementaryListOpen)setSupplementaryListOpen(false);
+      if(jumuahPanelOpen)setJumuahPanelOpen(false);
+    }
+  });
 }
 
 function renderSupplementaryPrayers(){
   const card=$('specialPrayers');
   if(!card)return;
   const entries=supplementaryPrayerEntries();
-  if(!entries.length){card.hidden=true;return;}
+  if(!entries.length){
+    card.hidden=true;
+    supplementaryListOpen=false;
+    syncDockDetailState();
+    return;
+  }
   card.hidden=false;
   bindBottomPanels();
   const nowDate=new Date();
@@ -4153,13 +4592,16 @@ function renderSupplementaryPrayers(){
     $('suppPrimaryTime').textContent=entry.window;
     $('suppStatusPrefix').textContent=context.mode==='active'?'Ends in':'Starts in';
     $('suppPrimaryStatus').textContent=shortDurationText(context.remaining);
-    card.setAttribute('aria-label',`${context.mode==='active'?'Active':'Next'} supplementary prayer: ${entry.title}, ${entry.window}. ${$('suppStatusPrefix').textContent} ${$('suppPrimaryStatus').textContent}.`);
+    card.setAttribute('aria-label',`${context.mode==='active'?'Active':'Next'} supplementary prayer: ${entry.title}, ${entry.window}. ${$('suppStatusPrefix').textContent} ${$('suppPrimaryStatus').textContent}. Tap to ${supplementaryListOpen?'close':'view all three'} supplementary prayers.`);
   }
   const note=$('specialPrayerNote');
   if(note)note.textContent='Beep enabled';
   const btn=$('suppViewAllBtn'), panel=$('suppAllPanel');
   if(btn)btn.setAttribute('aria-expanded',String(supplementaryListOpen));
   if(panel)panel.hidden=!supplementaryListOpen;
+  const viewText=$('suppViewText'), viewChevron=$('suppViewChevron');
+  if(viewText)viewText.textContent=supplementaryListOpen?'Close':'All 3';
+  if(viewChevron)viewChevron.textContent=supplementaryListOpen?'⌄':'›';
   const list=$('suppAllList');
   if(list){
     list.innerHTML=entries.map(entry=>{
@@ -4168,6 +4610,7 @@ function renderSupplementaryPrayers(){
       return `<div class="supp-context-item${active?' active':''}"><div class="supp-context-item-icon">${entry.icon}</div><div><div class="supp-context-item-name">${entry.title}</div><div class="supp-context-item-meta">${meta}</div></div><div class="supp-context-item-time">${entry.window}</div></div>`;
     }).join('');
   }
+  syncDockDetailState();
 }
 
 

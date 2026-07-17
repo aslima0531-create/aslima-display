@@ -1,4 +1,4 @@
-const CACHE='aslima-v939-unified-bottom-dock';
+const CACHE='aslima-v941-persistent-dock-detail-panels';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
