@@ -1,4 +1,4 @@
-const CACHE='aslima-v935-ishraq-supplementary-strip';
+const CACHE='aslima-v937-contextual-supplementary-jumuah-ui';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',

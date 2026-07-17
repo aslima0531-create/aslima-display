@@ -311,194 +311,60 @@ button{font:inherit}
   background:var(--gold);
   box-shadow:0 0 3.2vh rgba(241,189,101,.72);
 }
-.jumuah{
-  grid-column:1;
-  justify-self:start;
-  align-self:end;
-  display:flex;
-  align-items:center;
-  gap:1.6vw;
-  width:auto;
-  padding:1.7vh 1.6vw;
-  border:1px solid var(--border);
-  border-radius:1.1vh;
-  background:rgba(0,8,9,.50);
-  color:rgba(255,241,210,.94);
-  font-size:clamp(17px,1.55vw,30px);
-  letter-spacing:.055em;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
-}
-.jumuah:before{
-  content:"▣";
-  color:var(--gold);
-  font-size:1.25em;
-}
-.jumuah b{
-  color:rgba(255,241,210,.95);
-  font-weight:580;
-  letter-spacing:.09em;
-  text-transform:uppercase;
-}
+ .jumuah-legacy{display:none!important}
 .bottom-left{
   display:grid;
-  grid-template-rows:auto auto auto;
-  gap:1.05vh;
+  grid-template-rows:auto auto;
+  gap:1.15vh;
   align-items:end;
   min-width:0;
 }
-.bottom-left .progress{
-  margin-bottom:2.8vh!important;
-}
-.special-prayers{
-  width:min(58vw,760px);
-  padding:1.05vh 1vw;
-  border:1px solid var(--border);
-  border-radius:1.15vh;
-  background:rgba(0,8,9,.54);
-  backdrop-filter:blur(10px);
-  color:rgba(255,241,210,.94);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.4vh 3.4vh rgba(0,0,0,.26);
-}
-.special-prayers-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1vw;
-  margin-bottom:.72vh;
-}
-.special-prayers-title{
-  display:flex;
-  align-items:center;
-  gap:.55vw;
-  color:var(--gold);
-  font-size:clamp(12px,.9vw,17px);
-  font-weight:650;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-.special-prayers-title::before{
-  content:"✦";
-  color:var(--gold);
-  font-size:1em;
-}
-.special-prayers-note{
-  color:rgba(255,241,210,.58);
-  font-size:clamp(10px,.72vw,13px);
-  font-weight:520;
-  letter-spacing:.035em;
-  white-space:nowrap;
-}
-.special-prayers-list{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:.62vw;
-}
-.special-prayer-row{
-  min-width:0;
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr);
-  grid-template-areas:
-    "icon name"
-    "icon meta"
-    "time time";
-  align-items:center;
-  column-gap:.62vw;
-  row-gap:.18vh;
-  padding:.72vh .72vw .62vh;
-  border:1px solid rgba(255,241,210,.11);
-  border-radius:.86vh;
-  background:rgba(255,255,255,.025);
-}
-.special-prayer-icon{
-  grid-area:icon;
-  align-self:center;
-  width:1.55vw;
-  min-width:20px;
-  text-align:center;
-  font-size:clamp(17px,1.35vw,24px);
-  line-height:1;
-  color:rgba(255,241,210,.84);
-}
-.special-prayer-main{
-  display:contents;
-}
-.special-prayer-name{
-  grid-area:name;
-  min-width:0;
-  overflow:hidden;
-  color:rgba(255,241,210,.96);
-  font-size:clamp(14px,1.05vw,20px);
-  font-weight:570;
-  line-height:1.08;
-  letter-spacing:.025em;
-  text-transform:uppercase;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.special-prayer-meta{
-  grid-area:meta;
-  min-width:0;
-  overflow:hidden;
-  color:rgba(255,241,210,.66);
-  font-size:clamp(9px,.7vw,12px);
-  line-height:1.12;
-  letter-spacing:.01em;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.special-prayer-time{
-  grid-area:time;
-  margin-top:.32vh;
-  padding-top:.45vh;
-  border-top:1px solid rgba(255,241,210,.09);
-  color:rgba(255,241,210,.88);
-  font-size:clamp(11px,.8vw,14px);
-  font-weight:540;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-  text-align:center;
-  white-space:nowrap;
-}
-.special-prayer-row.active{
-  border-color:rgba(241,189,101,.34);
-  background:linear-gradient(135deg,rgba(241,189,101,.13),rgba(241,189,101,.035));
-  box-shadow:inset 0 0 0 1px rgba(241,189,101,.08),0 0 2vh rgba(241,189,101,.08);
-}
-.special-prayer-row.active .special-prayer-name,
-.special-prayer-row.active .special-prayer-time,
-.special-prayer-row.active .special-prayer-icon{
-  color:var(--gold);
-}
-.special-prayer-row.active .special-prayer-meta{
-  color:rgba(255,241,210,.82);
-}
-@media (max-width:1050px){
-  .special-prayers{width:100%;padding:.9vh .85vw}
-  .special-prayers-list{gap:.5vw}
-  .special-prayer-row{padding:.62vh .58vw .55vh;column-gap:.5vw}
-  .special-prayer-name{font-size:clamp(12px,1vw,17px)}
-  .special-prayer-meta{font-size:clamp(8px,.68vw,11px)}
-  .special-prayer-time{font-size:clamp(10px,.75vw,13px)}
-}
-@media (max-height:650px){
-  .bottom-left .progress{margin-bottom:1vh!important}
-  .bottom-left{gap:.72vh}
-  .special-prayers{padding:.62vh .72vw}
-  .special-prayers-head{margin-bottom:.42vh}
-  .special-prayer-row{padding:.42vh .5vw .38vh}
-  .special-prayer-time{margin-top:.18vh;padding-top:.28vh}
-}
-@media (max-aspect-ratio:1/1){
-  .bottom{grid-template-columns:1fr!important}
-  .special-prayers{width:100%!important}
-  .special-prayers-list{grid-template-columns:1fr!important;gap:.7vh!important}
-  .special-prayer-row{
-    grid-template-columns:auto minmax(0,1fr) auto!important;
-    grid-template-areas:"icon name time" "icon meta time"!important;
-  }
-  .special-prayer-time{border-top:0!important;margin-top:0!important;padding-top:0!important;text-align:right!important}
-}
+.bottom-left .progress{margin-bottom:1.65vh!important}
+.supp-context{position:relative;width:min(50vw,720px);padding:1.2vh 1.1vw 1.15vh;border:1px solid var(--border);border-radius:1.25vh;background:rgba(0,8,9,.58);backdrop-filter:blur(10px);color:rgba(255,241,210,.94);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.4vh 3.4vh rgba(0,0,0,.26)}
+.supp-context-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.95vh}
+.supp-context-kicker{display:flex;align-items:center;gap:.55vw;color:var(--gold);font-size:clamp(13px,1vw,18px);font-weight:650;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.supp-context-kicker::before{content:"✦";font-size:1em}
+.supp-context-bell{display:inline-flex;align-items:center;gap:.38vw;padding:.38vh .7vw;border:1px solid rgba(52,232,159,.20);border-radius:999px;color:rgba(52,232,159,.92);background:rgba(52,232,159,.07);font-size:clamp(10px,.76vw,13px);font-weight:600;letter-spacing:.045em;white-space:nowrap;text-transform:uppercase}
+.supp-context-bell::before{content:"•";font-size:1.15em}
+.supp-context-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1vw}
+.supp-context-icon{width:3.6vw;min-width:44px;height:3.6vw;min-height:44px;display:grid;place-items:center;border-radius:1.05vh;border:1px solid rgba(241,189,101,.18);background:rgba(255,255,255,.035);color:var(--gold);font-size:clamp(22px,2vw,34px)}
+.supp-context-main{min-width:0}
+.supp-context-name{color:rgba(255,241,210,.98);font-size:clamp(22px,2vw,36px);font-weight:540;line-height:1.04;letter-spacing:.03em;text-transform:uppercase}
+.supp-context-time{margin-top:.35vh;color:rgba(255,241,210,.92);font-size:clamp(18px,1.45vw,28px);font-weight:520;font-variant-numeric:tabular-nums;line-height:1.08}
+.supp-context-status{margin-top:.45vh;color:rgba(255,241,210,.72);font-size:clamp(13px,1.05vw,18px);font-weight:520;line-height:1.18}
+.supp-context-view{border:1px solid rgba(255,241,210,.18);border-radius:1vh;background:rgba(255,255,255,.04);color:rgba(255,241,210,.94);padding:1vh 1vw;min-width:8.5vw;font-size:clamp(14px,1.1vw,18px);font-weight:560;letter-spacing:.02em;white-space:nowrap}
+.supp-context-view::after{content:" ›";color:var(--gold);font-size:1.1em}
+.supp-context-view[aria-expanded="true"]{border-color:rgba(241,189,101,.30);color:var(--gold)}
+.supp-context-panel{position:absolute;left:0;bottom:calc(100% + 1vh);width:min(36vw,480px);padding:1.15vh 1vw;border:1px solid rgba(255,241,210,.14);border-radius:1.2vh;background:rgba(0,8,9,.90);backdrop-filter:blur(14px);box-shadow:0 2vh 5vh rgba(0,0,0,.34);z-index:30}
+.supp-context-panel[hidden]{display:none!important}
+.supp-context-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.9vh}
+.supp-context-panel-title{color:var(--gold);font-size:clamp(13px,1vw,17px);font-weight:650;letter-spacing:.16em;text-transform:uppercase}
+.supp-context-panel-close,.jumuah-panel-close{border:0;background:transparent;color:rgba(255,241,210,.82);font-size:clamp(18px,1.3vw,24px);line-height:1;padding:.2vh .2vw}
+.supp-context-list{display:grid;gap:.62vh}
+.supp-context-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75vw;align-items:center;padding:.72vh 0;border-top:1px solid rgba(255,255,255,.08)}
+.supp-context-item:first-child{border-top:0;padding-top:0}
+.supp-context-item-icon{font-size:clamp(18px,1.3vw,24px);color:rgba(255,241,210,.82);width:1.4vw;min-width:18px;text-align:center}
+.supp-context-item-name{color:rgba(255,241,210,.95);font-size:clamp(15px,1.08vw,18px);font-weight:560;letter-spacing:.03em;text-transform:uppercase}
+.supp-context-item-meta{margin-top:.18vh;color:rgba(255,241,210,.66);font-size:clamp(11px,.82vw,14px)}
+.supp-context-item-time{color:rgba(255,241,210,.88);font-size:clamp(12px,.92vw,15px);font-weight:560;white-space:nowrap;font-variant-numeric:tabular-nums}
+.supp-context-item.active .supp-context-item-name,.supp-context-item.active .supp-context-item-time,.supp-context-item.active .supp-context-item-icon{color:var(--gold)}
+.bottom-right-actions{position:relative;justify-self:end;align-self:end;width:min(23vw,330px);display:grid;justify-items:end;gap:.8vh}
+.jumuah-pill{display:inline-flex;align-items:center;gap:.6vw;border:1px solid rgba(241,189,101,.22);border-radius:999px;background:rgba(0,8,9,.58);color:rgba(255,241,210,.95);padding:.95vh 1.05vw;min-width:12.2vw;justify-content:center;font-size:clamp(13px,1vw,18px);font-weight:560;letter-spacing:.02em;backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.2vh 2.8vh rgba(0,0,0,.24)}
+.jumuah-pill::before{content:"🕌";font-size:1.1em}
+.jumuah-pill[aria-expanded="true"],.bottom-right-actions.is-friday .jumuah-pill{border-color:rgba(241,189,101,.40);color:var(--gold)}
+.jumuah-pill-label{white-space:nowrap}
+.jumuah-panel{position:absolute;right:0;bottom:calc(100% + .9vh);width:min(25vw,350px);padding:1.15vh 1vw 1vh;border:1px solid rgba(255,241,210,.14);border-radius:1.2vh;background:rgba(0,8,9,.90);backdrop-filter:blur(14px);box-shadow:0 2vh 5vh rgba(0,0,0,.34);z-index:28}
+.jumuah-panel[hidden]{display:none!important}
+.jumuah-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.75vh}
+.jumuah-panel-title{color:var(--gold);font-size:clamp(13px,1vw,17px);font-weight:650;letter-spacing:.16em;text-transform:uppercase}
+.jumuah-panel-subtitle{color:rgba(255,241,210,.64);font-size:clamp(10px,.8vw,13px);letter-spacing:.04em}
+.jumuah-panel-list{display:grid;gap:.2vh}
+.jumuah-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1vw;align-items:center;padding:.86vh 0;border-top:1px solid rgba(255,255,255,.08)}
+.jumuah-row:first-child{border-top:0}.jumuah-row-label{color:rgba(255,241,210,.88);font-size:clamp(14px,1.02vw,17px);font-weight:540;letter-spacing:.02em}.jumuah-row-time{color:#fff8e6;font-size:clamp(18px,1.35vw,22px);font-weight:560;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:1050px){.supp-context{width:100%;padding:1vh .95vw 1.02vh}.supp-context-body{gap:.8vw}.supp-context-view{min-width:92px;padding:.82vh .86vw}}
+@media (max-height:650px){.bottom-left{gap:.85vh}.bottom-left .progress{margin-bottom:1.1vh!important}.supp-context{padding:.85vh .8vw .9vh}.supp-context-head{margin-bottom:.6vh}.supp-context-name{font-size:clamp(20px,1.82vw,28px)}.supp-context-time{font-size:clamp(15px,1.18vw,22px)}.supp-context-status{font-size:clamp(12px,.92vw,15px)}.supp-context-panel{width:min(44vw,470px)}.jumuah-panel{width:min(29vw,330px)}}
+@media (max-height:650px) and (min-aspect-ratio:1/1){.bottom{grid-template-columns:60% 40%;gap:1.8vw}.supp-context{width:min(54vw,690px)}.supp-context-view{padding:.7vh .8vw;font-size:clamp(12px,.95vw,16px)}.jumuah-pill{padding:.75vh .95vw;min-width:120px}}
+@media (max-aspect-ratio:1/1){.bottom{grid-template-columns:1fr!important;gap:1.2vh!important}.bottom-right-actions{justify-self:start!important;width:100%!important}.supp-context{width:100%!important}.supp-context-body{grid-template-columns:auto 1fr!important}.supp-context-view{grid-column:1/3;justify-self:start;margin-top:.3vh}.supp-context-panel,.jumuah-panel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%!important;margin-top:.8vh}}
 
 .admin-hotspot{
   position:absolute;
@@ -2773,39 +2639,41 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   <section class="bottom">
     <div class="bottom-left">
       <div class="progress"><div class="fill"></div><div class="dot"></div></div>
-      <div class="special-prayers" id="specialPrayers" aria-label="Supplementary prayer windows">
-        <div class="special-prayers-head">
-          <div class="special-prayers-title">Supplementary Prayers</div>
-          <div class="special-prayers-note" id="specialPrayerNote">Beep reminders only · no Azaan</div>
+      <div class="supp-context" id="specialPrayers" aria-label="Supplementary prayer guidance">
+        <div class="supp-context-head">
+          <div class="supp-context-kicker" id="suppContextKicker">Next Supplementary Prayer</div>
+          <div class="supp-context-bell" id="specialPrayerNote">Beep On</div>
         </div>
-        <div class="special-prayers-list">
-          <div class="special-prayer-row" id="specialTahajjud">
-            <div class="special-prayer-icon">☾</div>
-            <div class="special-prayer-main">
-              <div class="special-prayer-name">Tahajjud</div>
-              <div class="special-prayer-meta" id="specialTahajjudMeta">Last third of the night</div>
-            </div>
-            <div class="special-prayer-time" id="specialTahajjudTime">--</div>
+        <div class="supp-context-body">
+          <div class="supp-context-icon" id="suppPrimaryIcon">☾</div>
+          <div class="supp-context-main">
+            <div class="supp-context-name" id="suppPrimaryName">Tahajjud</div>
+            <div class="supp-context-time" id="suppPrimaryTime">--</div>
+            <div class="supp-context-status" id="suppPrimaryStatus">Starts in --</div>
           </div>
-          <div class="special-prayer-row" id="specialIshraq">
-            <div class="special-prayer-icon">☀</div>
-            <div class="special-prayer-main">
-              <div class="special-prayer-name">Ishraq</div>
-              <div class="special-prayer-meta" id="specialIshraqMeta">Early post-sunrise prayer</div>
-            </div>
-            <div class="special-prayer-time" id="specialIshraqTime">--</div>
+          <button class="supp-context-view" id="suppViewAllBtn" type="button" aria-expanded="false" aria-controls="suppAllPanel">View All</button>
+        </div>
+        <div class="supp-context-panel" id="suppAllPanel" hidden>
+          <div class="supp-context-panel-head">
+            <div class="supp-context-panel-title">Supplementary Prayers</div>
+            <button class="supp-context-panel-close" id="suppAllClose" type="button" aria-label="Close supplementary prayers">×</button>
           </div>
-          <div class="special-prayer-row" id="specialDuha">
-            <div class="special-prayer-icon">☼</div>
-            <div class="special-prayer-main">
-              <div class="special-prayer-name">Duha / Chasht</div>
-              <div class="special-prayer-meta" id="specialDuhaMeta">Preferred mid-morning prayer</div>
-            </div>
-            <div class="special-prayer-time" id="specialDuhaTime">--</div>
-          </div>
+          <div class="supp-context-list" id="suppAllList"></div>
         </div>
       </div>
-      <div class="jumuah" id="jumuah"><b>Jumu’ah Prayer</b><span>1:45 PM</span><span>•</span><span>3:00 PM</span><span>•</span><span>4:00 PM</span></div>
+    </div>
+    <div class="bottom-right-actions" id="jumuahZone">
+      <button class="jumuah-pill" id="jumuahPill" type="button" aria-expanded="false" aria-controls="jumuahPanel"><span class="jumuah-pill-label" id="jumuahPillLabel">Jumu’ah Schedule</span></button>
+      <div class="jumuah-panel" id="jumuahPanel" hidden>
+        <div class="jumuah-panel-head">
+          <div>
+            <div class="jumuah-panel-title">Jumu’ah Prayer</div>
+            <div class="jumuah-panel-subtitle" id="jumuahPanelSubtitle">Available anytime</div>
+          </div>
+          <button class="jumuah-panel-close" id="jumuahClose" type="button" aria-label="Close Jumu’ah schedule">×</button>
+        </div>
+        <div class="jumuah-panel-list" id="jumuah"></div>
+      </div>
     </div>
   </section>
   <button class="brand-mark" id="brand" type="button">ASLIMA<span>أسليمة</span></button>
@@ -3831,6 +3699,13 @@ function shortDurationText(totalMinutes){
   return `${m}m`;
 }
 
+function compactTimeWindow(startMinutes,endMinutes){
+  const start=to12FromMinutes(startMinutes);
+  const end=to12FromMinutes(endMinutes);
+  if(start.period===end.period)return `${start.text}–${end.text} ${end.period}`;
+  return `${start.full}–${end.full}`;
+}
+
 function getSupplementaryPrayerWindows(){
   const fajr=mins(timings.Fajr);
   const sunrise=mins(timings.Sunrise);
@@ -3858,7 +3733,7 @@ function getSupplementaryPrayerWindows(){
       icon:'☾',
       start:tahajjudStart,
       end:tahajjudEnd,
-      window:`${to12FromMinutes(tahajjudStart).full} – ${to12FromMinutes(tahajjudEnd).full}`
+      window:compactTimeWindow(tahajjudStart,tahajjudEnd)
     },
     ishraq:{
       id:'ishraq',
@@ -3867,7 +3742,7 @@ function getSupplementaryPrayerWindows(){
       icon:'☀',
       start:ishraqStart,
       end:ishraqEnd,
-      window:`${to12FromMinutes(ishraqStart).full} – ${to12FromMinutes(ishraqEnd).full}`
+      window:compactTimeWindow(ishraqStart,ishraqEnd)
     },
     duha:{
       id:'duha',
@@ -3876,39 +3751,119 @@ function getSupplementaryPrayerWindows(){
       icon:'☼',
       start:duhaStart,
       end:duhaEnd,
-      window:`${to12FromMinutes(duhaStart).full} – ${to12FromMinutes(duhaEnd).full}`
+      window:compactTimeWindow(duhaStart,duhaEnd)
     }
   };
 }
 
-function renderSupplementaryPrayers(){
+let supplementaryListOpen=false;
+let jumuahPanelOpen=false;
+let jumuahFridayStateStamp='';
+let jumuahFridayDismissedStamp='';
+let bottomPanelsBound=false;
+
+function supplementaryPrayerEntries(){
   const windows=getSupplementaryPrayerWindows();
+  if(!windows)return [];
+  return [windows.tahajjud,windows.ishraq,windows.duha];
+}
+
+function contextualSupplementaryPrayer(nowMinutes,entries){
+  const active=entries.find(entry=>isMinuteWithinWindow(nowMinutes,entry.start,entry.end));
+  if(active)return {mode:'active',entry:active,remaining:minutesUntil(active.end,nowMinutes)};
+  const ranked=entries.map(entry=>({entry,delta:minutesUntil(entry.start,nowMinutes)})).sort((a,b)=>a.delta-b.delta);
+  return ranked[0]?{mode:'next',entry:ranked[0].entry,remaining:ranked[0].delta}:null;
+}
+
+function syncFridayJumuahState(){
+  const stamp=new Date().toDateString();
+  if(jumuahFridayStateStamp===stamp)return;
+  jumuahFridayStateStamp=stamp;
+  if(isFriday())jumuahPanelOpen=jumuahFridayDismissedStamp!==stamp;
+  else jumuahPanelOpen=false;
+}
+
+function setSupplementaryListOpen(force){
+  supplementaryListOpen=typeof force==='boolean'?force:!supplementaryListOpen;
+  if(supplementaryListOpen)jumuahPanelOpen=false;
+  renderSupplementaryPrayers();
+  renderJumuahPanel();
+}
+
+function setJumuahPanelOpen(force){
+  const next=typeof force==='boolean'?force:!jumuahPanelOpen;
+  jumuahPanelOpen=next;
+  if(next){
+    supplementaryListOpen=false;
+  }else if(isFriday()){
+    jumuahFridayDismissedStamp=new Date().toDateString();
+  }
+  renderJumuahPanel();
+  renderSupplementaryPrayers();
+}
+
+function renderJumuahPanel(){
+  syncFridayJumuahState();
+  const list=$('jumuah'), panel=$('jumuahPanel'), pill=$('jumuahPill'), label=$('jumuahPillLabel'), zone=$('jumuahZone'), subtitle=$('jumuahPanelSubtitle');
+  if(!list||!panel||!pill||!label||!zone)return;
+  const entries=(CONFIG.jumuah||[]).filter(Boolean);
+  const ordinals=['1st','2nd','3rd','4th'];
+  list.innerHTML=entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join('');
+  const friday=isFriday();
+  zone.classList.toggle('is-friday',friday);
+  label.textContent=friday?'Jumu’ah Today':'Jumu’ah Schedule';
+  if(subtitle)subtitle.textContent=friday?'Visible today · tap to collapse':'Available anytime';
+  panel.hidden=!jumuahPanelOpen;
+  pill.setAttribute('aria-expanded',String(jumuahPanelOpen));
+}
+
+function bindBottomPanels(){
+  if(bottomPanelsBound)return;
+  bottomPanelsBound=true;
+  const suppBtn=$('suppViewAllBtn'), suppClose=$('suppAllClose'), jBtn=$('jumuahPill'), jClose=$('jumuahClose');
+  if(suppBtn)suppBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setSupplementaryListOpen();});
+  if(suppClose)suppClose.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setSupplementaryListOpen(false);});
+  if(jBtn)jBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen();});
+  if(jClose)jClose.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen(false);});
+  document.addEventListener('click',e=>{
+    const suppWrap=$('specialPrayers'), jZone=$('jumuahZone');
+    if(supplementaryListOpen && suppWrap && !suppWrap.contains(e.target))setSupplementaryListOpen(false);
+    if(jumuahPanelOpen && jZone && !jZone.contains(e.target))setJumuahPanelOpen(false);
+  },true);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(supplementaryListOpen)setSupplementaryListOpen(false);if(jumuahPanelOpen)setJumuahPanelOpen(false);}});
+}
+
+function renderSupplementaryPrayers(){
   const card=$('specialPrayers');
   if(!card)return;
-  if(!windows){card.hidden=true;return;}
+  const entries=supplementaryPrayerEntries();
+  if(!entries.length){card.hidden=true;return;}
   card.hidden=false;
+  bindBottomPanels();
   const nowDate=new Date();
   const now=nowDate.getHours()*60+nowDate.getMinutes()+nowDate.getSeconds()/60;
-  const noteParts=[];
-
-  [
-    {row:$('specialTahajjud'),meta:$('specialTahajjudMeta'),time:$('specialTahajjudTime'),data:windows.tahajjud},
-    {row:$('specialIshraq'),meta:$('specialIshraqMeta'),time:$('specialIshraqTime'),data:windows.ishraq},
-    {row:$('specialDuha'),meta:$('specialDuhaMeta'),time:$('specialDuhaTime'),data:windows.duha}
-  ].forEach(entry=>{
-    if(!entry.row||!entry.meta||!entry.time)return;
-    const active=isMinuteWithinWindow(now,entry.data.start,entry.data.end);
-    const remaining=active?minutesUntil(entry.data.end,now):minutesUntil(entry.data.start,now);
-    const status=active?`Active now · ${shortDurationText(remaining)} left`:`Starts in ${shortDurationText(remaining)}`;
-    entry.row.classList.toggle('active',active);
-    entry.meta.textContent=`${entry.data.label} · ${status}`;
-    entry.time.textContent=entry.data.window;
-    if(active)noteParts.push(entry.data.title+' active now');
-  });
-
+  const context=contextualSupplementaryPrayer(now,entries);
+  if(context){
+    const entry=context.entry;
+    $('suppContextKicker').textContent=context.mode==='active'?'Active Supplementary Prayer':'Next Supplementary Prayer';
+    $('suppPrimaryIcon').textContent=entry.icon;
+    $('suppPrimaryName').textContent=entry.title;
+    $('suppPrimaryTime').textContent=entry.window;
+    $('suppPrimaryStatus').textContent=context.mode==='active'?`Now · ${shortDurationText(context.remaining)} left`:`Starts in ${shortDurationText(context.remaining)}`;
+    card.setAttribute('aria-label',`${context.mode==='active'?'Active':'Next'} supplementary prayer: ${entry.title}, ${entry.window}, ${$('suppPrimaryStatus').textContent}.`);
+  }
   const note=$('specialPrayerNote');
-  if(note){
-    note.textContent=noteParts.length?`${noteParts.join(' • ')} · beep reminders only`:'Beep reminders only · no Azaan';
+  if(note)note.textContent='Beep On';
+  const btn=$('suppViewAllBtn'), panel=$('suppAllPanel');
+  if(btn)btn.setAttribute('aria-expanded',String(supplementaryListOpen));
+  if(panel)panel.hidden=!supplementaryListOpen;
+  const list=$('suppAllList');
+  if(list){
+    list.innerHTML=entries.map(entry=>{
+      const active=isMinuteWithinWindow(now,entry.start,entry.end);
+      const meta=active?`Now · ${shortDurationText(minutesUntil(entry.end,now))} left`:`Beep at ${to12FromMinutes(entry.start).full}`;
+      return `<div class="supp-context-item${active?' active':''}"><div class="supp-context-item-icon">${entry.icon}</div><div><div class="supp-context-item-name">${entry.title}</div><div class="supp-context-item-meta">${meta}</div></div><div class="supp-context-item-time">${entry.window}</div></div>`;
+    }).join('');
   }
 }
 
@@ -4047,9 +4002,9 @@ function render(){
   });
   lastActivePrayerName=current||'';
 
-  $('jumuah').innerHTML='<b>Jumu’ah Prayer</b><span>'+CONFIG.jumuah.join('</span><span>•</span><span>')+'</span>';
   updateProgress();
   renderSupplementaryPrayers();
+  renderJumuahPanel();
   updateVolumeLabel();
   renderLocationControls();
 }

@@ -1,0 +1,10 @@
+ASLIMA V9.1.36
+
+Rebuilt the supplementary-prayer section based on the real tablet photograph.
+- Removed clipped descriptions and long countdown sentences.
+- Each prayer now shows its name, time window, and a compact beep/NOW badge.
+- Repositioned the beep-only indicator into a proper header pill.
+- Increased spacing below the progress bar.
+- Increased card height and readable typography at 1024x600 and 1280x800.
+- Preserved Tahajjud, Ishraq, Duha/Chasht timing and beep logic.
+- No Azaan audio or Azaan overlay is used for these reminders.
