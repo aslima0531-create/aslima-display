@@ -1,4 +1,4 @@
-const CACHE='aslima-v933-warning-seconds-font-icon';
+const CACHE='aslima-v935-ishraq-supplementary-strip';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',

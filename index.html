@@ -339,7 +339,166 @@ button{font:inherit}
   letter-spacing:.09em;
   text-transform:uppercase;
 }
-
+.bottom-left{
+  display:grid;
+  grid-template-rows:auto auto auto;
+  gap:1.05vh;
+  align-items:end;
+  min-width:0;
+}
+.bottom-left .progress{
+  margin-bottom:2.8vh!important;
+}
+.special-prayers{
+  width:min(58vw,760px);
+  padding:1.05vh 1vw;
+  border:1px solid var(--border);
+  border-radius:1.15vh;
+  background:rgba(0,8,9,.54);
+  backdrop-filter:blur(10px);
+  color:rgba(255,241,210,.94);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.4vh 3.4vh rgba(0,0,0,.26);
+}
+.special-prayers-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1vw;
+  margin-bottom:.72vh;
+}
+.special-prayers-title{
+  display:flex;
+  align-items:center;
+  gap:.55vw;
+  color:var(--gold);
+  font-size:clamp(12px,.9vw,17px);
+  font-weight:650;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.special-prayers-title::before{
+  content:"✦";
+  color:var(--gold);
+  font-size:1em;
+}
+.special-prayers-note{
+  color:rgba(255,241,210,.58);
+  font-size:clamp(10px,.72vw,13px);
+  font-weight:520;
+  letter-spacing:.035em;
+  white-space:nowrap;
+}
+.special-prayers-list{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:.62vw;
+}
+.special-prayer-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:
+    "icon name"
+    "icon meta"
+    "time time";
+  align-items:center;
+  column-gap:.62vw;
+  row-gap:.18vh;
+  padding:.72vh .72vw .62vh;
+  border:1px solid rgba(255,241,210,.11);
+  border-radius:.86vh;
+  background:rgba(255,255,255,.025);
+}
+.special-prayer-icon{
+  grid-area:icon;
+  align-self:center;
+  width:1.55vw;
+  min-width:20px;
+  text-align:center;
+  font-size:clamp(17px,1.35vw,24px);
+  line-height:1;
+  color:rgba(255,241,210,.84);
+}
+.special-prayer-main{
+  display:contents;
+}
+.special-prayer-name{
+  grid-area:name;
+  min-width:0;
+  overflow:hidden;
+  color:rgba(255,241,210,.96);
+  font-size:clamp(14px,1.05vw,20px);
+  font-weight:570;
+  line-height:1.08;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.special-prayer-meta{
+  grid-area:meta;
+  min-width:0;
+  overflow:hidden;
+  color:rgba(255,241,210,.66);
+  font-size:clamp(9px,.7vw,12px);
+  line-height:1.12;
+  letter-spacing:.01em;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.special-prayer-time{
+  grid-area:time;
+  margin-top:.32vh;
+  padding-top:.45vh;
+  border-top:1px solid rgba(255,241,210,.09);
+  color:rgba(255,241,210,.88);
+  font-size:clamp(11px,.8vw,14px);
+  font-weight:540;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  white-space:nowrap;
+}
+.special-prayer-row.active{
+  border-color:rgba(241,189,101,.34);
+  background:linear-gradient(135deg,rgba(241,189,101,.13),rgba(241,189,101,.035));
+  box-shadow:inset 0 0 0 1px rgba(241,189,101,.08),0 0 2vh rgba(241,189,101,.08);
+}
+.special-prayer-row.active .special-prayer-name,
+.special-prayer-row.active .special-prayer-time,
+.special-prayer-row.active .special-prayer-icon{
+  color:var(--gold);
+}
+.special-prayer-row.active .special-prayer-meta{
+  color:rgba(255,241,210,.82);
+}
+@media (max-width:1050px){
+  .special-prayers{width:100%;padding:.9vh .85vw}
+  .special-prayers-list{gap:.5vw}
+  .special-prayer-row{padding:.62vh .58vw .55vh;column-gap:.5vw}
+  .special-prayer-name{font-size:clamp(12px,1vw,17px)}
+  .special-prayer-meta{font-size:clamp(8px,.68vw,11px)}
+  .special-prayer-time{font-size:clamp(10px,.75vw,13px)}
+}
+@media (max-height:650px){
+  .bottom-left .progress{margin-bottom:1vh!important}
+  .bottom-left{gap:.72vh}
+  .special-prayers{padding:.62vh .72vw}
+  .special-prayers-head{margin-bottom:.42vh}
+  .special-prayer-row{padding:.42vh .5vw .38vh}
+  .special-prayer-time{margin-top:.18vh;padding-top:.28vh}
+}
+@media (max-aspect-ratio:1/1){
+  .bottom{grid-template-columns:1fr!important}
+  .special-prayers{width:100%!important}
+  .special-prayers-list{grid-template-columns:1fr!important;gap:.7vh!important}
+  .special-prayer-row{
+    grid-template-columns:auto minmax(0,1fr) auto!important;
+    grid-template-areas:"icon name time" "icon meta time"!important;
+  }
+  .special-prayer-time{border-top:0!important;margin-top:0!important;padding-top:0!important;text-align:right!important}
+}
 
 .admin-hotspot{
   position:absolute;
@@ -2612,8 +2771,40 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   </section>
 
   <section class="bottom">
-    <div>
+    <div class="bottom-left">
       <div class="progress"><div class="fill"></div><div class="dot"></div></div>
+      <div class="special-prayers" id="specialPrayers" aria-label="Supplementary prayer windows">
+        <div class="special-prayers-head">
+          <div class="special-prayers-title">Supplementary Prayers</div>
+          <div class="special-prayers-note" id="specialPrayerNote">Beep reminders only · no Azaan</div>
+        </div>
+        <div class="special-prayers-list">
+          <div class="special-prayer-row" id="specialTahajjud">
+            <div class="special-prayer-icon">☾</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Tahajjud</div>
+              <div class="special-prayer-meta" id="specialTahajjudMeta">Last third of the night</div>
+            </div>
+            <div class="special-prayer-time" id="specialTahajjudTime">--</div>
+          </div>
+          <div class="special-prayer-row" id="specialIshraq">
+            <div class="special-prayer-icon">☀</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Ishraq</div>
+              <div class="special-prayer-meta" id="specialIshraqMeta">Early post-sunrise prayer</div>
+            </div>
+            <div class="special-prayer-time" id="specialIshraqTime">--</div>
+          </div>
+          <div class="special-prayer-row" id="specialDuha">
+            <div class="special-prayer-icon">☼</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Duha / Chasht</div>
+              <div class="special-prayer-meta" id="specialDuhaMeta">Preferred mid-morning prayer</div>
+            </div>
+            <div class="special-prayer-time" id="specialDuhaTime">--</div>
+          </div>
+        </div>
+      </div>
       <div class="jumuah" id="jumuah"><b>Jumu’ah Prayer</b><span>1:45 PM</span><span>•</span><span>3:00 PM</span><span>•</span><span>4:00 PM</span></div>
     </div>
   </section>
@@ -3182,6 +3373,19 @@ function to12(t){
   };
 }
 
+function to12FromMinutes(totalMinutes){
+  const normalized=wrapMinuteValue(totalMinutes);
+  const h24=Math.floor(normalized/60);
+  const m=normalized%60;
+  const h=h24%12||12;
+  const ap=h24>=12?'PM':'AM';
+  return {
+    text:`${h}:${String(m).padStart(2,'0')}`,
+    period:ap,
+    full:`${h}:${String(m).padStart(2,'0')} ${ap}`
+  };
+}
+
 function mins(t){
   const [h,m]=clean(t).split(':').map(Number);
   return h*60+m;
@@ -3596,6 +3800,118 @@ function applyPrayerTheme(nextName){
   }
 }
 
+function wrapMinuteValue(value){
+  value=Math.round(Number(value)||0);
+  return ((value%1440)+1440)%1440;
+}
+
+function minutesUntil(target,current){
+  target=wrapMinuteValue(target);
+  current=wrapMinuteValue(current);
+  let delta=target-current;
+  if(delta<0)delta+=1440;
+  return delta;
+}
+
+function isMinuteWithinWindow(now,start,end){
+  now=wrapMinuteValue(now);
+  start=wrapMinuteValue(start);
+  end=wrapMinuteValue(end);
+  if(start===end)return false;
+  if(start<end)return now>=start && now<end;
+  return now>=start || now<end;
+}
+
+function shortDurationText(totalMinutes){
+  totalMinutes=Math.max(0,Math.round(totalMinutes||0));
+  const h=Math.floor(totalMinutes/60);
+  const m=totalMinutes%60;
+  if(h>0&&m>0)return `${h}h ${m}m`;
+  if(h>0)return `${h}h`;
+  return `${m}m`;
+}
+
+function getSupplementaryPrayerWindows(){
+  const fajr=mins(timings.Fajr);
+  const sunrise=mins(timings.Sunrise);
+  const dhuhr=mins(timings.Dhuhr);
+  const maghrib=mins(timings.Maghrib);
+  if(![fajr,sunrise,dhuhr,maghrib].every(Number.isFinite))return null;
+
+  const nightLength=(1440-maghrib)+fajr;
+  const tahajjudStart=wrapMinuteValue(fajr-Math.round(nightLength/3));
+  const tahajjudEnd=wrapMinuteValue(fajr);
+
+  // Practical South Asian Hanafi display split:
+  // Ishraq begins after the sunrise-prohibited period; Duha/Chasht is shown from mid-morning.
+  const ishraqStart=wrapMinuteValue(sunrise+20);
+  const morningMidpoint=wrapMinuteValue(sunrise+Math.round((dhuhr-sunrise)/2));
+  const ishraqEnd=Math.max(ishraqStart+1,morningMidpoint);
+  const duhaStart=ishraqEnd;
+  const duhaEnd=wrapMinuteValue(dhuhr-10);
+
+  return {
+    tahajjud:{
+      id:'tahajjud',
+      title:'Tahajjud',
+      label:'Last third of the night',
+      icon:'☾',
+      start:tahajjudStart,
+      end:tahajjudEnd,
+      window:`${to12FromMinutes(tahajjudStart).full} – ${to12FromMinutes(tahajjudEnd).full}`
+    },
+    ishraq:{
+      id:'ishraq',
+      title:'Ishraq',
+      label:'Early post-sunrise prayer',
+      icon:'☀',
+      start:ishraqStart,
+      end:ishraqEnd,
+      window:`${to12FromMinutes(ishraqStart).full} – ${to12FromMinutes(ishraqEnd).full}`
+    },
+    duha:{
+      id:'duha',
+      title:'Duha / Chasht',
+      label:'Preferred mid-morning prayer',
+      icon:'☼',
+      start:duhaStart,
+      end:duhaEnd,
+      window:`${to12FromMinutes(duhaStart).full} – ${to12FromMinutes(duhaEnd).full}`
+    }
+  };
+}
+
+function renderSupplementaryPrayers(){
+  const windows=getSupplementaryPrayerWindows();
+  const card=$('specialPrayers');
+  if(!card)return;
+  if(!windows){card.hidden=true;return;}
+  card.hidden=false;
+  const nowDate=new Date();
+  const now=nowDate.getHours()*60+nowDate.getMinutes()+nowDate.getSeconds()/60;
+  const noteParts=[];
+
+  [
+    {row:$('specialTahajjud'),meta:$('specialTahajjudMeta'),time:$('specialTahajjudTime'),data:windows.tahajjud},
+    {row:$('specialIshraq'),meta:$('specialIshraqMeta'),time:$('specialIshraqTime'),data:windows.ishraq},
+    {row:$('specialDuha'),meta:$('specialDuhaMeta'),time:$('specialDuhaTime'),data:windows.duha}
+  ].forEach(entry=>{
+    if(!entry.row||!entry.meta||!entry.time)return;
+    const active=isMinuteWithinWindow(now,entry.data.start,entry.data.end);
+    const remaining=active?minutesUntil(entry.data.end,now):minutesUntil(entry.data.start,now);
+    const status=active?`Active now · ${shortDurationText(remaining)} left`:`Starts in ${shortDurationText(remaining)}`;
+    entry.row.classList.toggle('active',active);
+    entry.meta.textContent=`${entry.data.label} · ${status}`;
+    entry.time.textContent=entry.data.window;
+    if(active)noteParts.push(entry.data.title+' active now');
+  });
+
+  const note=$('specialPrayerNote');
+  if(note){
+    note.textContent=noteParts.length?`${noteParts.join(' • ')} · beep reminders only`:'Beep reminders only · no Azaan';
+  }
+}
+
 
 function remainingHuman(seconds){
   seconds=Math.max(0,Math.floor(seconds||0));
@@ -3733,6 +4049,7 @@ function render(){
 
   $('jumuah').innerHTML='<b>Jumu’ah Prayer</b><span>'+CONFIG.jumuah.join('</span><span>•</span><span>')+'</span>';
   updateProgress();
+  renderSupplementaryPrayers();
   updateVolumeLabel();
   renderLocationControls();
 }
@@ -4191,7 +4508,56 @@ function bindAzaanAudioControls(){
 }
 bindAzaanAudioControls();
 
-document.addEventListener('pointerdown',unlockAudio,{once:true,passive:true});
+document.addEventListener('pointerdown',e=>{unlockAudio(e);unlockReminderAudio();},{once:true,passive:true});
+
+let reminderAudioContext=null;
+let reminderAudioUnlocked=false;
+
+function unlockReminderAudio(){
+  if(reminderAudioUnlocked)return true;
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)return false;
+  try{
+    reminderAudioContext=reminderAudioContext||new Ctx();
+    if(reminderAudioContext.state==='suspended'&&reminderAudioContext.resume){
+      reminderAudioContext.resume().catch(()=>{});
+    }
+    reminderAudioUnlocked=true;
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function playReminderBeep(label){
+  if(document.body.classList.contains('azaan-playing')||document.body.classList.contains('adhan-playing')||document.body.classList.contains('adhan-overlay-active'))return false;
+  if(!unlockReminderAudio()){
+    showToast(label+' time has begun');
+    return false;
+  }
+  try{
+    const now=reminderAudioContext.currentTime;
+    [0,0.24].forEach((offset,index)=>{
+      const osc=reminderAudioContext.createOscillator();
+      const gain=reminderAudioContext.createGain();
+      osc.type='sine';
+      osc.frequency.setValueAtTime(index===0?880:988, now+offset);
+      gain.gain.setValueAtTime(0.0001, now+offset);
+      gain.gain.exponentialRampToValueAtTime(0.07, now+offset+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+offset+0.18);
+      osc.connect(gain);
+      gain.connect(reminderAudioContext.destination);
+      osc.start(now+offset);
+      osc.stop(now+offset+0.19);
+    });
+    showToast(label+' time has begun');
+    return true;
+  }catch(e){
+    console.warn('Reminder beep failed',e);
+    showToast(label+' time has begun');
+    return false;
+  }
+}
 
 const azaanSchedulerStartedAt=Date.now();
 function autoFireAzaan(){
@@ -4214,6 +4580,31 @@ function autoFireAzaan(){
   });
 }
 
+function autoFireSupplementaryPrayerBeep(){
+  if(Date.now()-azaanSchedulerStartedAt<65000)return;
+  const windows=getSupplementaryPrayerWindows();
+  if(!windows)return;
+  const n=new Date();
+  const now=n.getHours()*60+n.getMinutes();
+  const stamp=n.toDateString();
+  const persistedKey='aslima_last_fired_special';
+  let firedMap={};
+  try{firedMap=JSON.parse(localStorage.getItem(persistedKey)||'{}')||{};}catch(e){firedMap={};}
+
+  [
+    {id:'tahajjud',start:windows.tahajjud.start,label:'Tahajjud'},
+    {id:'ishraq',start:windows.ishraq.start,label:'Ishraq'},
+    {id:'duha',start:windows.duha.start,label:'Duha / Chasht'}
+  ].forEach(item=>{
+    const dayKey=stamp+'-'+item.id;
+    if(now===item.start && firedMap[item.id]!==dayKey){
+      firedMap[item.id]=dayKey;
+      try{localStorage.setItem(persistedKey,JSON.stringify(firedMap));}catch(e){}
+      playReminderBeep(item.label);
+    }
+  });
+}
+
 loadAzaanPrefs();
 loadTimingSourcePrefs();
 renderAzaanControls();
@@ -4224,6 +4615,7 @@ loadTimes();
 render();
 setInterval(render,1000);
 setInterval(autoFireAzaan,30000);
+setInterval(autoFireSupplementaryPrayerBeep,15000);
 setInterval(loadTimes,6*60*60*1000);
 setInterval(applyBurnInShift,60000);
 setTimeout(applyBurnInShift,12000);

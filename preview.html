@@ -339,7 +339,166 @@ button{font:inherit}
   letter-spacing:.09em;
   text-transform:uppercase;
 }
-
+.bottom-left{
+  display:grid;
+  grid-template-rows:auto auto auto;
+  gap:1.05vh;
+  align-items:end;
+  min-width:0;
+}
+.bottom-left .progress{
+  margin-bottom:2.8vh!important;
+}
+.special-prayers{
+  width:min(58vw,760px);
+  padding:1.05vh 1vw;
+  border:1px solid var(--border);
+  border-radius:1.15vh;
+  background:rgba(0,8,9,.54);
+  backdrop-filter:blur(10px);
+  color:rgba(255,241,210,.94);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.4vh 3.4vh rgba(0,0,0,.26);
+}
+.special-prayers-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1vw;
+  margin-bottom:.72vh;
+}
+.special-prayers-title{
+  display:flex;
+  align-items:center;
+  gap:.55vw;
+  color:var(--gold);
+  font-size:clamp(12px,.9vw,17px);
+  font-weight:650;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.special-prayers-title::before{
+  content:"✦";
+  color:var(--gold);
+  font-size:1em;
+}
+.special-prayers-note{
+  color:rgba(255,241,210,.58);
+  font-size:clamp(10px,.72vw,13px);
+  font-weight:520;
+  letter-spacing:.035em;
+  white-space:nowrap;
+}
+.special-prayers-list{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:.62vw;
+}
+.special-prayer-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:
+    "icon name"
+    "icon meta"
+    "time time";
+  align-items:center;
+  column-gap:.62vw;
+  row-gap:.18vh;
+  padding:.72vh .72vw .62vh;
+  border:1px solid rgba(255,241,210,.11);
+  border-radius:.86vh;
+  background:rgba(255,255,255,.025);
+}
+.special-prayer-icon{
+  grid-area:icon;
+  align-self:center;
+  width:1.55vw;
+  min-width:20px;
+  text-align:center;
+  font-size:clamp(17px,1.35vw,24px);
+  line-height:1;
+  color:rgba(255,241,210,.84);
+}
+.special-prayer-main{
+  display:contents;
+}
+.special-prayer-name{
+  grid-area:name;
+  min-width:0;
+  overflow:hidden;
+  color:rgba(255,241,210,.96);
+  font-size:clamp(14px,1.05vw,20px);
+  font-weight:570;
+  line-height:1.08;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.special-prayer-meta{
+  grid-area:meta;
+  min-width:0;
+  overflow:hidden;
+  color:rgba(255,241,210,.66);
+  font-size:clamp(9px,.7vw,12px);
+  line-height:1.12;
+  letter-spacing:.01em;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.special-prayer-time{
+  grid-area:time;
+  margin-top:.32vh;
+  padding-top:.45vh;
+  border-top:1px solid rgba(255,241,210,.09);
+  color:rgba(255,241,210,.88);
+  font-size:clamp(11px,.8vw,14px);
+  font-weight:540;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  white-space:nowrap;
+}
+.special-prayer-row.active{
+  border-color:rgba(241,189,101,.34);
+  background:linear-gradient(135deg,rgba(241,189,101,.13),rgba(241,189,101,.035));
+  box-shadow:inset 0 0 0 1px rgba(241,189,101,.08),0 0 2vh rgba(241,189,101,.08);
+}
+.special-prayer-row.active .special-prayer-name,
+.special-prayer-row.active .special-prayer-time,
+.special-prayer-row.active .special-prayer-icon{
+  color:var(--gold);
+}
+.special-prayer-row.active .special-prayer-meta{
+  color:rgba(255,241,210,.82);
+}
+@media (max-width:1050px){
+  .special-prayers{width:100%;padding:.9vh .85vw}
+  .special-prayers-list{gap:.5vw}
+  .special-prayer-row{padding:.62vh .58vw .55vh;column-gap:.5vw}
+  .special-prayer-name{font-size:clamp(12px,1vw,17px)}
+  .special-prayer-meta{font-size:clamp(8px,.68vw,11px)}
+  .special-prayer-time{font-size:clamp(10px,.75vw,13px)}
+}
+@media (max-height:650px){
+  .bottom-left .progress{margin-bottom:1vh!important}
+  .bottom-left{gap:.72vh}
+  .special-prayers{padding:.62vh .72vw}
+  .special-prayers-head{margin-bottom:.42vh}
+  .special-prayer-row{padding:.42vh .5vw .38vh}
+  .special-prayer-time{margin-top:.18vh;padding-top:.28vh}
+}
+@media (max-aspect-ratio:1/1){
+  .bottom{grid-template-columns:1fr!important}
+  .special-prayers{width:100%!important}
+  .special-prayers-list{grid-template-columns:1fr!important;gap:.7vh!important}
+  .special-prayer-row{
+    grid-template-columns:auto minmax(0,1fr) auto!important;
+    grid-template-areas:"icon name time" "icon meta time"!important;
+  }
+  .special-prayer-time{border-top:0!important;margin-top:0!important;padding-top:0!important;text-align:right!important}
+}
 
 .admin-hotspot{
   position:absolute;
@@ -2612,8 +2771,40 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   </section>
 
   <section class="bottom">
-    <div>
+    <div class="bottom-left">
       <div class="progress"><div class="fill"></div><div class="dot"></div></div>
+      <div class="special-prayers" id="specialPrayers" aria-label="Supplementary prayer windows">
+        <div class="special-prayers-head">
+          <div class="special-prayers-title">Supplementary Prayers</div>
+          <div class="special-prayers-note" id="specialPrayerNote">Beep reminders only · no Azaan</div>
+        </div>
+        <div class="special-prayers-list">
+          <div class="special-prayer-row" id="specialTahajjud">
+            <div class="special-prayer-icon">☾</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Tahajjud</div>
+              <div class="special-prayer-meta" id="specialTahajjudMeta">Last third of the night</div>
+            </div>
+            <div class="special-prayer-time" id="specialTahajjudTime">--</div>
+          </div>
+          <div class="special-prayer-row" id="specialIshraq">
+            <div class="special-prayer-icon">☀</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Ishraq</div>
+              <div class="special-prayer-meta" id="specialIshraqMeta">Early post-sunrise prayer</div>
+            </div>
+            <div class="special-prayer-time" id="specialIshraqTime">--</div>
+          </div>
+          <div class="special-prayer-row" id="specialDuha">
+            <div class="special-prayer-icon">☼</div>
+            <div class="special-prayer-main">
+              <div class="special-prayer-name">Duha / Chasht</div>
+              <div class="special-prayer-meta" id="specialDuhaMeta">Preferred mid-morning prayer</div>
+            </div>
+            <div class="special-prayer-time" id="specialDuhaTime">--</div>
+          </div>
+        </div>
+      </div>
       <div class="jumuah" id="jumuah"><b>Jumu’ah Prayer</b><span>1:45 PM</span><span>•</span><span>3:00 PM</span><span>•</span><span>4:00 PM</span></div>
     </div>
   </section>
@@ -2644,32 +2835,31 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
     <div class="azaan-drawer-title">Azaan Controls</div>
     <div class="azaan-drawer-sub">Choose one task at a time. This keeps the tablet drawer clean and easier to use.</div>
     <div class="drawer-task-tabs" role="tablist" aria-label="Drawer actions">
-      <button type="button" class="drawer-task-tab active" data-drawer-section="audio">Audio</button>
+      <button type="button" class="drawer-task-tab active" data-drawer-section="audio">Azaan On/Off</button>
       <button type="button" class="drawer-task-tab" data-drawer-section="voice">Voice</button>
       <button type="button" class="drawer-task-tab" data-drawer-section="timing">Timings</button>
     </div>
     <div class="drawer-section drawer-section-audio active" data-drawer-panel="audio">
       <div id="azaanToggleList"></div>
-
-    <div class="azaan-drawer-admin-controls" aria-label="Azaan test and volume controls">
-      <div class="drawer-control-title">Azaan Audio</div>
-      <button type="button" id="drawerTestAzaan">Test Azaan</button>
-      <button type="button" id="drawerStopAzaan">Stop Azaan</button>
-      <div class="drawer-volume-row">
-        <button type="button" id="drawerVolDown" aria-label="Lower Azaan volume">−</button>
-        <div id="drawerVolumePct">70%</div>
-        <button type="button" id="drawerVolUp" aria-label="Raise Azaan volume">+</button>
-      </div>
-    </div>
     </div>
 
     <div class="drawer-section drawer-section-voice" data-drawer-panel="voice">
       <div class="muezzin-box">
-        <div class="azaan-drawer-title small-title">Muezzin Voice</div>
+        <div class="azaan-drawer-title small-title">Azaan Voice</div>
         <select id="drawerMuezzinSelect" class="muezzin-select native-fallback" aria-label="Choose Azaan voice"></select>
         <div class="muezzin-card-list" id="drawerMuezzinCards" aria-label="Choose Azaan voice"></div>
         <div class="muezzin-now" id="drawerMuezzinNow">Current Azaan: Azaan 1</div>
-        <div class="muezzin-sub">Choose a voice, then use Test Azaan. This avoids the broken tablet dropdown behavior.</div>
+        <div class="muezzin-sub">Choose a voice, then use Test Azaan to preview the selected recording.</div>
+      </div>
+      <div class="azaan-drawer-admin-controls" aria-label="Azaan test and volume controls">
+        <div class="drawer-control-title">Azaan Audio</div>
+        <button type="button" id="drawerTestAzaan">Test Azaan</button>
+        <button type="button" id="drawerStopAzaan">Stop Azaan</button>
+        <div class="drawer-volume-row">
+          <button type="button" id="drawerVolDown" aria-label="Lower Azaan volume">−</button>
+          <div id="drawerVolumePct">70%</div>
+          <button type="button" id="drawerVolUp" aria-label="Raise Azaan volume">+</button>
+        </div>
       </div>
     </div>
 
@@ -2848,7 +3038,6 @@ let activeAzaanPrayer='';
 let lastActivePrayerName='';
 let azaanVisualTimer=null;
 let azaanVisualIndex=0;
-let azaanPlaybackRequestId=0;
 let burnInIndex=0;
 const PRAYER_ORDER=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 let azaanEnabled={Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true};
@@ -3039,6 +3228,8 @@ function showToast(text){
 }
 
 
+renderMuezzinControls();
+
 function loadAzaanPrefs(){
   try{
     const saved=JSON.parse(localStorage.getItem('aslima_azaan_enabled')||'null');
@@ -3179,6 +3370,19 @@ function to12(t){
     text:`${h}:${String(m).padStart(2,'0')}`,
     period:p,
     full:`${h}:${String(m).padStart(2,'0')} ${p}`
+  };
+}
+
+function to12FromMinutes(totalMinutes){
+  const normalized=wrapMinuteValue(totalMinutes);
+  const h24=Math.floor(normalized/60);
+  const m=normalized%60;
+  const h=h24%12||12;
+  const ap=h24>=12?'PM':'AM';
+  return {
+    text:`${h}:${String(m).padStart(2,'0')}`,
+    period:ap,
+    full:`${h}:${String(m).padStart(2,'0')} ${ap}`
   };
 }
 
@@ -3596,6 +3800,118 @@ function applyPrayerTheme(nextName){
   }
 }
 
+function wrapMinuteValue(value){
+  value=Math.round(Number(value)||0);
+  return ((value%1440)+1440)%1440;
+}
+
+function minutesUntil(target,current){
+  target=wrapMinuteValue(target);
+  current=wrapMinuteValue(current);
+  let delta=target-current;
+  if(delta<0)delta+=1440;
+  return delta;
+}
+
+function isMinuteWithinWindow(now,start,end){
+  now=wrapMinuteValue(now);
+  start=wrapMinuteValue(start);
+  end=wrapMinuteValue(end);
+  if(start===end)return false;
+  if(start<end)return now>=start && now<end;
+  return now>=start || now<end;
+}
+
+function shortDurationText(totalMinutes){
+  totalMinutes=Math.max(0,Math.round(totalMinutes||0));
+  const h=Math.floor(totalMinutes/60);
+  const m=totalMinutes%60;
+  if(h>0&&m>0)return `${h}h ${m}m`;
+  if(h>0)return `${h}h`;
+  return `${m}m`;
+}
+
+function getSupplementaryPrayerWindows(){
+  const fajr=mins(timings.Fajr);
+  const sunrise=mins(timings.Sunrise);
+  const dhuhr=mins(timings.Dhuhr);
+  const maghrib=mins(timings.Maghrib);
+  if(![fajr,sunrise,dhuhr,maghrib].every(Number.isFinite))return null;
+
+  const nightLength=(1440-maghrib)+fajr;
+  const tahajjudStart=wrapMinuteValue(fajr-Math.round(nightLength/3));
+  const tahajjudEnd=wrapMinuteValue(fajr);
+
+  // Practical South Asian Hanafi display split:
+  // Ishraq begins after the sunrise-prohibited period; Duha/Chasht is shown from mid-morning.
+  const ishraqStart=wrapMinuteValue(sunrise+20);
+  const morningMidpoint=wrapMinuteValue(sunrise+Math.round((dhuhr-sunrise)/2));
+  const ishraqEnd=Math.max(ishraqStart+1,morningMidpoint);
+  const duhaStart=ishraqEnd;
+  const duhaEnd=wrapMinuteValue(dhuhr-10);
+
+  return {
+    tahajjud:{
+      id:'tahajjud',
+      title:'Tahajjud',
+      label:'Last third of the night',
+      icon:'☾',
+      start:tahajjudStart,
+      end:tahajjudEnd,
+      window:`${to12FromMinutes(tahajjudStart).full} – ${to12FromMinutes(tahajjudEnd).full}`
+    },
+    ishraq:{
+      id:'ishraq',
+      title:'Ishraq',
+      label:'Early post-sunrise prayer',
+      icon:'☀',
+      start:ishraqStart,
+      end:ishraqEnd,
+      window:`${to12FromMinutes(ishraqStart).full} – ${to12FromMinutes(ishraqEnd).full}`
+    },
+    duha:{
+      id:'duha',
+      title:'Duha / Chasht',
+      label:'Preferred mid-morning prayer',
+      icon:'☼',
+      start:duhaStart,
+      end:duhaEnd,
+      window:`${to12FromMinutes(duhaStart).full} – ${to12FromMinutes(duhaEnd).full}`
+    }
+  };
+}
+
+function renderSupplementaryPrayers(){
+  const windows=getSupplementaryPrayerWindows();
+  const card=$('specialPrayers');
+  if(!card)return;
+  if(!windows){card.hidden=true;return;}
+  card.hidden=false;
+  const nowDate=new Date();
+  const now=nowDate.getHours()*60+nowDate.getMinutes()+nowDate.getSeconds()/60;
+  const noteParts=[];
+
+  [
+    {row:$('specialTahajjud'),meta:$('specialTahajjudMeta'),time:$('specialTahajjudTime'),data:windows.tahajjud},
+    {row:$('specialIshraq'),meta:$('specialIshraqMeta'),time:$('specialIshraqTime'),data:windows.ishraq},
+    {row:$('specialDuha'),meta:$('specialDuhaMeta'),time:$('specialDuhaTime'),data:windows.duha}
+  ].forEach(entry=>{
+    if(!entry.row||!entry.meta||!entry.time)return;
+    const active=isMinuteWithinWindow(now,entry.data.start,entry.data.end);
+    const remaining=active?minutesUntil(entry.data.end,now):minutesUntil(entry.data.start,now);
+    const status=active?`Active now · ${shortDurationText(remaining)} left`:`Starts in ${shortDurationText(remaining)}`;
+    entry.row.classList.toggle('active',active);
+    entry.meta.textContent=`${entry.data.label} · ${status}`;
+    entry.time.textContent=entry.data.window;
+    if(active)noteParts.push(entry.data.title+' active now');
+  });
+
+  const note=$('specialPrayerNote');
+  if(note){
+    note.textContent=noteParts.length?`${noteParts.join(' • ')} · beep reminders only`:'Beep reminders only · no Azaan';
+  }
+}
+
 
 function remainingHuman(seconds){
   seconds=Math.max(0,Math.floor(seconds||0));
@@ -3733,6 +4049,7 @@ function render(){
 
   $('jumuah').innerHTML='<b>Jumu’ah Prayer</b><span>'+CONFIG.jumuah.join('</span><span>•</span><span>')+'</span>';
   updateProgress();
+  renderSupplementaryPrayers();
   updateVolumeLabel();
   renderLocationControls();
 }
@@ -3820,16 +4137,34 @@ function initAslimaFirebaseRemote(){
     if(!firebase.apps.length)firebase.initializeApp(window.ASLIMA_REMOTE.config);
     const ref=firebase.database().ref(window.ASLIMA_REMOTE.path);
     window.aslimaRemoteRef=ref;
+    // Dedicated voice listener makes phone selections apply immediately and
+    // updates the active playback controller without requiring Save Settings.
+    ref.child('muezzin').on('value',snap=>{
+      const value=snap.val();
+      if(typeof value==='string'&&value.trim()){
+        const id=normalizeAzaanVoiceId(value);
+        (window.setAzaanVoice||setAzaanVoice)(id,{quiet:true,preload:false,source:'firebase-child'});
+        forceMuezzinUiSync(id);
+      }
+    });
     let commandListenerReady=false;
     let commandBaselineId='';
-    ref.child('command').once('value').then(snap=>{const c=snap.val();commandBaselineId=c&&c.id?String(c.id):'';commandListenerReady=true;}).catch(()=>{commandListenerReady=true;});
+    ref.child('command').once('value').then(snap=>{
+      const c=snap.val();
+      commandBaselineId=c&&c.id?String(c.id):'';
+      commandListenerReady=true;
+    }).catch(()=>{commandListenerReady=true;});
     ref.child('command').on('value',snap=>{
-      const c=snap.val();if(!commandListenerReady||!c||!c.id)return;const id=String(c.id);
+      const c=snap.val();
+      if(!commandListenerReady||!c||!c.id)return;
+      const id=String(c.id);
       if(id===commandBaselineId){commandBaselineId='';return;}
       let persisted='';try{persisted=localStorage.getItem('aslima_last_remote_command')||'';}catch(e){}
-      const now=Date.now();const fresh=(!c.expiresAt||Number(c.expiresAt)>=now)&&(!c.createdAt||now-Number(c.createdAt)<=120000);
+      const now=Date.now();
+      const fresh=(!c.expiresAt||Number(c.expiresAt)>=now)&&(!c.createdAt||now-Number(c.createdAt)<=120000);
       if(!fresh||id===aslimaRemoteLastCommand||id===persisted)return;
-      aslimaRemoteLastCommand=id;try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
+      aslimaRemoteLastCommand=id;
+      try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
       if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command'});
       if(c.type==='stopAzaan'&&typeof window.stopAzaan==='function')window.stopAzaan();
     });
@@ -3908,64 +4243,96 @@ async function unlockAudio(e){
     audio.pause();
     audio.currentTime=0;
     audioUnlocked=true;
-  }catch(err){}
+  }catch(err){
+    // The app will retry from the explicit Test Azaan action.
+  }
 }
 
 
 const AZAAN_BASE_SEQUENCE=[
-  {ar:'الله أكبر', en:'Allah is the Greatest', repeat:4, weight:1.00},
-  {ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah', repeat:2, weight:1.35},
-  {ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah', repeat:2, weight:1.45},
-  {ar:'حي على الصلاة', en:'Come to prayer', repeat:2, weight:1.25},
-  {ar:'حي على الفلاح', en:'Come to success', repeat:2, weight:1.25},
-  {ar:'الله أكبر', en:'Allah is the Greatest', repeat:2, weight:.95},
-  {ar:'لا إله إلا الله', en:'There is no god but Allah', repeat:1, weight:1.45}
+  {key:'takbir1',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'takbir2',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'takbir3',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'takbir4',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'shahada1a',ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah'},
+  {key:'shahada1b',ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah'},
+  {key:'shahada2a',ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah'},
+  {key:'shahada2b',ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah'},
+  {key:'hayyaSalah1',ar:'حي على الصلاة', en:'Come to prayer'},
+  {key:'hayyaSalah2',ar:'حي على الصلاة', en:'Come to prayer'},
+  {key:'hayyaFalah1',ar:'حي على الفلاح', en:'Come to success'},
+  {key:'hayyaFalah2',ar:'حي على الفلاح', en:'Come to success'},
+  {key:'takbir5',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'takbir6',ar:'الله أكبر', en:'Allah is the Greatest'},
+  {key:'final',ar:'لا إله إلا الله', en:'There is no god but Allah'}
 ];
-const FAJR_EXTRA_SEQUENCE={ar:'الصلاة خير من النوم', en:'Prayer is better than sleep', repeat:2, weight:1.25};
+const FAJR_EXTRA_LINES=[
+  {key:'fajr1',ar:'الصلاة خير من النوم', en:'Prayer is better than sleep'},
+  {key:'fajr2',ar:'الصلاة خير من النوم', en:'Prayer is better than sleep'}
+];
 
-function getAzaanSequence(prayerName){
-  const sequence=[];
-  for(const item of AZAAN_BASE_SEQUENCE){
-    if(item.ar==='الله أكبر' && item.repeat===2 && String(prayerName).toLowerCase()==='fajr'){
-      for(let i=0;i<FAJR_EXTRA_SEQUENCE.repeat;i++){
-        sequence.push({...FAJR_EXTRA_SEQUENCE, currentRepeat:i+1});
-      }
-    }
-    for(let i=0;i<item.repeat;i++){
-      sequence.push({...item, currentRepeat:i+1});
-    }
-  }
-  return sequence;
+/* Per-recording phrase pacing. Values are relative phrase lengths and are
+   converted against the audio file's real duration, so the text remains tied
+   to playback even when recordings have different lengths. */
+const AZAAN_VISUAL_WEIGHTS={
+  madinah:[.72,.76,.78,.84,1.28,1.32,1.42,1.46,1.30,1.34,1.30,1.34,.82,.88,1.22],
+  makkah:[.82,.86,.90,.98,1.44,1.48,1.58,1.62,1.42,1.46,1.42,1.46,.92,.98,1.34],
+  abdulbasit:[.90,.94,.98,1.04,1.56,1.60,1.70,1.74,1.50,1.54,1.50,1.54,1.00,1.04,1.42],
+  minshawi:[.86,.90,.94,1.00,1.50,1.54,1.66,1.70,1.46,1.50,1.46,1.50,.96,1.00,1.38],
+  yusufislam:[.70,.74,.78,.82,1.20,1.24,1.32,1.36,1.18,1.22,1.18,1.22,.80,.84,1.12]
+};
+let azaanVisualFrameRequest=0;
+let azaanVisualTimeHandler=null;
+let azaanVisualMetaHandler=null;
+let azaanPlaybackRequestId=0;
+
+function getAzaanVisualSequence(prayerName){
+  const lines=AZAAN_BASE_SEQUENCE.map(x=>({...x}));
+  if(String(prayerName).toLowerCase()==='fajr')lines.splice(12,0,...FAJR_EXTRA_LINES.map(x=>({...x})));
+  const base=(AZAAN_VISUAL_WEIGHTS[selectedAzaanVoice]||AZAAN_VISUAL_WEIGHTS.madinah).slice();
+  if(String(prayerName).toLowerCase()==='fajr')base.splice(12,0,1.34,1.38);
+  return lines.map((line,i)=>({...line,weight:base[i]||1}));
 }
-
+function stopAzaanVisualSync(){
+  if(azaanVisualFrameRequest)cancelAnimationFrame(azaanVisualFrameRequest);
+  azaanVisualFrameRequest=0;
+  if(azaanVisualTimeHandler)audio.removeEventListener('timeupdate',azaanVisualTimeHandler);
+  if(azaanVisualMetaHandler)audio.removeEventListener('loadedmetadata',azaanVisualMetaHandler);
+  azaanVisualTimeHandler=null;
+  azaanVisualMetaHandler=null;
+}
 function startAzaanVisual(prayerName){
-  const sequence=getAzaanSequence(prayerName);
-  clearInterval(azaanVisualTimer);
+  const sequence=getAzaanVisualSequence(prayerName);
+  stopAzaanVisualSync();
   azaanVisualIndex=-1;
 
-  function paint(item,index){
+  function paint(index){
+    index=Math.max(0,Math.min(sequence.length-1,index));
     if(index===azaanVisualIndex)return;
     azaanVisualIndex=index;
-    $('azaanArabic').textContent=item.ar;
-    $('azaanEnglish').textContent=item.en;
+    $('azaanArabic').textContent=sequence[index].ar;
+    $('azaanEnglish').textContent=sequence[index].en;
   }
-
-  function frame(){
-    const fallbackDuration=String(prayerName).toLowerCase()==='fajr'?190:170;
-    const duration=(Number.isFinite(audio.duration)&&audio.duration>20)?audio.duration:fallbackDuration;
+  function sync(){
+    const duration=(Number.isFinite(audio.duration)&&audio.duration>20)?audio.duration:0;
+    const elapsed=Math.max(0,audio.currentTime||0);
+    if(!duration){paint(0);return;}
     const totalWeight=sequence.reduce((sum,item)=>sum+item.weight,0);
-    const elapsed=Math.max(0,Math.min(duration,audio.currentTime||0));
-    let cursor=0;
-    let index=sequence.length-1;
+    const progress=Math.min(1,elapsed/duration);
+    let cursor=0,index=sequence.length-1;
     for(let i=0;i<sequence.length;i++){
-      cursor+=duration*(sequence[i].weight/totalWeight);
-      if(elapsed<=cursor){index=i;break;}
+      cursor+=sequence[i].weight/totalWeight;
+      if(progress<cursor){index=i;break;}
     }
-    paint(sequence[index],index);
+    paint(index);
   }
-
-  frame();
-  azaanVisualTimer=setInterval(frame,250);
+  function loop(){sync();if(!audio.paused&&!audio.ended)azaanVisualFrameRequest=requestAnimationFrame(loop);}
+  azaanVisualTimeHandler=sync;
+  azaanVisualMetaHandler=sync;
+  audio.addEventListener('timeupdate',azaanVisualTimeHandler);
+  audio.addEventListener('loadedmetadata',azaanVisualMetaHandler);
+  sync();
+  azaanVisualFrameRequest=requestAnimationFrame(loop);
 }
 
 function resolveAzaanPrayer(prayerName){
@@ -3984,6 +4351,7 @@ async function playAzaan(prayerName,options){
   const requestId=++azaanPlaybackRequestId;
   activeAzaanPrayer=prayer;
   try{
+    // Keep the overlay hidden until the selected recording is genuinely ready.
     hideAzaanOverlay();
     const voiceAtStart=selectedAzaanVoice;
     await prepareAzaanAudio(voiceAtStart,true);
@@ -3993,7 +4361,7 @@ async function playAzaan(prayerName,options){
     audio.volume=Number.isFinite(currentVolume)?Math.max(0,Math.min(1,currentVolume)):0.70;
     try{audio.currentTime=0;}catch(e){}
     const playResult=audio.play();
-    if(playResult&&typeof playResult.then==='function')await playResult;
+    if(playResult && typeof playResult.then==='function')await playResult;
     if(requestId!==azaanPlaybackRequestId){
       try{audio.pause();audio.currentTime=0;}catch(e){}
       return false;
@@ -4015,8 +4383,7 @@ async function playAzaan(prayerName,options){
 }
 
 function hideAzaanOverlay(){
-  clearInterval(azaanVisualTimer);
-  azaanVisualTimer=null;
+  stopAzaanVisualSync();
   const overlay=$('adhanOverlay');
   if(overlay)overlay.classList.remove('show');
   document.body.classList.remove('azaan-playing','adhan-playing','adhan-overlay-active');
@@ -4028,6 +4395,8 @@ function stopAzaan(){
   azaanAudioLoadPromise=null;
   try{audio.pause();}catch(e){}
   try{audio.currentTime=0;}catch(e){}
+  // Keep the source attached. Detaching it caused a race in Fully Kiosk where
+  // the next play request could show the overlay while the media element had no source.
   audio.removeAttribute('autoplay');
   activeAzaanPrayer='';
   hideAzaanOverlay();
@@ -4038,8 +4407,15 @@ function stopAzaan(){
 window.playAzaan=playAzaan;
 window.stopAzaan=stopAzaan;
 audio.addEventListener('ended',()=>{activeAzaanPrayer='';hideAzaanOverlay();});
-audio.addEventListener('pause',()=>{if(audio.currentTime===0||audio.ended)hideAzaanOverlay();});
-audio.addEventListener('error',()=>{const v=getAzaanVoice(selectedAzaanVoice);hideAzaanOverlay();showToast('Azaan audio failed: '+v.name);});
+audio.addEventListener('pause',()=>{
+  if(audio.currentTime===0 || audio.ended)hideAzaanOverlay();
+});
+audio.addEventListener('error',()=>{
+  const v=getAzaanVoice(selectedAzaanVoice);
+  console.warn('Azaan audio element error',audio.error);
+  hideAzaanOverlay();
+  showToast('Azaan audio failed: '+v.name);
+});
 
 
 function showAdmin(opts){
@@ -4132,10 +4508,61 @@ function bindAzaanAudioControls(){
 }
 bindAzaanAudioControls();
 
-document.addEventListener('pointerdown',unlockAudio,{once:true,passive:true});
+document.addEventListener('pointerdown',e=>{unlockAudio(e);unlockReminderAudio();},{once:true,passive:true});
+
+let reminderAudioContext=null;
+let reminderAudioUnlocked=false;
+
+function unlockReminderAudio(){
+  if(reminderAudioUnlocked)return true;
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)return false;
+  try{
+    reminderAudioContext=reminderAudioContext||new Ctx();
+    if(reminderAudioContext.state==='suspended'&&reminderAudioContext.resume){
+      reminderAudioContext.resume().catch(()=>{});
+    }
+    reminderAudioUnlocked=true;
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function playReminderBeep(label){
+  if(document.body.classList.contains('azaan-playing')||document.body.classList.contains('adhan-playing')||document.body.classList.contains('adhan-overlay-active'))return false;
+  if(!unlockReminderAudio()){
+    showToast(label+' time has begun');
+    return false;
+  }
+  try{
+    const now=reminderAudioContext.currentTime;
+    [0,0.24].forEach((offset,index)=>{
+      const osc=reminderAudioContext.createOscillator();
+      const gain=reminderAudioContext.createGain();
+      osc.type='sine';
+      osc.frequency.setValueAtTime(index===0?880:988, now+offset);
+      gain.gain.setValueAtTime(0.0001, now+offset);
+      gain.gain.exponentialRampToValueAtTime(0.07, now+offset+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now+offset+0.18);
+      osc.connect(gain);
+      gain.connect(reminderAudioContext.destination);
+      osc.start(now+offset);
+      osc.stop(now+offset+0.19);
+    });
+    showToast(label+' time has begun');
+    return true;
+  }catch(e){
+    console.warn('Reminder beep failed',e);
+    showToast(label+' time has begun');
+    return false;
+  }
+}
 
 const azaanSchedulerStartedAt=Date.now();
 function autoFireAzaan(){
+  // Never auto-start immediately after a page refresh. This also gives the
+  // tablet enough time to load current prayer times and remote settings.
   if(Date.now()-azaanSchedulerStartedAt<65000)return;
   const n=new Date();
   const stamp=n.toDateString();
@@ -4153,6 +4580,31 @@ function autoFireAzaan(){
   });
 }
 
+function autoFireSupplementaryPrayerBeep(){
+  if(Date.now()-azaanSchedulerStartedAt<65000)return;
+  const windows=getSupplementaryPrayerWindows();
+  if(!windows)return;
+  const n=new Date();
+  const now=n.getHours()*60+n.getMinutes();
+  const stamp=n.toDateString();
+  const persistedKey='aslima_last_fired_special';
+  let firedMap={};
+  try{firedMap=JSON.parse(localStorage.getItem(persistedKey)||'{}')||{};}catch(e){firedMap={};}
+
+  [
+    {id:'tahajjud',start:windows.tahajjud.start,label:'Tahajjud'},
+    {id:'ishraq',start:windows.ishraq.start,label:'Ishraq'},
+    {id:'duha',start:windows.duha.start,label:'Duha / Chasht'}
+  ].forEach(item=>{
+    const dayKey=stamp+'-'+item.id;
+    if(now===item.start && firedMap[item.id]!==dayKey){
+      firedMap[item.id]=dayKey;
+      try{localStorage.setItem(persistedKey,JSON.stringify(firedMap));}catch(e){}
+      playReminderBeep(item.label);
+    }
+  });
+}
+
 loadAzaanPrefs();
 loadTimingSourcePrefs();
 renderAzaanControls();
@@ -4163,6 +4615,7 @@ loadTimes();
 render();
 setInterval(render,1000);
 setInterval(autoFireAzaan,30000);
+setInterval(autoFireSupplementaryPrayerBeep,15000);
 setInterval(loadTimes,6*60*60*1000);
 setInterval(applyBurnInShift,60000);
 setTimeout(applyBurnInShift,12000);
@@ -5105,6 +5558,7 @@ body.drawer-open #azaanDrawer.azaan-drawer{
       });
     });
   }
+  window.drawAslimaVoiceCards=drawVoiceCards;
   var oldRender=null;
   function hookMuezzinRender(){
     try{
@@ -5122,9 +5576,42 @@ body.drawer-open #azaanDrawer.azaan-drawer{
 })();
 </script>
 
-<script>window.addEventListener("load",()=>{document.getElementById("azaanDrawer")?.classList.add("open");document.body.classList.add("azaan-drawer-open","drawer-open");setTimeout(()=>{document.querySelector("[data-drawer-section=voice]")?.click();},100);});</script><style id="aslima-v9113-drawer-handle-preview-fix">
-.aslima-persistent-handle{right:0!important;top:50%!important;transform:translateY(-50%)!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;z-index:100020!important}
-body.azaan-drawer-open .aslima-persistent-handle,body.drawer-open .aslima-persistent-handle{right:min(92vw,440px)!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+<style id="aslima-v9113-drawer-handle-and-sync-fix">
+/* ASLIMA V9.1.13 — handle remains visible and attaches to the open drawer edge. */
+.aslima-persistent-handle{
+  right:0!important;
+  top:50%!important;
+  bottom:auto!important;
+  transform:translateY(-50%)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  z-index:100020!important;
+  transition:right .32s cubic-bezier(.2,.8,.2,1),opacity .2s ease!important;
+}
+body.azaan-drawer-open .aslima-persistent-handle,
+body.drawer-open .aslima-persistent-handle{
+  right:min(92vw,440px)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+/* The drawer is a following sibling in this build; keep this fallback for
+   browsers where the body class update occurs a frame later. */
+body:has(#azaanDrawer.open) .aslima-persistent-handle{
+  right:min(92vw,440px)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+body.global-timing-open .aslima-persistent-handle,
+body.azaan-playing .aslima-persistent-handle,
+body.adhan-playing .aslima-persistent-handle,
+body.adhan-overlay-active .aslima-persistent-handle{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
 </style>
 
 <style id="aslima-v915-stop-and-overlay-handle-fix">

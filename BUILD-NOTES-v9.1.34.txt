@@ -1,0 +1,7 @@
+ASLIMA V9.1.34
+
+Added Tahajjud and Duha / Chasht supplementary prayer visuals.
+Added automatic gentle beep reminders at the start of each supplementary prayer window.
+These reminders do not use the Azaan overlay or Azaan audio recordings.
+Tahajjud is shown as the last third of the night.
+Duha / Chasht is shown from 20 minutes after sunrise until 10 minutes before Dhuhr.
