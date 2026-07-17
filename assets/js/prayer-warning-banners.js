@@ -1,4 +1,4 @@
-/* ASLIMA V9.1.39 — compact expandable prayer-guidance banner with dock-safe placement.
+/* ASLIMA V9.1.40 — compact expandable prayer-guidance banner with dock-safe placement.
    Collapsed by default with concise warning text; expands on tap for full details.
    Isolated display add-on: does not modify prayer times, Azaan audio, Firebase,
    timing-source selection, the controls drawer, or the animated background. */
@@ -506,10 +506,11 @@
     maxTop=Math.min(maxTop,Math.floor(safeBottom-banner.offsetHeight));
     var top=Math.max(minTop,Math.min(desiredTop,maxTop));
 
-    // On short landscape screens, an expanded banner cannot fit below the
-    // prayer panel without covering the dock/logo. Move it above the dock and
-    // to the open space immediately left of the prayer panel instead.
-    if(uiState.expanded&&maxTop<minTop){
+    // On short landscape screens, a warning may not fit below the prayer
+    // panel once the unified dock is present or expanded. Move either the
+    // collapsed or expanded banner above the dock and into the open space
+    // immediately left of the prayer panel instead of allowing an overlap.
+    if(maxTop<minTop){
       top=Math.max(margin,maxTop);
       var leftOfPanel=Math.round(rect.left-banner.offsetWidth-12);
       if(leftOfPanel>=margin)left=leftOfPanel;
@@ -579,7 +580,7 @@
   }
 
   window.ASLIMAPrayerWarnings={
-    version:'9.1.39',
+    version:'9.1.40',
     config:config,
     parseMinutes:parseMinutes,
     normalizeSchedule:normalizeSchedule,
