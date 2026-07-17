@@ -1,19 +1,19 @@
-/* ASLIMA V9.1.32 — compact expandable prayer-guidance banner.
+/* ASLIMA V9.1.33 — compact expandable prayer-guidance banner.
    Collapsed by default with concise warning text; expands on tap for full details.
    Isolated display add-on: does not modify prayer times, Azaan audio, Firebase,
    timing-source selection, the controls drawer, or the animated background. */
 (function(){
   'use strict';
 
-  var ADDON_ID='aslima-prayer-warning-banners-v932';
-  if(window.__ASLIMA_PRAYER_WARNINGS_V932__)return;
-  window.__ASLIMA_PRAYER_WARNINGS_V932__=true;
+  var ADDON_ID='aslima-prayer-warning-banners-v933';
+  if(window.__ASLIMA_PRAYER_WARNINGS_V933__)return;
+  window.__ASLIMA_PRAYER_WARNINGS_V933__=true;
 
   var defaults={
     sunriseProhibitedMinutes:18,
     zawalLeadMinutes:5,
     sunsetProhibitedMinutes:15,
-    updateIntervalMs:1000
+    updateIntervalMs:250
   };
   var supplied=window.ASLIMA_PRAYER_WARNING_CONFIG||{};
   var config={};
@@ -59,6 +59,7 @@
         cursor:pointer;
         -webkit-tap-highlight-color:transparent;
         user-select:none;
+        font-family:var(--font-ui,"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)!important;
       }
       #aslimaPrayerWarning.aslima-warning-visible{
         opacity:1;
@@ -79,18 +80,38 @@
         background:linear-gradient(180deg,rgba(27,11,12,.95),rgba(12,10,12,.94));
       }
       #aslimaPrayerWarning .aslima-warning-icon{
+        position:relative;
         width:32px;
         min-width:32px;
         height:32px;
-        display:grid;
-        place-items:center;
         border:1px solid color-mix(in srgb,var(--warn-accent) 46%,transparent);
         border-radius:10px;
         background:var(--warn-soft);
         color:var(--warn-accent);
-        font:800 20px/1 Inter,system-ui,sans-serif;
+        font-family:var(--font-ui,"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif)!important;
+      }
+      #aslimaPrayerWarning .aslima-warning-icon::before{
+        content:"!";
+        position:absolute;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-54%);
+        font-family:inherit;
+        font-size:20px;
+        line-height:1;
+        font-weight:700;
+        text-align:center;
       }
       #aslimaPrayerWarning .aslima-warning-copy{min-width:0;display:grid;gap:4px}
+      #aslimaPrayerWarning .aslima-warning-copy,
+      #aslimaPrayerWarning .aslima-warning-title,
+      #aslimaPrayerWarning .aslima-warning-countdown,
+      #aslimaPrayerWarning .aslima-warning-chevron,
+      #aslimaPrayerWarning .aslima-warning-summary,
+      #aslimaPrayerWarning .aslima-warning-detail,
+      #aslimaPrayerWarning .aslima-warning-hint{
+        font-family:inherit!important;
+      }
       #aslimaPrayerWarning .aslima-warning-top{
         display:grid;
         grid-template-columns:minmax(0,1fr) auto;
@@ -100,10 +121,10 @@
       #aslimaPrayerWarning .aslima-warning-title{
         min-width:0;
         color:#fff0d3;
-        font-size:clamp(13px,.96vw,16px);
+        font-size:clamp(13px,1vw,16px);
         line-height:1.08;
-        font-weight:780;
-        letter-spacing:.045em;
+        font-weight:600;
+        letter-spacing:.035em;
         text-transform:uppercase;
         white-space:nowrap;
       }
@@ -118,17 +139,17 @@
         display:inline-flex;
         align-items:center;
         justify-content:center;
-        min-width:48px;
-        max-width:72px;
-        padding:6px 8px;
+        min-width:76px;
+        max-width:112px;
+        padding:6px 9px;
         border:1px solid color-mix(in srgb,var(--warn-accent) 34%,transparent);
         border-radius:999px;
         background:rgba(0,0,0,.18);
         color:#ffe9bd;
-        font-size:clamp(10px,.78vw,12px);
+        font-size:clamp(10px,.80vw,12px);
         line-height:1;
-        font-weight:730;
-        letter-spacing:.045em;
+        font-weight:600;
+        letter-spacing:.015em;
         white-space:nowrap;
         font-variant-numeric:tabular-nums;
       }
@@ -150,9 +171,9 @@
       #aslimaPrayerWarning .aslima-warning-summary{
         min-width:0;
         color:rgba(255,240,211,.76);
-        font-size:clamp(11px,.82vw,12px);
+        font-size:clamp(11px,.84vw,13px);
         line-height:1.15;
-        font-weight:570;
+        font-weight:500;
         white-space:nowrap;
       }
       #aslimaPrayerWarning .aslima-warning-detail,
@@ -166,9 +187,9 @@
       #aslimaPrayerWarning .aslima-warning-detail{
         min-width:0;
         color:rgba(255,240,211,.82);
-        font-size:clamp(12px,.90vw,14px);
+        font-size:clamp(12px,.92vw,14px);
         line-height:1.32;
-        font-weight:540;
+        font-weight:500;
         white-space:normal;
         overflow-wrap:break-word;
       }
@@ -268,7 +289,8 @@
       detail:detail,
       end:end,
       countdownLabel:countdownLabel,
-      remainingMinutes:Math.max(0,Math.ceil(end-now))
+      remainingSeconds:Math.max(0,Math.ceil(Math.max(0,(end-now)*60)-1e-7)),
+      remainingMinutes:Math.max(0,Math.ceil(Math.max(0,end-now)-1e-9))
     };
   }
 
@@ -309,16 +331,21 @@
 
   function nowAsMinutes(date){return date.getHours()*60+date.getMinutes()+date.getSeconds()/60;}
 
+  function formatRemainingSeconds(totalSeconds){
+    var seconds=Math.max(0,Math.ceil(Number(totalSeconds)||0));
+    var hours=Math.floor(seconds/3600);
+    var minutes=Math.floor((seconds%3600)/60);
+    var remainder=seconds%60;
+    if(hours>0)return hours+'h '+String(minutes).padStart(2,'0')+'m '+String(remainder).padStart(2,'0')+'s';
+    return minutes+'m '+String(remainder).padStart(2,'0')+'s';
+  }
+
   function formatRemaining(minutes){
-    if(minutes<=1)return '<1m';
-    if(minutes<60)return minutes+'m';
-    var hours=Math.floor(minutes/60);
-    var remainder=minutes%60;
-    return hours+'h'+(remainder?' '+remainder+'m':'');
+    return formatRemainingSeconds(Math.max(0,Number(minutes)||0)*60);
   }
 
   function buildCountdownText(state){
-    return formatRemaining(state.remainingMinutes);
+    return formatRemainingSeconds(state.remainingSeconds);
   }
 
   function getCollapsedSummary(state){
@@ -346,7 +373,7 @@
     var icon=document.createElement('div');
     icon.className='aslima-warning-icon';
     icon.setAttribute('aria-hidden','true');
-    icon.textContent='!';
+    icon.textContent='';
 
     var copy=document.createElement('div');
     copy.className='aslima-warning-copy';
@@ -525,7 +552,7 @@
     installStyles();
     createBanner();
     update();
-    window.setInterval(update,Math.max(500,config.updateIntervalMs));
+    window.setInterval(update,Math.max(250,config.updateIntervalMs));
     window.addEventListener('resize',function(){update();},{passive:true});
     window.addEventListener('orientationchange',function(){window.setTimeout(update,120);},{passive:true});
     document.addEventListener('click',function(){setExpanded(false,false);});
@@ -533,7 +560,7 @@
   }
 
   window.ASLIMAPrayerWarnings={
-    version:'9.1.32',
+    version:'9.1.33',
     config:config,
     parseMinutes:parseMinutes,
     normalizeSchedule:normalizeSchedule,
@@ -542,6 +569,7 @@
     applyAnchoredLayout:applyAnchoredLayout,
     buildCountdownText:buildCountdownText,
     formatRemaining:formatRemaining,
+    formatRemainingSeconds:formatRemainingSeconds,
     toggleExpanded:toggleExpanded,
     setExpanded:setExpanded,
     get uiState(){return uiState;}
