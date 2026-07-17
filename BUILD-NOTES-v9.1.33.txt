@@ -1,6 +1,0 @@
-ASLIMA V9.1.33
-
-- Optically centers the warning exclamation mark.
-- Countdown now updates with hours, minutes, and seconds.
-- Banner inherits the same ASLIMA UI font stack and uses matching typography weights/spacing.
-- Retains compact tap-to-expand behavior and all V9.1.32 prayer-window logic.
