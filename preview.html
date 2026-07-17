@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
-<title>ASLIMA V9.1.39</title>
+<title>ASLIMA V9.1.45</title>
 <style>
 :root{
   --gold:#f1bd65;
@@ -3280,6 +3280,397 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 @media (prefers-reduced-motion:reduce){.dock-detail-area{animation:none!important}.bottom-dock{transition:none!important}}
 </style>
 
+
+<style id="aslima-v942-dock-tone-tiles">
+/* ASLIMA V9.1.42 — tonal grouping for bottom-dock detail tiles + logo lift */
+.brand-mark{
+  right:5.15vw!important;
+  bottom:4.1vh!important;
+}
+.bottom-dock.detail-open .dock-detail-area{
+  padding:.8vh 0 .72vh!important;
+}
+.supp-context-list,
+.jumuah-panel-list{
+  gap:.52vw!important;
+}
+.supp-context-item,
+.jumuah-row{
+  border-left:0!important;
+  border-top:0!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:1.05vh!important;
+  min-height:4.55vh!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 .8vh 1.6vh rgba(0,0,0,.08)!important;
+}
+.supp-context-item{
+  grid-template-columns:auto minmax(0,1fr)!important;
+  padding:.52vh .72vw!important;
+  background:linear-gradient(180deg,rgba(37,112,123,.14),rgba(20,69,76,.15))!important;
+  border-color:rgba(95,208,217,.18)!important;
+}
+.supp-context-item:nth-child(1){
+  background:linear-gradient(180deg,rgba(44,114,126,.16),rgba(20,63,72,.15))!important;
+  border-color:rgba(100,209,218,.20)!important;
+}
+.supp-context-item:nth-child(2){
+  background:linear-gradient(180deg,rgba(44,128,110,.15),rgba(20,74,63,.15))!important;
+  border-color:rgba(92,214,177,.20)!important;
+}
+.supp-context-item:nth-child(3){
+  background:linear-gradient(180deg,rgba(42,94,129,.15),rgba(18,56,73,.15))!important;
+  border-color:rgba(102,183,220,.20)!important;
+}
+.supp-context-item.active{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 0 0 1px rgba(92,214,177,.18),0 0 2.0vh rgba(44,128,110,.12)!important;
+}
+.supp-context-item-name,
+.supp-context-item-time{color:rgba(255,246,227,.93)!important}
+.supp-context-item-icon{color:rgba(198,244,235,.92)!important}
+.supp-context-item:nth-child(1) .supp-context-item-icon{color:rgba(167,228,235,.95)!important}
+.supp-context-item:nth-child(2) .supp-context-item-icon{color:rgba(165,236,209,.95)!important}
+.supp-context-item:nth-child(3) .supp-context-item-icon{color:rgba(165,214,236,.95)!important}
+.supp-context-item.active .supp-context-item-name,
+.supp-context-item.active .supp-context-item-time,
+.supp-context-item.active .supp-context-item-icon{color:#fff5d8!important}
+.jumuah-panel-list{
+  gap:.56vw!important;
+}
+.jumuah-row{
+  gap:.28vh!important;
+  padding:.58vh .62vw!important;
+  background:linear-gradient(180deg,rgba(129,94,49,.15),rgba(68,45,18,.12))!important;
+  border-color:rgba(214,166,92,.18)!important;
+}
+.jumuah-row:nth-child(1){
+  background:linear-gradient(180deg,rgba(155,115,58,.16),rgba(84,58,24,.13))!important;
+  border-color:rgba(234,184,101,.22)!important;
+}
+.jumuah-row:nth-child(2){
+  background:linear-gradient(180deg,rgba(137,99,54,.16),rgba(76,52,23,.13))!important;
+  border-color:rgba(220,168,94,.21)!important;
+}
+.jumuah-row:nth-child(3){
+  background:linear-gradient(180deg,rgba(120,86,57,.15),rgba(66,47,28,.13))!important;
+  border-color:rgba(195,150,96,.20)!important;
+}
+.jumuah-row-label{color:rgba(255,238,204,.78)!important;letter-spacing:.05em!important;text-transform:uppercase!important}
+.jumuah-row-time{color:#fff7e8!important;text-shadow:0 0 1.1vh rgba(241,189,101,.08)!important}
+@media (max-width:1100px),(max-height:650px){
+  .brand-mark{right:5.25vw!important;bottom:4.5vh!important}
+  .supp-context-list,.jumuah-panel-list{gap:.44vw!important}
+  .supp-context-item,.jumuah-row{min-height:4.2vh!important}
+  .supp-context-item{padding:.46vh .62vw!important}
+  .jumuah-row{padding:.5vh .5vw!important}
+}
+@media (max-aspect-ratio:1/1){
+  .brand-mark{right:4.4vw!important;bottom:3.4vh!important}
+  .supp-context-list,.jumuah-panel-list{gap:.38vh!important}
+}
+</style>
+
+
+<style id="aslima-v943-premium-detail-cards">
+/* ASLIMA V9.1.43 — premium detail-card rhythm with subtle inner glow */
+.bottom-dock.detail-open .dock-detail-area{
+  padding:.92vh 0 .82vh!important;
+}
+.supp-context-list,
+.jumuah-panel-list{
+  align-items:stretch!important;
+  gap:.62vw!important;
+}
+.supp-context-item,
+.jumuah-row{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:4.9vh!important;
+  border-radius:1.18vh!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(0,0,0,.10),
+    0 1.0vh 2.2vh rgba(0,0,0,.12)!important;
+}
+.supp-context-item::before,
+.jumuah-row::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 52%);
+  pointer-events:none;
+}
+.supp-context-item::after,
+.jumuah-row::after{
+  content:'';
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:-32%;
+  height:68%;
+  border-radius:999px;
+  opacity:.55;
+  filter:blur(14px);
+  pointer-events:none;
+}
+.supp-context-item{
+  grid-template-columns:auto minmax(0,1fr)!important;
+  grid-template-areas:
+    "icon name"
+    "time time"!important;
+  row-gap:.22vh!important;
+  padding:.54vh .78vw!important;
+  align-content:center!important;
+  background:linear-gradient(180deg,rgba(37,112,123,.15),rgba(20,69,76,.17))!important;
+  border-color:rgba(95,208,217,.18)!important;
+}
+.supp-context-item::after{background:radial-gradient(circle,rgba(120,228,238,.22),rgba(120,228,238,0) 72%)}
+.supp-context-item:nth-child(1){
+  background:linear-gradient(180deg,rgba(44,114,126,.17),rgba(20,63,72,.17))!important;
+  border-color:rgba(100,209,218,.22)!important;
+}
+.supp-context-item:nth-child(1)::after{background:radial-gradient(circle,rgba(123,223,231,.24),rgba(123,223,231,0) 72%)}
+.supp-context-item:nth-child(2){
+  background:linear-gradient(180deg,rgba(44,128,110,.16),rgba(20,74,63,.17))!important;
+  border-color:rgba(92,214,177,.22)!important;
+}
+.supp-context-item:nth-child(2)::after{background:radial-gradient(circle,rgba(120,232,196,.22),rgba(120,232,196,0) 72%)}
+.supp-context-item:nth-child(3){
+  background:linear-gradient(180deg,rgba(42,94,129,.16),rgba(18,56,73,.17))!important;
+  border-color:rgba(102,183,220,.22)!important;
+}
+.supp-context-item:nth-child(3)::after{background:radial-gradient(circle,rgba(135,201,238,.22),rgba(135,201,238,0) 72%)}
+.supp-context-item.active{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    0 0 0 1px rgba(92,214,177,.18),
+    0 0 2.4vh rgba(44,128,110,.15)!important;
+}
+.supp-context-item-icon{
+  grid-area:icon;
+  align-self:center!important;
+  justify-self:start!important;
+  color:rgba(198,244,235,.95)!important;
+}
+.supp-context-item-name{
+  grid-area:name;
+  align-self:center!important;
+  font-size:clamp(10px,.8vw,13px)!important;
+  letter-spacing:.06em!important;
+  color:rgba(255,245,227,.94)!important;
+}
+.supp-context-item-time{
+  grid-area:time;
+  display:block!important;
+  width:100%;
+  margin-top:.18vh!important;
+  padding-top:.38vh;
+  border-top:1px solid rgba(255,255,255,.08);
+  text-align:center!important;
+  font-size:clamp(11px,.84vw,14px)!important;
+  letter-spacing:.02em!important;
+  color:#fdf4e4!important;
+}
+.jumuah-panel-list{
+  gap:.66vw!important;
+}
+.jumuah-row{
+  padding:.62vh .72vw!important;
+  gap:.28vh!important;
+  background:linear-gradient(180deg,rgba(129,94,49,.15),rgba(68,45,18,.14))!important;
+  border-color:rgba(214,166,92,.19)!important;
+}
+.jumuah-row::after{background:radial-gradient(circle,rgba(243,198,120,.20),rgba(243,198,120,0) 72%)}
+.jumuah-row:nth-child(1){
+  background:linear-gradient(180deg,rgba(155,115,58,.17),rgba(84,58,24,.14))!important;
+  border-color:rgba(234,184,101,.24)!important;
+}
+.jumuah-row:nth-child(1)::after{background:radial-gradient(circle,rgba(246,207,132,.23),rgba(246,207,132,0) 72%)}
+.jumuah-row:nth-child(2){
+  background:linear-gradient(180deg,rgba(137,99,54,.17),rgba(76,52,23,.14))!important;
+  border-color:rgba(220,168,94,.22)!important;
+}
+.jumuah-row:nth-child(2)::after{background:radial-gradient(circle,rgba(232,188,116,.21),rgba(232,188,116,0) 72%)}
+.jumuah-row:nth-child(3){
+  background:linear-gradient(180deg,rgba(120,86,57,.16),rgba(66,47,28,.14))!important;
+  border-color:rgba(195,150,96,.21)!important;
+}
+.jumuah-row:nth-child(3)::after{background:radial-gradient(circle,rgba(214,170,114,.20),rgba(214,170,114,0) 72%)}
+.jumuah-row-label{
+  color:rgba(255,238,204,.76)!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+}
+.jumuah-row-time{
+  color:#fff7e8!important;
+  text-shadow:0 0 1.2vh rgba(241,189,101,.10)!important;
+}
+@media (max-width:1100px),(max-height:650px){
+  .bottom-dock.detail-open .dock-detail-area{padding:.82vh 0 .74vh!important}
+  .supp-context-list,.jumuah-panel-list{gap:.5vw!important}
+  .supp-context-item,.jumuah-row{min-height:4.55vh!important}
+  .supp-context-item{padding:.48vh .64vw!important}
+  .supp-context-item-time{padding-top:.3vh!important;font-size:clamp(10px,.8vw,13px)!important}
+  .jumuah-row{padding:.56vh .56vw!important}
+}
+@media (max-aspect-ratio:1/1){
+  .supp-context-list,.jumuah-panel-list{gap:.42vh!important}
+}
+</style>
+
+
+<style id="aslima-v944-collapsed-dock-premium">
+/* ASLIMA V9.1.44 — premium collapsed dock treatment */
+.bottom-dock{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(7,20,24,.84) 0%,rgba(3,12,15,.90) 44%,rgba(1,8,10,.93) 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.065),
+    inset 0 0 0 1px rgba(241,189,101,.08),
+    0 1.8vh 4.4vh rgba(0,0,0,.28)!important;
+}
+.bottom-dock::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 26%);
+  pointer-events:none;
+}
+.bottom-dock::after{
+  content:'';
+  position:absolute;
+  left:12%; right:12%; top:-26%; height:52%;
+  border-radius:999px;
+  background:radial-gradient(circle,rgba(117,214,227,.08),rgba(117,214,227,0) 72%);
+  filter:blur(18px);
+  pointer-events:none;
+}
+.dock-progress-row{
+  position:relative;
+  align-items:center!important;
+  padding:.34vh .5vw .56vh!important;
+  margin:0 0 .86vh!important;
+  border-radius:.92vh;
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.008));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.dock-progress-row::after{
+  content:'';
+  position:absolute;
+  left:.45vw; right:.45vw; bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,rgba(241,189,101,0),rgba(241,189,101,.22),rgba(241,189,101,0));
+  opacity:.85;
+}
+.dock-progress-label{
+  letter-spacing:.11em!important;
+  font-weight:700!important;
+}
+.dock-progress-start,.dock-progress-end{
+  text-shadow:0 0 .9vh rgba(241,189,101,.12);
+}
+.dock-progress-row .progress{
+  height:.62vh!important;
+  min-height:5px!important;
+  border-radius:999px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.055))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), inset 0 0 0 1px rgba(255,255,255,.02)!important;
+}
+.dock-progress-row .progress .fill{
+  background:linear-gradient(90deg,rgba(52,232,159,.92),rgba(110,245,194,.92))!important;
+  box-shadow:0 0 1.4vh rgba(52,232,159,.24)!important;
+}
+.dock-progress-row .progress .dot{
+  width:11px!important;height:11px!important;
+  margin-top:-2px!important;
+  background:radial-gradient(circle at 35% 35%,#fff6dd 0 24%, #f1bd65 25% 58%, #c98b22 59% 100%)!important;
+  box-shadow:0 0 0 2px rgba(15,21,22,.56), 0 0 1.2vh rgba(241,189,101,.26)!important;
+}
+.dock-content-row{
+  position:relative;
+  align-items:center!important;
+  gap:.72vw!important;
+  padding:.18vh .22vw 0!important;
+}
+.supp-ticker{
+  position:relative;
+  border:1px solid rgba(124,207,216,.12)!important;
+  border-radius:1.02vh!important;
+  background:linear-gradient(180deg,rgba(10,40,45,.42),rgba(8,24,27,.28))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 .6vh 1.6vh rgba(0,0,0,.12)!important;
+}
+.supp-ticker::before{
+  content:'';
+  position:absolute; inset:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,rgba(95,208,217,.05),rgba(95,208,217,0) 38%,rgba(255,255,255,0));
+  pointer-events:none;
+}
+.supp-ticker-icon{
+  color:#bdf5f1!important;
+  text-shadow:0 0 1.2vh rgba(95,208,217,.18);
+}
+.supp-ticker-label{
+  color:rgba(241,189,101,.92)!important;
+  letter-spacing:.16em!important;
+}
+.supp-ticker-name{color:rgba(255,247,230,.97)!important}
+.supp-ticker-time{color:rgba(255,241,210,.82)!important}
+.supp-ticker-status{color:rgba(255,241,210,.66)!important}
+.supp-reminder-status{
+  padding:.18vh .36vw;
+  border-radius:999px;
+  background:rgba(52,232,159,.08);
+  border:1px solid rgba(52,232,159,.12);
+}
+.supp-ticker-view{
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;
+  border-color:rgba(255,241,210,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+.supp-ticker[aria-expanded="true"] .supp-ticker-view{
+  background:linear-gradient(180deg,rgba(241,189,101,.11),rgba(241,189,101,.05))!important;
+}
+.dock-separator{
+  width:1px!important;
+  align-self:stretch!important;
+  background:linear-gradient(180deg,rgba(255,255,255,0),rgba(241,189,101,.26),rgba(255,255,255,0))!important;
+  opacity:.9!important;
+}
+.bottom-right-actions{
+  padding:.18vh .18vw;
+  border-radius:.96vh;
+  background:linear-gradient(180deg,rgba(74,52,18,.16),rgba(24,17,8,.06));
+  border:1px solid rgba(241,189,101,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+.jumuah-pill{
+  background:linear-gradient(180deg,rgba(111,74,22,.15),rgba(40,26,8,.06))!important;
+  border-color:rgba(241,189,101,.20)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+.jumuah-pill-label{color:rgba(255,243,219,.95)!important}
+.jumuah-pill-badge{
+  background:rgba(241,189,101,.16)!important;
+  box-shadow:0 0 1vh rgba(241,189,101,.10);
+}
+.jumuah-icon{color:var(--gold)!important;filter:drop-shadow(0 0 .8vh rgba(241,189,101,.10));}
+.bottom-dock.detail-open{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 0 1px rgba(241,189,101,.09),
+    0 2.2vh 5vh rgba(0,0,0,.34)!important;
+}
+@media (max-width:1100px),(max-height:650px){
+  .dock-progress-row{padding:.28vh .42vw .48vh!important;margin-bottom:.75vh!important}
+  .dock-content-row{gap:.55vw!important}
+  .supp-ticker{border-radius:.96vh!important}
+  .bottom-right-actions{padding:.12vh .14vw}
+}
+</style>
+
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -3361,7 +3752,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
             <span class="supp-ticker-status"><span class="supp-status-prefix" id="suppStatusPrefix">Starts in</span> <span id="suppPrimaryStatus">--</span></span>
             <span class="supp-reminder-status" aria-hidden="true"><span class="supp-reminder-dot"></span>Beep</span>
             <span class="sr-only" id="specialPrayerNote">Beep enabled</span>
-            <span class="supp-ticker-view"><span class="supp-ticker-view-text" id="suppViewText">All 3</span><span class="supp-ticker-chevron" id="suppViewChevron" aria-hidden="true">›</span></span>
+            <span class="supp-ticker-view"><span class="supp-ticker-view-text" id="suppViewText">More Prayers</span><span class="supp-ticker-chevron" id="suppViewChevron" aria-hidden="true">›</span></span>
           </button>
         </div>
         <div class="dock-separator" aria-hidden="true"></div>
@@ -4600,7 +4991,7 @@ function renderSupplementaryPrayers(){
   if(btn)btn.setAttribute('aria-expanded',String(supplementaryListOpen));
   if(panel)panel.hidden=!supplementaryListOpen;
   const viewText=$('suppViewText'), viewChevron=$('suppViewChevron');
-  if(viewText)viewText.textContent=supplementaryListOpen?'Close':'All 3';
+  if(viewText)viewText.textContent=supplementaryListOpen?'Close':'More Prayers';
   if(viewChevron)viewChevron.textContent=supplementaryListOpen?'⌄':'›';
   const list=$('suppAllList');
   if(list){

@@ -1,4 +1,4 @@
-const CACHE='aslima-v941-persistent-dock-detail-panels';
+const CACHE='aslima-v945-more-prayers-label';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
