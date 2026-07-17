@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
-<title>ASLIMA V6.9 Burn-In Protection</title>
+<title>ASLIMA V9.1.39</title>
 <style>
 :root{
   --gold:#f1bd65;
@@ -320,19 +320,19 @@ button{font:inherit}
   min-width:0;
 }
 .bottom-left .progress{margin-bottom:1.65vh!important}
-.supp-context{position:relative;width:min(50vw,720px);padding:1.2vh 1.1vw 1.15vh;border:1px solid var(--border);border-radius:1.25vh;background:rgba(0,8,9,.58);backdrop-filter:blur(10px);color:rgba(255,241,210,.94);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.4vh 3.4vh rgba(0,0,0,.26)}
-.supp-context-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.95vh}
-.supp-context-kicker{display:flex;align-items:center;gap:.55vw;color:var(--gold);font-size:clamp(13px,1vw,18px);font-weight:650;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.supp-context{position:relative;width:min(35vw,500px);padding:.82vh .88vw .86vh;border:1px solid var(--border);border-radius:1.15vh;background:rgba(0,8,9,.56);backdrop-filter:blur(10px);color:rgba(255,241,210,.94);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 1.05vh 2.45vh rgba(0,0,0,.22)}
+.supp-context-head{display:flex;align-items:center;justify-content:space-between;gap:.7vw;margin-bottom:.48vh}
+.supp-context-kicker{display:flex;align-items:center;gap:.4vw;color:var(--gold);font-size:clamp(10px,.82vw,14px);font-weight:650;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .supp-context-kicker::before{content:"✦";font-size:1em}
-.supp-context-bell{display:inline-flex;align-items:center;gap:.38vw;padding:.38vh .7vw;border:1px solid rgba(52,232,159,.20);border-radius:999px;color:rgba(52,232,159,.92);background:rgba(52,232,159,.07);font-size:clamp(10px,.76vw,13px);font-weight:600;letter-spacing:.045em;white-space:nowrap;text-transform:uppercase}
+.supp-context-bell{display:inline-flex;align-items:center;gap:.28vw;padding:.26vh .52vw;border:1px solid rgba(52,232,159,.18);border-radius:999px;color:rgba(52,232,159,.90);background:rgba(52,232,159,.06);font-size:clamp(8px,.62vw,11px);font-weight:600;letter-spacing:.04em;white-space:nowrap;text-transform:uppercase}
 .supp-context-bell::before{content:"•";font-size:1.15em}
-.supp-context-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1vw}
-.supp-context-icon{width:3.6vw;min-width:44px;height:3.6vw;min-height:44px;display:grid;place-items:center;border-radius:1.05vh;border:1px solid rgba(241,189,101,.18);background:rgba(255,255,255,.035);color:var(--gold);font-size:clamp(22px,2vw,34px)}
+.supp-context-body{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.62vw}
+.supp-context-icon{width:2.65vw;min-width:34px;height:2.65vw;min-height:34px;display:grid;place-items:center;border-radius:.92vh;border:1px solid rgba(241,189,101,.16);background:rgba(255,255,255,.03);color:var(--gold);font-size:clamp(18px,1.55vw,26px)}
 .supp-context-main{min-width:0}
-.supp-context-name{color:rgba(255,241,210,.98);font-size:clamp(22px,2vw,36px);font-weight:540;line-height:1.04;letter-spacing:.03em;text-transform:uppercase}
-.supp-context-time{margin-top:.35vh;color:rgba(255,241,210,.92);font-size:clamp(18px,1.45vw,28px);font-weight:520;font-variant-numeric:tabular-nums;line-height:1.08}
-.supp-context-status{margin-top:.45vh;color:rgba(255,241,210,.72);font-size:clamp(13px,1.05vw,18px);font-weight:520;line-height:1.18}
-.supp-context-view{border:1px solid rgba(255,241,210,.18);border-radius:1vh;background:rgba(255,255,255,.04);color:rgba(255,241,210,.94);padding:1vh 1vw;min-width:8.5vw;font-size:clamp(14px,1.1vw,18px);font-weight:560;letter-spacing:.02em;white-space:nowrap}
+.supp-context-name{color:rgba(255,241,210,.98);font-size:clamp(17px,1.45vw,24px);font-weight:560;line-height:1.02;letter-spacing:.028em;text-transform:uppercase}
+.supp-context-time{margin-top:.16vh;color:rgba(255,241,210,.92);font-size:clamp(13px,1.02vw,18px);font-weight:520;font-variant-numeric:tabular-nums;line-height:1.05}
+.supp-context-status{margin-top:.22vh;color:rgba(255,241,210,.72);font-size:clamp(10px,.82vw,14px);font-weight:520;line-height:1.12}
+.supp-context-view{border:1px solid rgba(255,241,210,.16);border-radius:.92vh;background:rgba(255,255,255,.04);color:rgba(255,241,210,.94);padding:.58vh .72vw;min-width:auto;font-size:clamp(11px,.88vw,14px);font-weight:560;letter-spacing:.015em;white-space:nowrap}
 .supp-context-view::after{content:" ›";color:var(--gold);font-size:1.1em}
 .supp-context-view[aria-expanded="true"]{border-color:rgba(241,189,101,.30);color:var(--gold)}
 .supp-context-panel{position:absolute;left:0;bottom:calc(100% + 1vh);width:min(36vw,480px);padding:1.15vh 1vw;border:1px solid rgba(255,241,210,.14);border-radius:1.2vh;background:rgba(0,8,9,.90);backdrop-filter:blur(14px);box-shadow:0 2vh 5vh rgba(0,0,0,.34);z-index:30}
@@ -348,12 +348,12 @@ button{font:inherit}
 .supp-context-item-meta{margin-top:.18vh;color:rgba(255,241,210,.66);font-size:clamp(11px,.82vw,14px)}
 .supp-context-item-time{color:rgba(255,241,210,.88);font-size:clamp(12px,.92vw,15px);font-weight:560;white-space:nowrap;font-variant-numeric:tabular-nums}
 .supp-context-item.active .supp-context-item-name,.supp-context-item.active .supp-context-item-time,.supp-context-item.active .supp-context-item-icon{color:var(--gold)}
-.bottom-right-actions{position:relative;justify-self:end;align-self:end;width:min(23vw,330px);display:grid;justify-items:end;gap:.8vh}
-.jumuah-pill{display:inline-flex;align-items:center;gap:.6vw;border:1px solid rgba(241,189,101,.22);border-radius:999px;background:rgba(0,8,9,.58);color:rgba(255,241,210,.95);padding:.95vh 1.05vw;min-width:12.2vw;justify-content:center;font-size:clamp(13px,1vw,18px);font-weight:560;letter-spacing:.02em;backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1.2vh 2.8vh rgba(0,0,0,.24)}
+.bottom-right-actions{position:relative;justify-self:end;align-self:end;width:auto;display:grid;justify-items:end;gap:.65vh;margin-right:.3vw;margin-bottom:6.6vh;z-index:5}
+.jumuah-pill{display:inline-flex;align-items:center;gap:.42vw;border:1px solid rgba(241,189,101,.22);border-radius:999px;background:rgba(0,8,9,.58);color:rgba(255,241,210,.95);padding:.56vh .82vw;min-width:auto;justify-content:center;font-size:clamp(11px,.86vw,15px);font-weight:560;letter-spacing:.015em;backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 .9vh 2.2vh rgba(0,0,0,.22)}
 .jumuah-pill::before{content:"🕌";font-size:1.1em}
 .jumuah-pill[aria-expanded="true"],.bottom-right-actions.is-friday .jumuah-pill{border-color:rgba(241,189,101,.40);color:var(--gold)}
-.jumuah-pill-label{white-space:nowrap}
-.jumuah-panel{position:absolute;right:0;bottom:calc(100% + .9vh);width:min(25vw,350px);padding:1.15vh 1vw 1vh;border:1px solid rgba(255,241,210,.14);border-radius:1.2vh;background:rgba(0,8,9,.90);backdrop-filter:blur(14px);box-shadow:0 2vh 5vh rgba(0,0,0,.34);z-index:28}
+.jumuah-pill-label{white-space:nowrap}.jumuah-pill-badge{display:inline-flex;align-items:center;justify-content:center;padding:.1vh .42vw;border-radius:999px;background:rgba(241,189,101,.16);color:var(--gold);font-size:clamp(8px,.62vw,10px);font-weight:650;letter-spacing:.05em;text-transform:uppercase}.jumuah-pill-badge[hidden]{display:none!important}
+.jumuah-panel{position:absolute;right:0;bottom:calc(100% + .9vh);width:min(22vw,320px);padding:1.0vh .92vw .92vh;border:1px solid rgba(255,241,210,.14);border-radius:1.1vh;background:rgba(0,8,9,.90);backdrop-filter:blur(14px);box-shadow:0 2vh 5vh rgba(0,0,0,.34);z-index:28}
 .jumuah-panel[hidden]{display:none!important}
 .jumuah-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.75vh}
 .jumuah-panel-title{color:var(--gold);font-size:clamp(13px,1vw,17px);font-weight:650;letter-spacing:.16em;text-transform:uppercase}
@@ -361,9 +361,9 @@ button{font:inherit}
 .jumuah-panel-list{display:grid;gap:.2vh}
 .jumuah-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1vw;align-items:center;padding:.86vh 0;border-top:1px solid rgba(255,255,255,.08)}
 .jumuah-row:first-child{border-top:0}.jumuah-row-label{color:rgba(255,241,210,.88);font-size:clamp(14px,1.02vw,17px);font-weight:540;letter-spacing:.02em}.jumuah-row-time{color:#fff8e6;font-size:clamp(18px,1.35vw,22px);font-weight:560;font-variant-numeric:tabular-nums;white-space:nowrap}
-@media (max-width:1050px){.supp-context{width:100%;padding:1vh .95vw 1.02vh}.supp-context-body{gap:.8vw}.supp-context-view{min-width:92px;padding:.82vh .86vw}}
-@media (max-height:650px){.bottom-left{gap:.85vh}.bottom-left .progress{margin-bottom:1.1vh!important}.supp-context{padding:.85vh .8vw .9vh}.supp-context-head{margin-bottom:.6vh}.supp-context-name{font-size:clamp(20px,1.82vw,28px)}.supp-context-time{font-size:clamp(15px,1.18vw,22px)}.supp-context-status{font-size:clamp(12px,.92vw,15px)}.supp-context-panel{width:min(44vw,470px)}.jumuah-panel{width:min(29vw,330px)}}
-@media (max-height:650px) and (min-aspect-ratio:1/1){.bottom{grid-template-columns:60% 40%;gap:1.8vw}.supp-context{width:min(54vw,690px)}.supp-context-view{padding:.7vh .8vw;font-size:clamp(12px,.95vw,16px)}.jumuah-pill{padding:.75vh .95vw;min-width:120px}}
+@media (max-width:1050px){.supp-context{width:min(39vw,430px);padding:.75vh .78vw .78vh}.supp-context-body{gap:.56vw}.supp-context-view{min-width:auto;padding:.52vh .68vw}.bottom-right-actions{margin-bottom:5.7vh}}
+@media (max-height:650px){.bottom-left{gap:.68vh}.bottom-left .progress{margin-bottom:.95vh!important}.supp-context{padding:.68vh .7vw .7vh;width:min(38vw,400px)}.supp-context-head{margin-bottom:.34vh}.supp-context-name{font-size:clamp(15px,1.42vw,21px)}.supp-context-time{font-size:clamp(12px,.94vw,16px)}.supp-context-status{font-size:clamp(9px,.74vw,12px)}.supp-context-panel{width:min(42vw,440px)}.bottom-right-actions{margin-bottom:5.2vh}.jumuah-panel{width:min(27vw,300px)}}
+@media (max-height:650px) and (min-aspect-ratio:1/1){.bottom{grid-template-columns:60% 40%;gap:1.8vw}.supp-context{width:min(40vw,420px)}.supp-context-view{padding:.48vh .62vw;font-size:clamp(10px,.82vw,13px)}.jumuah-pill{padding:.48vh .74vw;min-width:auto}}
 @media (max-aspect-ratio:1/1){.bottom{grid-template-columns:1fr!important;gap:1.2vh!important}.bottom-right-actions{justify-self:start!important;width:100%!important}.supp-context{width:100%!important}.supp-context-body{grid-template-columns:auto 1fr!important}.supp-context-view{grid-column:1/3;justify-self:start;margin-top:.3vh}.supp-context-panel,.jumuah-panel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%!important;margin-top:.8vh}}
 
 .admin-hotspot{
@@ -2353,6 +2353,294 @@ body.adhan-overlay-active .aslima-persistent-handle{
 .tablet-manual-actions button:disabled{opacity:.42;filter:grayscale(.4)}
 .tablet-manual-status{margin-top:9px;font-size:11px;line-height:1.35;color:rgba(255,255,255,.7)}
 
+
+
+/* ASLIMA V9.1.39 — unified bottom dock */
+.sr-only{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+.bottom{
+  position:relative!important;
+  z-index:3!important;
+  grid-column:1/3!important;
+  display:block!important;
+  align-self:end!important;
+  width:100%!important;
+  padding-right:clamp(120px,15vw,210px)!important;
+  margin:0!important;
+}
+.bottom::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  left:-4.3vw;
+  right:-4.3vw;
+  bottom:-3.5vh;
+  height:25vh;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,4,6,.44) 35%,rgba(0,3,5,.82) 100%);
+}
+.bottom-dock{
+  position:relative;
+  z-index:2;
+  width:100%;
+  min-width:0;
+  padding:.8vh 1vw .82vh;
+  border:1px solid rgba(248,200,111,.28);
+  border-radius:1.35vh;
+  background:linear-gradient(180deg,rgba(3,12,15,.70),rgba(0,7,9,.78));
+  -webkit-backdrop-filter:blur(14px) saturate(1.05);
+  backdrop-filter:blur(14px) saturate(1.05);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 1.4vh 4.2vh rgba(0,0,0,.31);
+}
+.dock-progress-row{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:.72vw;
+  min-width:0;
+}
+.dock-progress-label{
+  color:rgba(255,241,210,.62);
+  font-size:clamp(9px,.67vw,12px);
+  font-weight:650;
+  letter-spacing:.12em;
+  line-height:1;
+}
+.dock-progress-start{color:rgba(52,232,159,.88)}
+#bottomDock .progress{
+  position:relative!important;
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  height:4px!important;
+  margin:0!important;
+  border-radius:999px!important;
+  background:rgba(255,241,210,.20)!important;
+}
+#bottomDock .progress::before,
+#bottomDock .progress::after{content:none!important;display:none!important}
+#bottomDock .fill{inset:0 auto 0 0!important}
+#bottomDock .dot{
+  width:1.35vh!important;
+  height:1.35vh!important;
+  min-width:7px!important;
+  min-height:7px!important;
+}
+.dock-content-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 1px auto;
+  align-items:center;
+  gap:.88vw;
+  margin-top:.72vh;
+  min-width:0;
+}
+.dock-separator{
+  align-self:stretch;
+  width:1px;
+  min-height:3.6vh;
+  background:linear-gradient(180deg,transparent,rgba(255,241,210,.19),transparent);
+}
+.supp-ticker-wrap{position:relative;min-width:0}
+.supp-ticker{
+  width:100%;
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto auto auto auto auto minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:.58vw;
+  border:0;
+  border-radius:.85vh;
+  background:transparent;
+  color:rgba(255,241,210,.94);
+  padding:.48vh .36vw;
+  text-align:left;
+}
+.supp-ticker:active,
+.supp-ticker[aria-expanded="true"]{background:rgba(255,255,255,.045)}
+.supp-ticker-icon{
+  display:grid;
+  place-items:center;
+  width:2.05vw;
+  min-width:26px;
+  height:2.05vw;
+  min-height:26px;
+  color:var(--gold);
+  font-size:clamp(18px,1.45vw,25px);
+  line-height:1;
+}
+.supp-ticker-label{
+  color:rgba(241,189,101,.84);
+  font-size:clamp(9px,.68vw,12px);
+  font-weight:700;
+  letter-spacing:.14em;
+  white-space:nowrap;
+}
+.supp-ticker-name{
+  color:#fff1d2;
+  font-size:clamp(16px,1.28vw,22px);
+  font-weight:610;
+  letter-spacing:.035em;
+  line-height:1;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.supp-ticker-separator{color:rgba(255,241,210,.32);font-size:.9em}
+.supp-ticker-time{
+  color:rgba(255,241,210,.88);
+  font-size:clamp(12px,.94vw,16px);
+  font-weight:540;
+  line-height:1;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.supp-ticker-status{
+  min-width:0;
+  color:rgba(255,241,210,.64);
+  font-size:clamp(10px,.78vw,14px);
+  font-weight:520;
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
+}
+.supp-ticker-bell{
+  width:18px;
+  height:18px;
+  display:grid;
+  place-items:center;
+  color:rgba(52,232,159,.90);
+}
+.supp-ticker-bell svg{
+  width:16px;
+  height:16px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.supp-ticker-view{
+  display:inline-flex;
+  align-items:center;
+  gap:.28vw;
+  color:rgba(255,241,210,.72);
+  font-size:clamp(10px,.78vw,13px);
+  font-weight:580;
+  white-space:nowrap;
+}
+.supp-ticker[aria-expanded="true"] .supp-ticker-view{color:var(--gold)}
+.supp-context-panel{
+  position:absolute!important;
+  left:0!important;
+  bottom:calc(100% + 1.15vh)!important;
+  width:min(42vw,480px)!important;
+  padding:1.05vh 1vw!important;
+  border:1px solid rgba(248,200,111,.25)!important;
+  border-radius:1.2vh!important;
+  background:rgba(0,8,10,.94)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  backdrop-filter:blur(16px)!important;
+  box-shadow:0 2vh 5vh rgba(0,0,0,.42)!important;
+  z-index:40!important;
+}
+.supp-context-panel[hidden]{display:none!important}
+.supp-context-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.8vh}
+.supp-context-panel-title{color:var(--gold);font-size:clamp(12px,.94vw,16px);font-weight:650;letter-spacing:.15em;text-transform:uppercase}
+.supp-context-panel-close,.jumuah-panel-close{border:0;background:transparent;color:rgba(255,241,210,.80);font-size:clamp(18px,1.3vw,24px);line-height:1;padding:.2vh .2vw}
+.supp-context-list{display:grid;gap:.48vh}
+.supp-context-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75vw;align-items:center;padding:.66vh 0;border-top:1px solid rgba(255,255,255,.08)}
+.supp-context-item:first-child{border-top:0;padding-top:0}
+.supp-context-item-icon{font-size:clamp(17px,1.25vw,23px);color:rgba(255,241,210,.82);width:1.35vw;min-width:18px;text-align:center}
+.supp-context-item-name{color:rgba(255,241,210,.95);font-size:clamp(14px,1.02vw,18px);font-weight:580;letter-spacing:.03em;text-transform:uppercase}
+.supp-context-item-meta{margin-top:.16vh;color:rgba(255,241,210,.62);font-size:clamp(10px,.76vw,13px)}
+.supp-context-item-time{color:rgba(255,241,210,.86);font-size:clamp(11px,.86vw,15px);font-weight:560;white-space:nowrap;font-variant-numeric:tabular-nums}
+.supp-context-item.active .supp-context-item-name,.supp-context-item.active .supp-context-item-time,.supp-context-item.active .supp-context-item-icon{color:var(--gold)}
+.bottom-right-actions{position:relative!important;display:block!important;width:auto!important;margin:0!important;justify-self:auto!important;align-self:auto!important;z-index:5!important}
+.jumuah-pill{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:.42vw!important;
+  min-width:auto!important;
+  padding:.52vh .48vw!important;
+  border:0!important;
+  border-radius:.8vh!important;
+  background:transparent!important;
+  color:rgba(255,241,210,.82)!important;
+  font-size:clamp(11px,.88vw,15px)!important;
+  font-weight:580!important;
+  letter-spacing:.02em!important;
+  box-shadow:none!important;
+  white-space:nowrap!important;
+}
+.jumuah-pill::before{content:none!important;display:none!important}
+.jumuah-pill:active,
+.jumuah-pill[aria-expanded="true"]{background:rgba(255,255,255,.045)!important;color:var(--gold)!important}
+.jumuah-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.jumuah-pill-badge{display:inline-flex;align-items:center;justify-content:center;padding:.14vh .4vw;border-radius:999px;background:rgba(241,189,101,.14);color:var(--gold);font-size:clamp(8px,.60vw,10px);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.jumuah-pill-badge[hidden]{display:none!important}
+.jumuah-panel{
+  position:absolute!important;
+  right:calc(100% + .9vw)!important;
+  bottom:calc(100% + 1.15vh)!important;
+  transform:translateX(-15%)!important;
+  width:min(25vw,320px)!important;
+  padding:1.0vh .92vw .92vh!important;
+  border:1px solid rgba(248,200,111,.25)!important;
+  border-radius:1.15vh!important;
+  background:rgba(0,8,10,.95)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  backdrop-filter:blur(16px)!important;
+  box-shadow:0 2vh 5vh rgba(0,0,0,.42)!important;
+  z-index:42!important;
+}
+.jumuah-panel[hidden]{display:none!important}
+.jumuah-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1vw;margin-bottom:.7vh}
+.jumuah-panel-title{color:var(--gold);font-size:clamp(12px,.94vw,16px);font-weight:650;letter-spacing:.15em;text-transform:uppercase}
+.jumuah-panel-subtitle{color:rgba(255,241,210,.58);font-size:clamp(9px,.70vw,12px);letter-spacing:.035em}
+.jumuah-panel-list{display:grid;gap:.15vh}
+.jumuah-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1vw;align-items:center;padding:.74vh 0;border-top:1px solid rgba(255,255,255,.08)}
+.jumuah-row:first-child{border-top:0}
+.jumuah-row-label{color:rgba(255,241,210,.84);font-size:clamp(12px,.92vw,16px);font-weight:540}
+.jumuah-row-time{color:#fff8e6;font-size:clamp(15px,1.18vw,20px);font-weight:570;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:1100px), (max-height:650px){
+  .bottom{padding-right:clamp(112px,15vw,170px)!important}
+  .bottom-dock{padding:.68vh .82vw .7vh!important}
+  .dock-content-row{gap:.64vw!important;margin-top:.58vh!important}
+  .supp-ticker{gap:.44vw!important;padding:.36vh .2vw!important}
+  .supp-ticker-label{font-size:clamp(8px,.65vw,10px)!important}
+  .supp-ticker-name{font-size:clamp(14px,1.18vw,18px)!important}
+  .supp-ticker-time{font-size:clamp(10px,.84vw,13px)!important}
+  .supp-status-prefix{display:none!important}
+  .supp-ticker-status{font-size:clamp(9px,.72vw,11px)!important}
+  .supp-ticker-view-text{display:none!important}
+  .supp-ticker-view{font-size:16px!important}
+  .jumuah-pill-label{font-size:clamp(10px,.82vw,13px)!important}
+  .jumuah-panel{width:min(29vw,290px)!important;right:calc(100% + .7vw)!important}
+}
+@media (max-width:880px){
+  .supp-ticker-label,.supp-ticker-separator,.supp-ticker-status{display:none!important}
+  .supp-ticker{grid-template-columns:auto auto minmax(0,1fr) auto auto!important}
+  .supp-ticker-time{overflow:hidden;text-overflow:clip}
+}
+@media (max-aspect-ratio:1/1){
+  .bottom{padding-right:0!important}
+  .bottom-dock{width:100%!important}
+  .dock-content-row{grid-template-columns:1fr!important;gap:.55vh!important}
+  .dock-separator{display:none!important}
+  .jumuah-pill{justify-content:flex-start!important}
+  .supp-context-panel,.jumuah-panel{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;transform:none!important;width:100%!important;margin-top:.7vh!important}
+}
+
 </style>
 
 
@@ -2637,42 +2925,53 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   </section>
 
   <section class="bottom">
-    <div class="bottom-left">
-      <div class="progress"><div class="fill"></div><div class="dot"></div></div>
-      <div class="supp-context" id="specialPrayers" aria-label="Supplementary prayer guidance">
-        <div class="supp-context-head">
-          <div class="supp-context-kicker" id="suppContextKicker">Next Supplementary Prayer</div>
-          <div class="supp-context-bell" id="specialPrayerNote">Beep On</div>
-        </div>
-        <div class="supp-context-body">
-          <div class="supp-context-icon" id="suppPrimaryIcon">☾</div>
-          <div class="supp-context-main">
-            <div class="supp-context-name" id="suppPrimaryName">Tahajjud</div>
-            <div class="supp-context-time" id="suppPrimaryTime">--</div>
-            <div class="supp-context-status" id="suppPrimaryStatus">Starts in --</div>
-          </div>
-          <button class="supp-context-view" id="suppViewAllBtn" type="button" aria-expanded="false" aria-controls="suppAllPanel">View All</button>
-        </div>
-        <div class="supp-context-panel" id="suppAllPanel" hidden>
-          <div class="supp-context-panel-head">
-            <div class="supp-context-panel-title">Supplementary Prayers</div>
-            <button class="supp-context-panel-close" id="suppAllClose" type="button" aria-label="Close supplementary prayers">×</button>
-          </div>
-          <div class="supp-context-list" id="suppAllList"></div>
-        </div>
+    <div class="bottom-dock" id="bottomDock">
+      <div class="dock-progress-row" aria-label="Prayer day progress from Fajr to Isha">
+        <span class="dock-progress-label dock-progress-start">FAJR</span>
+        <div class="progress"><div class="fill"></div><div class="dot"></div></div>
+        <span class="dock-progress-label dock-progress-end">ISHA</span>
       </div>
-    </div>
-    <div class="bottom-right-actions" id="jumuahZone">
-      <button class="jumuah-pill" id="jumuahPill" type="button" aria-expanded="false" aria-controls="jumuahPanel"><span class="jumuah-pill-label" id="jumuahPillLabel">Jumu’ah Schedule</span></button>
-      <div class="jumuah-panel" id="jumuahPanel" hidden>
-        <div class="jumuah-panel-head">
-          <div>
-            <div class="jumuah-panel-title">Jumu’ah Prayer</div>
-            <div class="jumuah-panel-subtitle" id="jumuahPanelSubtitle">Available anytime</div>
+      <div class="dock-content-row">
+        <div class="supp-ticker-wrap" id="specialPrayers" aria-label="Supplementary prayer guidance">
+          <button class="supp-ticker" id="suppViewAllBtn" type="button" aria-expanded="false" aria-controls="suppAllPanel">
+            <span class="supp-ticker-icon" id="suppPrimaryIcon" aria-hidden="true">☾</span>
+            <span class="supp-ticker-label" id="suppContextKicker">NEXT</span>
+            <span class="supp-ticker-name" id="suppPrimaryName">Tahajjud</span>
+            <span class="supp-ticker-separator" aria-hidden="true">•</span>
+            <span class="supp-ticker-time" id="suppPrimaryTime">--</span>
+            <span class="supp-ticker-status"><span class="supp-status-prefix" id="suppStatusPrefix">Starts in</span> <span id="suppPrimaryStatus">--</span></span>
+            <span class="supp-ticker-bell" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            </span>
+            <span class="sr-only" id="specialPrayerNote">Beep enabled</span>
+            <span class="supp-ticker-view"><span class="supp-ticker-view-text">View</span><span aria-hidden="true">›</span></span>
+          </button>
+          <div class="supp-context-panel" id="suppAllPanel" hidden>
+            <div class="supp-context-panel-head">
+              <div class="supp-context-panel-title">Supplementary Prayers</div>
+              <button class="supp-context-panel-close" id="suppAllClose" type="button" aria-label="Close supplementary prayers">×</button>
+            </div>
+            <div class="supp-context-list" id="suppAllList"></div>
           </div>
-          <button class="jumuah-panel-close" id="jumuahClose" type="button" aria-label="Close Jumu’ah schedule">×</button>
         </div>
-        <div class="jumuah-panel-list" id="jumuah"></div>
+        <div class="dock-separator" aria-hidden="true"></div>
+        <div class="bottom-right-actions" id="jumuahZone">
+          <button class="jumuah-pill" id="jumuahPill" type="button" aria-expanded="false" aria-controls="jumuahPanel">
+            <svg class="jumuah-icon" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><path d="M3 25h22M5 25V14h18v11M9 14V9h10v5M14 3c-2 2-2 4 0 6 2-2 2-4 0-6M9 18v7M14 18v7M19 18v7"/></svg>
+            <span class="jumuah-pill-label" id="jumuahPillLabel">Jumu’ah</span>
+            <span class="jumuah-pill-badge" id="jumuahPillBadge" hidden>Today</span>
+          </button>
+          <div class="jumuah-panel" id="jumuahPanel" hidden>
+            <div class="jumuah-panel-head">
+              <div>
+                <div class="jumuah-panel-title">Jumu’ah Prayer</div>
+                <div class="jumuah-panel-subtitle" id="jumuahPanelSubtitle">Available anytime</div>
+              </div>
+              <button class="jumuah-panel-close" id="jumuahClose" type="button" aria-label="Close Jumu’ah schedule">×</button>
+            </div>
+            <div class="jumuah-panel-list" id="jumuah"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -3811,7 +4110,9 @@ function renderJumuahPanel(){
   list.innerHTML=entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join('');
   const friday=isFriday();
   zone.classList.toggle('is-friday',friday);
-  label.textContent=friday?'Jumu’ah Today':'Jumu’ah Schedule';
+  label.textContent='Jumu’ah';
+  const badge=$('jumuahPillBadge');
+  if(badge)badge.hidden=!friday;
   if(subtitle)subtitle.textContent=friday?'Visible today · tap to collapse':'Available anytime';
   panel.hidden=!jumuahPanelOpen;
   pill.setAttribute('aria-expanded',String(jumuahPanelOpen));
@@ -3845,15 +4146,17 @@ function renderSupplementaryPrayers(){
   const context=contextualSupplementaryPrayer(now,entries);
   if(context){
     const entry=context.entry;
-    $('suppContextKicker').textContent=context.mode==='active'?'Active Supplementary Prayer':'Next Supplementary Prayer';
+    card.dataset.mode=context.mode;
+    $('suppContextKicker').textContent=context.mode==='active'?'NOW':'NEXT';
     $('suppPrimaryIcon').textContent=entry.icon;
     $('suppPrimaryName').textContent=entry.title;
     $('suppPrimaryTime').textContent=entry.window;
-    $('suppPrimaryStatus').textContent=context.mode==='active'?`Now · ${shortDurationText(context.remaining)} left`:`Starts in ${shortDurationText(context.remaining)}`;
-    card.setAttribute('aria-label',`${context.mode==='active'?'Active':'Next'} supplementary prayer: ${entry.title}, ${entry.window}, ${$('suppPrimaryStatus').textContent}.`);
+    $('suppStatusPrefix').textContent=context.mode==='active'?'Ends in':'Starts in';
+    $('suppPrimaryStatus').textContent=shortDurationText(context.remaining);
+    card.setAttribute('aria-label',`${context.mode==='active'?'Active':'Next'} supplementary prayer: ${entry.title}, ${entry.window}. ${$('suppStatusPrefix').textContent} ${$('suppPrimaryStatus').textContent}.`);
   }
   const note=$('specialPrayerNote');
-  if(note)note.textContent='Beep On';
+  if(note)note.textContent='Beep enabled';
   const btn=$('suppViewAllBtn'), panel=$('suppAllPanel');
   if(btn)btn.setAttribute('aria-expanded',String(supplementaryListOpen));
   if(panel)panel.hidden=!supplementaryListOpen;
@@ -5725,7 +6028,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
 </script>
 
 
-<!-- ASLIMA_PRAYER_WARNING_BANNERS_V933 -->
-<script src="./assets/js/prayer-warning-banners.js?v=933"></script>
+<!-- ASLIMA_PRAYER_WARNING_BANNERS_V939 -->
+<script src="./assets/js/prayer-warning-banners.js?v=939"></script>
 </body>
 </html>

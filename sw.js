@@ -1,4 +1,4 @@
-const CACHE='aslima-v937-contextual-supplementary-jumuah-ui';
+const CACHE='aslima-v939-unified-bottom-dock';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
