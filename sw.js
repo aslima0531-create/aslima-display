@@ -1,11 +1,10 @@
-const CACHE='aslima-v946-controller-cleanup';
+const CACHE='aslima-v947-timing-integrity-docs-organized';
 const CORE=[
-  './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
+  './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
   './assets/audio/azaan-1.mp3','./assets/audio/azaan-2.mp3',
   './assets/audio/azaan-3.mp3','./assets/audio/azaan-4.mp3',
-  './assets/audio/azaan-5.mp3',
-  './assets/audio/AUDIO_SOURCE.md','./assets/audio/SHA256SUMS.txt'
+  './assets/audio/azaan-5.mp3'
 ];
 self.addEventListener('install',event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())

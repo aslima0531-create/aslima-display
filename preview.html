@@ -3671,6 +3671,50 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 }
 </style>
 
+
+<style id="aslima-v9147-timing-integrity-ui">
+.timing-health{display:inline-flex;align-items:center;gap:.42vw;justify-content:flex-end;color:rgba(255,244,220,.76);font-size:clamp(9px,.72vw,12px);font-weight:760;letter-spacing:.12em;white-space:nowrap;margin-bottom:.45vh;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.timing-health-dot{width:7px;height:7px;border-radius:50%;background:#b7a98d;box-shadow:0 0 8px rgba(183,169,141,.28)}
+.timing-health[data-state="official"]{color:rgba(196,239,218,.90)}
+.timing-health[data-state="official"] .timing-health-dot{background:#57d497;box-shadow:0 0 9px rgba(87,212,151,.48)}
+.timing-health[data-state="cached"]{color:rgba(255,224,157,.90)}
+.timing-health[data-state="cached"] .timing-health-dot{background:#e6b85d;box-shadow:0 0 9px rgba(230,184,93,.42)}
+.timing-health[data-state="calculated"]{color:rgba(182,224,238,.90)}
+.timing-health[data-state="calculated"] .timing-health-dot{background:#65bdd8;box-shadow:0 0 9px rgba(101,189,216,.40)}
+.timing-health[data-state="manual"] .timing-health-dot{background:#cba7ee}
+.timing-health[data-state="unavailable"]{color:#ffd1cb}
+.timing-health[data-state="unavailable"] .timing-health-dot{background:#ff7668;box-shadow:0 0 10px rgba(255,118,104,.50)}
+.right{width:min(39vw,670px)!important}
+.prayer-panel{padding:1.3vh 1.25vw 1.45vh!important}
+.prayer-panel-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(72px,auto) minmax(72px,auto);gap:clamp(6px,.72vw,14px);align-items:end;padding:0 .2vw .62vh calc(28px + .85vw);color:rgba(255,241,210,.55);font-size:clamp(8px,.70vw,11px);font-weight:780;letter-spacing:.13em;text-transform:uppercase;border-bottom:1px solid rgba(255,241,210,.10)}
+.prayer-panel-head span:nth-child(2),.prayer-panel-head span:nth-child(3){text-align:right}
+#prayerPanel .row{grid-template-columns:minmax(28px,2.1vw) minmax(70px,1fr) auto!important;padding:1.34vh .1vw!important}
+.ptime-group{display:grid;grid-template-columns:minmax(72px,auto) minmax(72px,auto);gap:clamp(6px,.72vw,14px);align-items:center}
+#prayerPanel .ptime{font-size:clamp(17px,1.52vw,28px)!important;letter-spacing:-.025em!important;text-align:right!important;white-space:nowrap!important}
+#prayerPanel .iqamah-time{color:rgba(255,241,210,.78)!important}
+#prayerPanel .row.active .iqamah-time{color:var(--gold)!important}
+#prayerPanel .row.active .ptime{transform:none!important}
+#prayerPanel .row.active .pname{transform:none!important;letter-spacing:inherit!important}
+@media (max-width:920px){
+  .right{width:41.5vw!important}
+  .prayer-panel{padding:1.05vh 1vw 1.2vh!important}
+  .prayer-panel-head{grid-template-columns:minmax(0,1fr) minmax(60px,auto) minmax(60px,auto);padding-left:calc(28px + .55vw);gap:5px;font-size:8px}
+  #prayerPanel .row{grid-template-columns:28px minmax(60px,1fr) auto!important;gap:.55vw!important;padding:1.15vh 0!important}
+  .ptime-group{grid-template-columns:minmax(60px,auto) minmax(60px,auto);gap:5px}
+  #prayerPanel .ptime{font-size:clamp(14px,2.05vw,19px)!important}
+  #prayerPanel .pname{font-size:clamp(17px,2.55vw,23px)!important}
+}
+@media (max-width:820px){
+  .timing-health{font-size:8px;letter-spacing:.08em;gap:4px}
+  .timing-health-dot{width:6px;height:6px}
+  .right{width:43vw!important}
+  .prayer-panel-head{grid-template-columns:minmax(0,1fr) 57px 57px}
+  .ptime-group{grid-template-columns:57px 57px}
+  #prayerPanel .ptime{font-size:14px!important}
+  #prayerPanel .pname{font-size:17px!important}
+}
+</style>
+
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -3679,6 +3723,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   <header class="top">
     <div class="kalima" id="kalima">لا إله إلا الله محمد رسول الله</div>
     <div class="status">
+      <div class="timing-health" id="timingHealthChip" data-state="loading" role="status" aria-live="polite"><span class="timing-health-dot" aria-hidden="true"></span><span id="timingHealthText">LOADING</span></div>
       <div class="date" id="dateLine">TODAY</div>
       <div class="hijri-date" id="hijriDateLine" aria-label="Islamic date">--</div>
     </div>
@@ -3695,11 +3740,12 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 
   <section class="right">
     <div class="prayer-panel" id="prayerPanel">
-      <div class="row" data-prayer="Fajr"><div class="icon">☀</div><div class="pname">Fajr</div><div class="ptime" id="timeFajr">--</div></div>
-      <div class="row" data-prayer="Dhuhr"><div class="icon">☼</div><div class="pname">Dhuhr</div><div class="ptime" id="timeDhuhr">--</div></div>
-      <div class="row" data-prayer="Asr"><div class="icon">☼</div><div class="pname">Asr</div><div class="ptime" id="timeAsr">--</div></div>
-      <div class="row" data-prayer="Maghrib"><div class="icon">☀</div><div class="pname">Maghrib</div><div class="ptime" id="timeMaghrib">--</div></div>
-      <div class="row" data-prayer="Isha"><div class="icon">☾</div><div class="pname">Isha</div><div class="ptime" id="timeIsha">--</div></div>
+      <div class="prayer-panel-head" aria-hidden="true"><span>Prayer</span><span>Adhan</span><span>Iqamah</span></div>
+      <div class="row" data-prayer="Fajr"><div class="icon">☀</div><div class="pname">Fajr</div><div class="ptime-group"><div class="ptime" id="timeFajr">--</div><div class="ptime iqamah-time" id="iqamahFajr">—</div></div></div>
+      <div class="row" data-prayer="Dhuhr"><div class="icon">☼</div><div class="pname">Dhuhr</div><div class="ptime-group"><div class="ptime" id="timeDhuhr">--</div><div class="ptime iqamah-time" id="iqamahDhuhr">—</div></div></div>
+      <div class="row" data-prayer="Asr"><div class="icon">☼</div><div class="pname">Asr</div><div class="ptime-group"><div class="ptime" id="timeAsr">--</div><div class="ptime iqamah-time" id="iqamahAsr">—</div></div></div>
+      <div class="row" data-prayer="Maghrib"><div class="icon">☀</div><div class="pname">Maghrib</div><div class="ptime-group"><div class="ptime" id="timeMaghrib">--</div><div class="ptime iqamah-time" id="iqamahMaghrib">—</div></div></div>
+      <div class="row" data-prayer="Isha"><div class="icon">☾</div><div class="pname">Isha</div><div class="ptime-group"><div class="ptime" id="timeIsha">--</div><div class="ptime iqamah-time" id="iqamahIsha">—</div></div></div>
     </div>
   </section>
 
@@ -3966,32 +4012,39 @@ const CONFIG={
   city:'Irving',
   country:'United States',
   method:2,
-  vricUrls:['https://vric.org/prayertimes/','https://vric.org/','https://vric.org/home-2/'],
+  timezone:'America/Chicago',
+  timingDataUrl:'./data/vric-prayer-times.json',
+  liveFreshHours:12,
   vricSyncMinutes:360,
   jumuah:['1:45 PM','3:00 PM','4:00 PM'],
   timingSource:'vric',
   selectedMasjidId:'vric',
   masjidPresets:[
-    {id:'vric',name:'Valley Ranch Islamic Center (VRIC)',city:'Irving, TX',lat:32.9185,lon:-96.9590,method:2,urls:['https://vric.org/prayertimes/','https://vric.org/','https://vric.org/home-2/']},
-    {id:'iant',name:'Islamic Association of North Texas (IANT)',city:'Richardson, TX',lat:32.9482,lon:-96.7299,method:2,urls:[]},
-    {id:'epic',name:'East Plano Islamic Center (EPIC)',city:'Plano, TX',lat:33.0198,lon:-96.7005,method:2,urls:[]},
-    {id:'frisco',name:'Islamic Center of Frisco',city:'Frisco, TX',lat:33.1507,lon:-96.8236,method:2,urls:[]},
-    {id:'makkah',name:'Makkah Masjid',city:'Garland, TX',lat:32.9098,lon:-96.6357,method:2,urls:[]}
+    {id:'vric',name:'Valley Ranch Islamic Center (VRIC)',city:'Irving, TX',lat:32.9185,lon:-96.9590,method:2},
+    {id:'iant',name:'Islamic Association of North Texas (IANT)',city:'Richardson, TX',lat:32.9482,lon:-96.7299,method:2},
+    {id:'epic',name:'East Plano Islamic Center (EPIC)',city:'Plano, TX',lat:33.0198,lon:-96.7005,method:2},
+    {id:'frisco',name:'Islamic Center of Frisco',city:'Frisco, TX',lat:33.1507,lon:-96.8236,method:2},
+    {id:'makkah',name:'Makkah Masjid',city:'Garland, TX',lat:32.9098,lon:-96.6357,method:2}
   ]
 };
 
-const DEMO={
-  Fajr:'05:01',
-  Sunrise:'06:23',
-  Dhuhr:'13:32',
-  Asr:'17:14',
-  Maghrib:'20:40',
-  Isha:'22:02'
+const EMPTY_ADHAN={Fajr:'',Sunrise:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:''};
+const EMPTY_IQAMAH={Fajr:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:''};
+let timings={...EMPTY_ADHAN};
+let iqamahTimings={...EMPTY_IQAMAH};
+let timingDataset={
+  schemaVersion:2,
+  prayerDate:'',
+  timezone:CONFIG.timezone,
+  fetchedAt:'',
+  source:{id:'none',label:'Loading',kind:'none'},
+  adhan:{...EMPTY_ADHAN},
+  iqamah:{...EMPTY_IQAMAH},
+  jumuah:[],
+  runtimeStatus:'loading'
 };
-
-let timings={...DEMO};
 let lastFired='';
-let lastVricSyncStatus='Not synced yet';
+let lastVricSyncStatus='Loading prayer times…';
 let audioUnlocked=false;
 let lastActivePrayerName='';
 let burnInIndex=0;
@@ -4346,224 +4399,306 @@ function bindAzaanDrawer(){
 }
 
 function clean(t){
-  const m=String(t||'').match(/\d{1,2}:\d{2}/);
-  return m?m[0]:'00:00';
+  const raw=String(t||'').trim();
+  const m=raw.match(/^(\d{1,2}):(\d{2})/);
+  if(!m)return '';
+  const h=Number(m[1]),min=Number(m[2]);
+  if(!Number.isInteger(h)||!Number.isInteger(min)||h<0||h>23||min<0||min>59)return '';
+  return `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
 }
 
 function to12(t){
-  let [h,m]=clean(t).split(':').map(Number);
+  const normalized=clean(t);
+  if(!normalized)return {text:'--:--',period:'',full:'--:--'};
+  let [h,m]=normalized.split(':').map(Number);
   const p=h>=12?'PM':'AM';
   h=h%12||12;
-  return {
-    text:`${h}:${String(m).padStart(2,'0')}`,
-    period:p,
-    full:`${h}:${String(m).padStart(2,'0')} ${p}`
-  };
+  return {text:`${h}:${String(m).padStart(2,'0')}`,period:p,full:`${h}:${String(m).padStart(2,'0')} ${p}`};
 }
 
 function to12FromMinutes(totalMinutes){
+  if(!Number.isFinite(Number(totalMinutes)))return {text:'--:--',period:'',full:'--:--'};
   const normalized=wrapMinuteValue(totalMinutes);
   const h24=Math.floor(normalized/60);
   const m=normalized%60;
   const h=h24%12||12;
   const ap=h24>=12?'PM':'AM';
-  return {
-    text:`${h}:${String(m).padStart(2,'0')}`,
-    period:ap,
-    full:`${h}:${String(m).padStart(2,'0')} ${ap}`
-  };
+  return {text:`${h}:${String(m).padStart(2,'0')}`,period:ap,full:`${h}:${String(m).padStart(2,'0')} ${ap}`};
 }
 
 function mins(t){
-  const [h,m]=clean(t).split(':').map(Number);
+  const normalized=clean(t);
+  if(!normalized)return NaN;
+  const [h,m]=normalized.split(':').map(Number);
   return h*60+m;
 }
 
-function to24(timeText){
-  const raw=String(timeText||'').trim();
-  const m=raw.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-  if(!m)return null;
-  let h=parseInt(m[1],10);
-  const min=m[2];
-  const ap=(m[3]||'').toUpperCase();
-  if(ap==='PM' && h<12)h+=12;
-  if(ap==='AM' && h===12)h=0;
-  return String(h).padStart(2,'0')+':'+min;
-}
 
-function normalizePrayerSource(text){
-  return String(text||'')
-    .replace(/<script[\s\S]*?<\/script>/gi,' ')
-    .replace(/<style[\s\S]*?<\/style>/gi,' ')
-    .replace(/<[^>]+>/g,' ')
-    .replace(/&nbsp;/gi,' ')
-    .replace(/&#8217;|&rsquo;/gi,'’')
-    .replace(/&amp;/gi,'&')
-    .replace(/\s+/g,' ')
-    .trim();
-}
+const TIMING_SCHEMA_VERSION=2;
+const TIMING_ALL_PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+const TIMING_IQAMAH_PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const TIMING_CACHE_KEY='aslima_timing_cache_v2';
+const CALCULATED_CACHE_KEY='aslima_calculated_cache_v2';
+let timingLoadPromise=null;
+let timingLastLoadedAt=0;
+let timingLastDateKey='';
+let timingLastNotice='';
 
-function makeVricFetchRoutes(url){
-  return [
-    {name:'Direct VRIC',url:url},
-    {name:'AllOrigins raw',url:'https://api.allorigins.win/raw?url='+encodeURIComponent(url)},
-    {name:'AllOrigins JSON',url:'https://api.allorigins.win/get?url='+encodeURIComponent(url)},
-    {name:'Jina Reader HTTPS',url:'https://r.jina.ai/https://'+url.replace(/^https?:\/\//,'')},
-    {name:'Jina Reader HTTP',url:'https://r.jina.ai/http://'+url.replace(/^https?:\/\//,'')},
-    {name:'CORSProxy',url:'https://corsproxy.io/?'+encodeURIComponent(url)}
-  ];
-}
-
-function extractFetchText(payload){
-  if(!payload)return '';
-  const trimmed=String(payload).trim();
-  if(trimmed.startsWith('{')){
-    try{
-      const json=JSON.parse(trimmed);
-      return json.contents||json.data||json.body||trimmed;
-    }catch(e){}
-  }
-  return payload;
-}
-
-function looksLikeVricData(text){
-  const normalized=normalizePrayerSource(text);
-  return /Valley Ranch|VRIC|Prayer Times|Salah|Fajr|Dhuhr|Jummah|Jumu/i.test(normalized) && /\d{1,2}:\d{2}/.test(normalized);
-}
-
-async function fetchTextWithFallback(url){
-  let lastErr=null;
-  for(const route of makeVricFetchRoutes(url)){
-    try{
-      const r=await fetch(route.url,{cache:'no-store',mode:'cors'});
-      if(!r.ok)throw new Error(route.name+' HTTP '+r.status);
-      const payload=await r.text();
-      const text=extractFetchText(payload);
-      if(text && text.length>80 && looksLikeVricData(text)){
-        return {text,sourceUrl:url,route:route.name};
-      }
-      lastErr=new Error(route.name+' returned unusable data');
-    }catch(e){
-      lastErr=e;
-    }
-  }
-  throw lastErr||new Error('Unable to fetch VRIC');
-}
-
-async function fetchBestVricSource(){
-  const urls=CONFIG.vricUrls||['https://vric.org/prayertimes/','https://vric.org/'];
-  let lastErr=null;
-  for(const url of urls){
-    try{
-      const result=await fetchTextWithFallback(url);
-      if(result && result.text)return result;
-    }catch(e){
-      lastErr=e;
-    }
-  }
-  throw lastErr||new Error('Unable to fetch any VRIC route');
-}
-
-function parseVricPrayerTimes(sourceText){
-  const text=normalizePrayerSource(sourceText);
-  const out={};
-  const names=[
-    ['Fajr',['Fajr']],
-    ['Dhuhr',['Dhuhr','Zuhr','Zuhur','Dhuhur']],
-    ['Asr',['Asr']],
-    ['Maghrib',['Maghrib','Magrib']],
-    ['Isha',['Isha','Isha’a','Isha’a']]
-  ];
-
-  names.forEach(([key,aliases])=>{
-    for(const alias of aliases){
-      const re=new RegExp('(?:^|\\s|;|,|>)'+alias+'(?:\\s|,|:|-|–|—)+([0-9]{1,2}:[0-9]{2}\\s*(?:AM|PM|am|pm)?)','i');
-      const m=text.match(re);
-      const v=m && to24(m[1]);
-      if(v){out[key]=v;break;}
-    }
-  });
-
-  const jumuah=[];
-  const jumRe=/(?:Jummah|Jumu[’'`]?ah)(?:\s*\d+|\s*Prayer)?(?:\s|,|:|-|–|—){0,10}([0-9]{1,2}:[0-9]{2}\s*(?:AM|PM|am|pm))/gi;
-  let jm;
-  while((jm=jumRe.exec(text))!==null){
-    const pretty=to12(to24(jm[1])).full;
-    if(!jumuah.includes(pretty))jumuah.push(pretty);
-  }
-
-  // Fallback: VRIC pages sometimes mention "three Jummah prayers: 1:45, 3:00, & 4:00 PM".
-  if(jumuah.length===0){
-    const loose=text.match(/(?:Jummah|Jumu[’'`]?ah)[^.;]{0,160}/i);
-    if(loose){
-      const times=[...loose[0].matchAll(/([0-9]{1,2}:[0-9]{2}\s*(?:AM|PM|am|pm)?)/g)].map(x=>x[1]);
-      const hasPm=/PM/i.test(loose[0]);
-      times.forEach(t=>{
-        const fixed=/AM|PM/i.test(t)?t:(hasPm?t+' PM':t);
-        const v=to24(fixed);
-        if(v){
-          const pretty=to12(v).full;
-          if(!jumuah.includes(pretty))jumuah.push(pretty);
-        }
-      });
-    }
-  }
-
-  return {timings:out,jumuah:jumuah.slice(0,4),sourceText:text};
-}
-
-async function syncVricTimes(showSuccess){
-  const syncResult=await fetchBestVricSource();
-  const parsed=parseVricPrayerTimes(syncResult.text);
-  parsed.sourceUrl=syncResult.sourceUrl;
-  parsed.route=syncResult.route;
-  const found=parsed.timings||{};
-  const required=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-  const validPrayers=required.filter(k=>found[k]);
-
-  if(validPrayers.length>=4){
-    timings={...timings,...found};
-  }
-  if(parsed.jumuah && parsed.jumuah.length){
-    CONFIG.jumuah=parsed.jumuah;
-  }
-
-  if(validPrayers.length<4 && (!parsed.jumuah || !parsed.jumuah.length)){
-    throw new Error('VRIC page loaded but times were not found');
-  }
-
-  const stamp=new Date().toLocaleString();
-  lastVricSyncStatus='VRIC live sync: '+stamp+' via '+(parsed.route||'route');
+function timingDateKey(date,timeZone){
+  const d=date instanceof Date?date:new Date(date||Date.now());
+  const zone=timeZone||CONFIG.timezone||'America/Chicago';
   try{
-    localStorage.setItem('aslima_vric_cache',JSON.stringify({timings,jumuah:CONFIG.jumuah,stamp,route:parsed.route||'',sourceUrl:parsed.sourceUrl||''}));
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);
+    const map={};parts.forEach(p=>{if(p.type!=='literal')map[p.type]=p.value;});
+    if(map.year&&map.month&&map.day)return `${map.year}-${map.month}-${map.day}`;
   }catch(e){}
-  if(showSuccess)showToast('VRIC live timings synced');
-  return true;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function timingAgeHours(iso){
+  const parsed=Date.parse(iso||'');
+  return Number.isFinite(parsed)?Math.max(0,(Date.now()-parsed)/3600000):Infinity;
+}
+
+function canonicalTimingValue(value){
+  const raw=String(value||'').trim();
+  const match=raw.match(/(?:^|\s)(\d{1,2}):(\d{2})\s*(AM|PM)?(?:\s|$)/i)||raw.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  if(!match)return '';
+  let hour=Number(match[1]);
+  const minute=Number(match[2]);
+  const period=String(match[3]||'').toUpperCase();
+  if(!Number.isInteger(hour)||!Number.isInteger(minute)||minute<0||minute>59)return '';
+  if(period){
+    if(hour<1||hour>12)return '';
+    if(period==='PM'&&hour<12)hour+=12;
+    if(period==='AM'&&hour===12)hour=0;
+  }else if(hour<0||hour>23)return '';
+  return `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`;
+}
+
+function timingMinutes(value){
+  const normalized=canonicalTimingValue(value);
+  if(!normalized)return NaN;
+  const [hour,minute]=normalized.split(':').map(Number);
+  return hour*60+minute;
+}
+
+function normalizeTimingMap(input,keys){
+  const out={};
+  (keys||TIMING_ALL_PRAYERS).forEach(key=>{out[key]=canonicalTimingValue(input&&input[key]);});
+  return out;
+}
+
+function normalizeJumuahTimes(values){
+  const out=[];
+  (Array.isArray(values)?values:[]).forEach(value=>{
+    const normalized=canonicalTimingValue(value);
+    if(!normalized)return;
+    const pretty=to12(normalized).full;
+    if(pretty&&pretty!=='--:--'&&!out.includes(pretty))out.push(pretty);
+  });
+  return out.slice(0,4);
+}
+
+function normalizeJumuahMeta(rawMeta,jumuah,sourceKind){
+  const meta=rawMeta&&typeof rawMeta==='object'?rawMeta:{};
+  const allowed=['verified','retained','configured','unavailable'];
+  let status=allowed.includes(String(meta.status||''))?String(meta.status):'';
+  if(!jumuah.length)status='unavailable';
+  else if(!status){
+    if(sourceKind==='official-mirror'||sourceKind==='official-direct')status='verified';
+    else if(sourceKind==='manual')status='configured';
+    else status='configured';
+  }
+  return {
+    status,
+    fetchedAt:String(meta.fetchedAt||meta.verifiedAt||''),
+    checkedAt:String(meta.checkedAt||''),
+    source:String(meta.source||'')
+  };
+}
+
+function validateTimingDataset(raw,options){
+  options=options||{};
+  if(!raw||typeof raw!=='object')throw new Error('Timing data is missing');
+  const expectedDate=options.expectedDate||timingDateKey(new Date(),CONFIG.timezone);
+  const prayerDate=String(raw.prayerDate||'');
+  const timezone=String(raw.timezone||CONFIG.timezone||'America/Chicago');
+  if(options.requireCurrentDate!==false&&prayerDate!==expectedDate)throw new Error(`Timing date ${prayerDate||'missing'} does not match ${expectedDate}`);
+  const adhan=normalizeTimingMap(raw.adhan||raw.timings,TIMING_ALL_PRAYERS);
+  const iqamah=normalizeTimingMap(raw.iqamah,TIMING_IQAMAH_PRAYERS);
+  const missingAdhan=TIMING_ALL_PRAYERS.filter(key=>!adhan[key]);
+  if(missingAdhan.length)throw new Error('Missing Adhan times: '+missingAdhan.join(', '));
+  const sequence=TIMING_ALL_PRAYERS.map(key=>timingMinutes(adhan[key]));
+  for(let i=1;i<sequence.length;i++){
+    if(!(sequence[i]>sequence[i-1]))throw new Error('Prayer times are not in chronological order');
+  }
+  const requireIqamah=options.requireIqamah===true;
+  if(requireIqamah){
+    const missingIqamah=TIMING_IQAMAH_PRAYERS.filter(key=>!iqamah[key]);
+    if(missingIqamah.length)throw new Error('Missing Iqamah times: '+missingIqamah.join(', '));
+  }
+  TIMING_IQAMAH_PRAYERS.forEach(key=>{
+    if(!iqamah[key])return;
+    const delta=timingMinutes(iqamah[key])-timingMinutes(adhan[key]);
+    if(delta<0||delta>180)throw new Error(`${key} Iqamah is not a plausible time after Adhan`);
+  });
+  const sourceRaw=raw.source&&typeof raw.source==='object'?raw.source:{};
+  const source={
+    id:String(sourceRaw.id||raw.sourceId||'unknown'),
+    label:String(sourceRaw.label||raw.sourceLabel||'Prayer-time source'),
+    kind:String(sourceRaw.kind||raw.sourceKind||'unknown'),
+    url:String(sourceRaw.url||''),
+    route:String(sourceRaw.route||'')
+  };
+  const jumuah=normalizeJumuahTimes(raw.jumuah);
+  return {
+    schemaVersion:TIMING_SCHEMA_VERSION,
+    prayerDate,
+    timezone,
+    fetchedAt:String(raw.fetchedAt||raw.generatedAt||new Date().toISOString()),
+    generatedAt:String(raw.generatedAt||raw.fetchedAt||new Date().toISOString()),
+    source,
+    adhan,
+    iqamah,
+    jumuah,
+    jumuahMeta:normalizeJumuahMeta(raw.jumuahMeta,jumuah,source.kind),
+    validation:{valid:true,validatedAt:new Date().toISOString()}
+  };
+}
+
+function timingRuntimeStatus(dataset,forced){
+  if(forced)return forced;
+  const kind=dataset&&dataset.source?dataset.source.kind:'';
+  if(kind==='manual')return 'manual';
+  if(kind==='calculated')return 'calculated';
+  if(kind==='official-mirror'||kind==='official-direct'){
+    return timingAgeHours(dataset.fetchedAt)<=Number(CONFIG.liveFreshHours||12)?'official':'cached';
+  }
+  return 'cached';
+}
+
+function timingStatusText(){
+  const state=timingDataset&&timingDataset.runtimeStatus||'loading';
+  const fetched=timingDataset&&timingDataset.fetchedAt;
+  let updated='';
+  if(fetched&&Number.isFinite(Date.parse(fetched))){
+    try{updated=new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(fetched));}catch(e){}
+  }
+  if(state==='official')return updated?`VRIC verified • updated ${updated}`:'VRIC verified';
+  if(state==='cached')return updated?`VRIC cached for today • updated ${updated}`:'VRIC cached for today';
+  if(state==='calculated')return 'Calculated fallback • VRIC mirror unavailable';
+  if(state==='manual')return 'Manual prayer times active';
+  if(state==='unavailable')return 'Prayer times unavailable — refresh or check network';
+  return 'Loading prayer times…';
+}
+
+function renderTimingHealth(){
+  const chip=document.getElementById('timingHealthChip');
+  const text=document.getElementById('timingHealthText');
+  const state=timingDataset&&timingDataset.runtimeStatus||'loading';
+  const labels={official:'VRIC VERIFIED',cached:'VRIC CACHED',calculated:'CALCULATED',manual:'MANUAL',unavailable:'TIMES UNAVAILABLE',loading:'LOADING'};
+  if(chip){chip.dataset.state=state;chip.title=timingStatusText();}
+  if(text)text.textContent=labels[state]||labels.loading;
+  const status=document.getElementById('timingSourceStatus');
+  if(status)status.textContent=timingStatusText();
+  const title=document.getElementById('timingCurrentTitle');
+  const sub=document.getElementById('timingCurrentSub');
+  if(CONFIG.timingSource==='vric'){
+    if(title)title.textContent=state==='calculated'?'VRIC Fallback Active':(state==='cached'?'VRIC Cached':'VRIC Live');
+    if(sub)sub.textContent=timingStatusText();
+  }
+}
+
+function applyTimingDataset(dataset,forcedStatus){
+  const normalized=validateTimingDataset(dataset,{requireCurrentDate:true,requireIqamah:false});
+  timings={...normalized.adhan};
+  iqamahTimings={Fajr:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:'',...normalized.iqamah};
+  if(normalized.jumuah.length)CONFIG.jumuah=normalized.jumuah;
+  timingDataset={...normalized,runtimeStatus:timingRuntimeStatus(normalized,forcedStatus)};
+  timingLastDateKey=normalized.prayerDate;
+  timingLastLoadedAt=Date.now();
+  lastVricSyncStatus=timingStatusText();
+  renderTimingHealth();
+  return timingDataset;
+}
+
+function setTimingUnavailable(reason){
+  const now=new Date();
+  const dateKey=timingDateKey(now,CONFIG.timezone);
+  timings={Fajr:'',Sunrise:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:''};
+  iqamahTimings={Fajr:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:''};
+  timingDataset={
+    schemaVersion:TIMING_SCHEMA_VERSION,
+    prayerDate:dateKey,
+    timezone:CONFIG.timezone,
+    fetchedAt:'',generatedAt:'',
+    source:{id:'none',label:'Unavailable',kind:'none',url:'',route:''},
+    adhan:{...timings},iqamah:{...iqamahTimings},jumuah:[],
+    jumuahMeta:{status:'unavailable',fetchedAt:'',checkedAt:'',source:''},
+    runtimeStatus:'unavailable',error:String(reason&&reason.message||reason||'Unknown timing error')
+  };
+  timingLastDateKey=dateKey;
+  timingLastLoadedAt=now.getTime();
+  lastVricSyncStatus=timingStatusText();
+  renderTimingHealth();
+}
+
+function persistOfficialTimingDataset(dataset){
+  try{localStorage.setItem(TIMING_CACHE_KEY,JSON.stringify(dataset));}catch(e){}
+}
+
+function persistCalculatedTimingDataset(dataset){
+  try{localStorage.setItem(CALCULATED_CACHE_KEY,JSON.stringify(dataset));}catch(e){}
 }
 
 function loadCachedVricTimes(){
   try{
-    const cached=JSON.parse(localStorage.getItem('aslima_vric_cache')||'null');
-    if(cached && cached.timings){
-      timings={...timings,...cached.timings};
-      if(cached.jumuah && cached.jumuah.length)CONFIG.jumuah=cached.jumuah;
-      lastVricSyncStatus='Using last VRIC sync: '+(cached.stamp||'saved');
-      return true;
-    }
-  }catch(e){}
-  return false;
+    const raw=JSON.parse(localStorage.getItem(TIMING_CACHE_KEY)||'null');
+    if(!raw)return false;
+    const normalized=validateTimingDataset(raw,{requireCurrentDate:true,requireIqamah:true});
+    if(!(normalized.source.kind==='official-mirror'||normalized.source.kind==='official-direct'))return false;
+    applyTimingDataset(normalized,'cached');
+    return true;
+  }catch(e){return false;}
 }
 
+async function fetchJsonWithTimeout(url,timeoutMs){
+  const controller=typeof AbortController!=='undefined'?new AbortController():null;
+  const timer=controller?setTimeout(()=>controller.abort(),timeoutMs||9000):0;
+  try{
+    const response=await fetch(url,{cache:'no-store',signal:controller?controller.signal:undefined});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  }finally{if(timer)clearTimeout(timer);}
+}
+
+async function fetchSameOriginVricMirror(){
+  const raw=await fetchJsonWithTimeout(CONFIG.timingDataUrl||'./data/vric-prayer-times.json',9000);
+  const normalized=validateTimingDataset(raw,{requireCurrentDate:true,requireIqamah:true});
+  if(normalized.source.id!=='vric')throw new Error('Same-origin timing file is not VRIC data');
+  normalized.source.kind='official-mirror';
+  normalized.source.route=normalized.source.route||'GitHub Actions mirror';
+  return normalized;
+}
+
+async function syncVricTimes(showSuccess){
+  const dataset=await fetchSameOriginVricMirror();
+  const applied=applyTimingDataset(dataset);
+  persistOfficialTimingDataset(applied);
+  if(showSuccess)showToast(applied.runtimeStatus==='official'?'VRIC timings verified':'VRIC timings loaded from today’s cache');
+  return true;
+}
 
 function loadTimingSourcePrefs(){
   try{
     const saved=JSON.parse(localStorage.getItem('aslima_timing_source')||'null');
-    if(saved && typeof saved==='object'){
+    if(saved&&typeof saved==='object'){
       if(saved.mode)CONFIG.timingSource=saved.mode;
       if(saved.masjidId)CONFIG.selectedMasjidId=saved.masjidId;
       if(saved.city)CONFIG.city=saved.city;
       if(saved.country)CONFIG.country=saved.country;
-      if(saved.lat && saved.lon){CONFIG.geoLat=saved.lat;CONFIG.geoLon=saved.lon;}
+      if(saved.lat&&saved.lon){CONFIG.geoLat=saved.lat;CONFIG.geoLon=saved.lon;}
       if(saved.method)CONFIG.method=parseInt(saved.method,10)||CONFIG.method;
     }
   }catch(e){}
@@ -4573,6 +4708,7 @@ function saveTimingSourcePrefs(){
   try{
     localStorage.setItem('aslima_timing_source',JSON.stringify({
       mode:CONFIG.timingSource,
+      masjidId:CONFIG.selectedMasjidId,
       city:CONFIG.city,
       country:CONFIG.country,
       lat:CONFIG.geoLat,
@@ -4583,7 +4719,7 @@ function saveTimingSourcePrefs(){
 }
 
 function masjidById(id){
-  return (CONFIG.masjidPresets||[]).find(m=>m.id===id) || (CONFIG.masjidPresets||[])[0];
+  return (CONFIG.masjidPresets||[]).find(m=>m.id===id)||(CONFIG.masjidPresets||[])[0];
 }
 
 function distanceMiles(aLat,aLon,bLat,bLon){
@@ -4591,7 +4727,7 @@ function distanceMiles(aLat,aLon,bLat,bLon){
   const toRad=x=>x*Math.PI/180;
   const dLat=toRad(bLat-aLat);
   const dLon=toRad(bLon-aLon);
-  const s=Math.sin(dLat/2)**2 + Math.cos(toRad(aLat))*Math.cos(toRad(bLat))*Math.sin(dLon/2)**2;
+  const s=Math.sin(dLat/2)**2+Math.cos(toRad(aLat))*Math.cos(toRad(bLat))*Math.sin(dLon/2)**2;
   return 2*R*Math.asin(Math.sqrt(s));
 }
 
@@ -4600,29 +4736,42 @@ function getDevicePosition(){
     if(!navigator.geolocation)return reject(new Error('Location permission is not available on this tablet/browser'));
     navigator.geolocation.getCurrentPosition(
       pos=>resolve({lat:pos.coords.latitude,lon:pos.coords.longitude}),
-      err=>reject(new Error(err && err.message ? err.message : 'Location permission denied')),
+      err=>reject(new Error(err&&err.message?err.message:'Location permission denied')),
       {enableHighAccuracy:true,timeout:12000,maximumAge:10*60*1000}
     );
   });
 }
 
+function alAdhanDatasetFromResponse(response,label){
+  if(!response||!response.data||!response.data.timings)throw new Error('No calculated prayer times returned');
+  const t=response.data.timings;
+  const adhan={Fajr:t.Fajr,Sunrise:t.Sunrise,Dhuhr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Isha:t.Isha};
+  return validateTimingDataset({
+    schemaVersion:TIMING_SCHEMA_VERSION,
+    prayerDate:timingDateKey(new Date(),CONFIG.timezone),
+    timezone:response.data.meta&&response.data.meta.timezone||CONFIG.timezone,
+    fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),
+    source:{id:'aladhan',label:label||'Calculated prayer times',kind:'calculated',url:'https://api.aladhan.com',route:'AlAdhan API'},
+    adhan,iqamah:{},jumuah:[],
+    jumuahMeta:{status:'unavailable',fetchedAt:'',source:'Calculated source does not provide Jumuah'}
+  },{requireCurrentDate:true,requireIqamah:false});
+}
+
 async function syncAlAdhanByCoordinates(lat,lon,label,method){
   const url=`https://api.aladhan.com/v1/timings?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&method=${encodeURIComponent(method||CONFIG.method)}`;
-  const r=await fetch(url,{cache:'no-store'});
-  if(!r.ok)throw new Error('AlAdhan location lookup failed');
-  const j=await r.json();
-  if(!j || !j.data || !j.data.timings)throw new Error('No location timings returned');
-  const t=j.data.timings;
-  timings={
-    Fajr:clean(t.Fajr),
-    Sunrise:clean(t.Sunrise),
-    Dhuhr:clean(t.Dhuhr),
-    Asr:clean(t.Asr),
-    Maghrib:clean(t.Maghrib),
-    Isha:clean(t.Isha)
-  };
-  lastVricSyncStatus='Timing source: '+label;
-  try{localStorage.setItem('aslima_location_cache',JSON.stringify({timings,label,stamp:new Date().toLocaleString()}));}catch(e){}
+  const response=await fetchJsonWithTimeout(url,12000);
+  const dataset=alAdhanDatasetFromResponse(response,label);
+  const applied=applyTimingDataset(dataset,'calculated');
+  persistCalculatedTimingDataset(applied);
+  return true;
+}
+
+async function syncAlAdhanByCity(){
+  const url=`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CONFIG.city)}&country=${encodeURIComponent(CONFIG.country)}&method=${encodeURIComponent(CONFIG.method)}`;
+  const response=await fetchJsonWithTimeout(url,12000);
+  const dataset=alAdhanDatasetFromResponse(response,`Calculated for ${CONFIG.city}`);
+  const applied=applyTimingDataset(dataset,'calculated');
+  persistCalculatedTimingDataset(applied);
   return true;
 }
 
@@ -4631,47 +4780,22 @@ async function syncClosestMasjidFromDevice(){
   let best=null;
   (CONFIG.masjidPresets||[]).forEach(m=>{
     const d=distanceMiles(pos.lat,pos.lon,m.lat,m.lon);
-    if(!best || d<best.distance)best={...m,distance:d};
+    if(!best||d<best.distance)best={...m,distance:d};
   });
   if(!best)throw new Error('No masjid presets are available');
   CONFIG.selectedMasjidId=best.id;
   saveTimingSourcePrefs();
-
-  // If the closest preset has its own live timing source, try that first.
-  if(best.urls && best.urls.length){
-    const oldUrls=CONFIG.vricUrls;
-    try{
-      CONFIG.vricUrls=best.urls;
-      await syncVricTimes(false);
-      lastVricSyncStatus='Timing source: closest masjid — '+best.name+' ('+best.distance.toFixed(1)+' mi)';
-      renderLocationControls();
-      return true;
-    }catch(e){
-      CONFIG.vricUrls=oldUrls;
-    }
-  }
-
-  await syncAlAdhanByCoordinates(best.lat,best.lon,'closest masjid location — '+best.name+' ('+best.distance.toFixed(1)+' mi)',best.method);
+  if(best.id==='vric')return await syncVricTimes(false);
+  await syncAlAdhanByCoordinates(best.lat,best.lon,`Calculated near ${best.name} (${best.distance.toFixed(1)} mi)`,best.method);
   renderLocationControls();
   return true;
 }
 
 async function syncSelectedMasjid(){
-  const m=masjidById(CONFIG.selectedMasjidId);
-  if(!m)throw new Error('Selected masjid not found');
-  if(m.urls && m.urls.length){
-    const oldUrls=CONFIG.vricUrls;
-    try{
-      CONFIG.vricUrls=m.urls;
-      await syncVricTimes(false);
-      lastVricSyncStatus='Timing source: '+m.name+' live sync';
-      renderLocationControls();
-      return true;
-    }catch(e){
-      CONFIG.vricUrls=oldUrls;
-    }
-  }
-  await syncAlAdhanByCoordinates(m.lat,m.lon,m.name+' location',m.method);
+  const masjid=masjidById(CONFIG.selectedMasjidId);
+  if(!masjid)throw new Error('Selected masjid not found');
+  if(masjid.id==='vric')return await syncVricTimes(false);
+  await syncAlAdhanByCoordinates(masjid.lat,masjid.lon,`Calculated near ${masjid.name}`,masjid.method);
   renderLocationControls();
   return true;
 }
@@ -4681,75 +4805,138 @@ async function syncDeviceLocation(){
   CONFIG.geoLat=pos.lat;
   CONFIG.geoLon=pos.lon;
   saveTimingSourcePrefs();
-  await syncAlAdhanByCoordinates(pos.lat,pos.lon,'calculated from this tablet location',CONFIG.method);
+  await syncAlAdhanByCoordinates(pos.lat,pos.lon,'Calculated from this tablet location',CONFIG.method);
   renderLocationControls();
   return true;
 }
 
 function renderLocationControls(){
   const mode=document.getElementById('timingSourceMode');
-  const status=document.getElementById('timingSourceStatus');
   const method=document.getElementById('calcMethodSelect');
   if(mode)mode.value=(CONFIG.timingSource==='device-location'?'calculated-location':(CONFIG.timingSource||'vric'));
   if(method)method.value=String(CONFIG.method||2);
-  if(status)status.textContent=lastVricSyncStatus||'Not synced yet';
+  renderTimingHealth();
   if(window.renderPremiumTimingSourceUI)window.renderPremiumTimingSourceUI();
+  renderTimingHealth();
 }
 
 function bindLocationControls(){
   const mode=document.getElementById('timingSourceMode');
   const method=document.getElementById('calcMethodSelect');
   const refreshBtn=document.getElementById('refreshTimingSource');
-  if(mode && !mode.__aslimaBound){
+  if(mode&&!mode.__aslimaBound){
     mode.__aslimaBound=true;
-    mode.addEventListener('change',async e=>{
-      CONFIG.timingSource=e.target.value;
+    mode.addEventListener('change',async event=>{
+      CONFIG.timingSource=event.target.value;
       saveTimingSourcePrefs();
-      showToast(e.target.value==='vric'?'Using VRIC live timings':'Using calculated tablet-location timings');
-      await loadTimes();
+      await loadTimes({reason:'source-change',userInitiated:true});
     });
   }
-  if(method && !method.__aslimaBound){
+  if(method&&!method.__aslimaBound){
     method.__aslimaBound=true;
-    method.addEventListener('change',async e=>{
-      CONFIG.method=parseInt(e.target.value,10)||2;
+    method.addEventListener('change',async event=>{
+      CONFIG.method=parseInt(event.target.value,10)||2;
       saveTimingSourcePrefs();
-      if((CONFIG.timingSource||'vric')!=='vric') await loadTimes();
+      if((CONFIG.timingSource||'vric')!=='vric')await loadTimes({reason:'method-change',userInitiated:true});
     });
   }
-  if(refreshBtn && !refreshBtn.__aslimaBound){
+  if(refreshBtn&&!refreshBtn.__aslimaBound){
     refreshBtn.__aslimaBound=true;
-    refreshBtn.onclick=async()=>{showToast('Refreshing timings');await loadTimes();};
+    refreshBtn.onclick=async()=>{await loadTimes({reason:'manual-refresh',userInitiated:true});};
   }
   renderLocationControls();
 }
 
 async function syncConfiguredTimingSource(){
   const source=CONFIG.timingSource||'vric';
-  if(source==='device-location' || source==='calculated-location'){
-    return await syncDeviceLocation();
-  }
-  return await syncVricTimes(true);
+  if(source==='device-location'||source==='calculated-location')return await syncDeviceLocation();
+  return await syncVricTimes(false);
 }
 
+function timingNoticeOnce(message){
+  if(!message||message===timingLastNotice)return;
+  timingLastNotice=message;
+  showToast(message);
+}
 
+async function loadTimes(options){
+  options=options||{};
+  if(timingLoadPromise)return timingLoadPromise;
+  timingLoadPromise=(async()=>{
+    if(window.aslimaRemoteManualEnabled&&window.aslimaRemoteManualTimings){
+      const manual=validateTimingDataset({
+        prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,
+        fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),
+        source:{id:'manual',label:'Manual prayer times',kind:'manual'},
+        adhan:window.aslimaRemoteManualTimings,iqamah:{},jumuah:CONFIG.jumuah
+      },{requireCurrentDate:true,requireIqamah:false});
+      applyTimingDataset(manual,'manual');
+      render();
+      return true;
+    }
+    const mode=CONFIG.timingSource||'vric';
+    try{
+      if(mode==='vric'){
+        try{
+          await syncVricTimes(false);
+        }catch(officialError){
+          if(!loadCachedVricTimes()){
+            try{await syncAlAdhanByCity();}
+            catch(calculatedError){setTimingUnavailable(`${officialError.message}; ${calculatedError.message}`);}
+          }
+        }
+      }else{
+        await syncConfiguredTimingSource();
+      }
+      if(options.userInitiated){
+        const state=timingDataset&&timingDataset.runtimeStatus;
+        if(state==='official')timingNoticeOnce('VRIC timings verified');
+        else if(state==='cached')timingNoticeOnce('Using today’s saved VRIC timings');
+        else if(state==='calculated')timingNoticeOnce('VRIC unavailable — calculated fallback loaded');
+        else if(state==='unavailable')timingNoticeOnce('Prayer times are unavailable');
+      }
+      render();
+      return timingDataset&&timingDataset.runtimeStatus!=='unavailable';
+    }catch(error){
+      setTimingUnavailable(error);
+      if(options.userInitiated)timingNoticeOnce('Prayer times are unavailable');
+      render();
+      return false;
+    }
+  })();
+  try{return await timingLoadPromise;}finally{timingLoadPromise=null;}
+}
+
+function checkTimingLifecycle(){
+  const today=timingDateKey(new Date(),CONFIG.timezone);
+  const dateChanged=timingLastDateKey&&today!==timingLastDateKey;
+  const tooOld=Date.now()-timingLastLoadedAt>6*60*60*1000;
+  if(dateChanged||tooOld)loadTimes({reason:dateChanged?'date-rollover':'periodic'});
+}
+
+window.addEventListener('online',()=>loadTimes({reason:'network-restored'}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkTimingLifecycle();});
+window.ASLIMA_TIMING={
+  validateTimingDataset,
+  applyTimingDataset,
+  timingDateKey,
+  loadTimes,
+  checkTimingLifecycle,
+  getState:()=>JSON.parse(JSON.stringify(timingDataset||{}))
+};
 function getNext(){
   const n=new Date();
   const cur=n.getHours()*60+n.getMinutes()+n.getSeconds()/60;
+  const available=PRAYER_ORDER.filter(p=>Number.isFinite(mins(timings[p])));
+  if(!available.length)return {name:'Fajr',seconds:0,unavailable:true};
   let best=9999;
-  let name='Fajr';
-  PRAYER_ORDER.forEach(p=>{
-    let d=mins(timings[p])-cur;
-    if(d>0 && d<best){
-      best=d;
-      name=p;
-    }
+  let name=available[0];
+  available.forEach(p=>{
+    const delta=mins(timings[p])-cur;
+    if(delta>0&&delta<best){best=delta;name=p;}
   });
-  if(best===9999){
-    best=1440-cur+mins(timings.Fajr);
-    name='Fajr';
-  }
-  return {name,seconds:Math.max(0,Math.floor(best*60))};
+  if(best===9999){best=1440-cur+mins(timings[available[0]]);name=available[0];}
+  return {name,seconds:Math.max(0,Math.floor(best*60)),unavailable:false};
 }
 
 function activePrayer(nextName){
@@ -4771,6 +4958,15 @@ function currentPrayerTheme(nextName){
   const asr=mins(timings.Asr);
   const maghrib=mins(timings.Maghrib);
   const isha=mins(timings.Isha);
+
+  if(![fajr,dhuhr,asr,maghrib,isha].every(Number.isFinite)){
+    const hour=n.getHours();
+    if(hour<6||hour>=21)return 'after-isha';
+    if(hour<12)return 'fajr';
+    if(hour<16)return 'dhuhr';
+    if(hour<19)return 'asr';
+    return 'maghrib';
+  }
 
   if(isFriday() && now>=fajr && now<asr)return 'jumuah';
   if(now<fajr || now>=isha)return 'after-isha';
@@ -4936,17 +5132,18 @@ function setJumuahPanelOpen(force){
 }
 
 function jumuahTimingSourceLabel(){
-  const mode=CONFIG&&CONFIG.timingSource?CONFIG.timingSource:'vric';
-  if(mode==='manual')return 'Manual';
-  if(mode==='calculated-location'||mode==='device-location')return 'Calculated location';
-  return 'VRIC';
+  const meta=timingDataset&&timingDataset.jumuahMeta||{};
+  if(meta.status==='verified')return 'VRIC';
+  if(meta.status==='retained')return 'Previous VRIC schedule';
+  if(meta.status==='configured')return 'Configured';
+  return 'Unavailable';
 }
 
 function renderJumuahPanel(){
   syncFridayJumuahState();
   const list=$('jumuah'), panel=$('jumuahPanel'), pill=$('jumuahPill'), label=$('jumuahPillLabel'), zone=$('jumuahZone'), subtitle=$('jumuahPanelSubtitle');
   if(!list||!panel||!pill||!label||!zone)return;
-  const entries=(CONFIG.jumuah||[]).filter(Boolean);
+  const entries=(timingDataset&&Array.isArray(timingDataset.jumuah)?timingDataset.jumuah:[]).filter(Boolean);
   const ordinals=['1st','2nd','3rd','4th'];
   list.style.setProperty('--jumuah-count',String(Math.max(1,entries.length)));
   list.innerHTML=entries.length?entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join(''):'<div class="jumuah-row"><span class="jumuah-row-label">Schedule</span><span class="jumuah-row-time">Unavailable</span></div>';
@@ -4957,7 +5154,7 @@ function renderJumuahPanel(){
   if(badge)badge.hidden=!friday;
   const chevron=$('jumuahChevron');
   if(chevron)chevron.textContent=jumuahPanelOpen?'⌄':'›';
-  if(subtitle)subtitle.textContent=friday?'Today’s prayer schedule':'Available anytime';
+  if(subtitle)subtitle.textContent=entries.length?(friday?'Today’s prayer schedule':'Available anytime'):'Jumuah schedule unavailable';
   const source=$('jumuahSourceLabel');
   if(source)source.textContent=jumuahTimingSourceLabel();
   panel.hidden=!jumuahPanelOpen;
@@ -5134,6 +5331,10 @@ function updateProgress(){
   const now=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
   const start=mins(timings.Fajr);
   const end=mins(timings.Isha);
+  if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start){
+    document.documentElement.style.setProperty('--progress','0%');
+    return;
+  }
   const pct=Math.max(0,Math.min(100,((now-start)/Math.max(1,end-start))*100));
   document.documentElement.style.setProperty('--progress',pct+'%');
 }
@@ -5142,29 +5343,35 @@ function render(){
   updateClock();
   const next=getNext();
   applyPrayerTheme(next.name);
-  const nextTime=to12(timings[next.name]);
-
-  $('nextName').textContent=next.name.toUpperCase();
-  $('nextTime').textContent=nextTime.full;
-  $('remaining').textContent=remainingHuman(next.seconds);
+  if(next.unavailable){
+    $('nextName').textContent='PRAYER TIMES';
+    $('nextTime').textContent='UNAVAILABLE';
+    $('remaining').textContent='CHECK CONNECTION';
+  }else{
+    const nextTime=to12(timings[next.name]);
+    $('nextName').textContent=next.name.toUpperCase();
+    $('nextTime').textContent=nextTime.full;
+    $('remaining').textContent=remainingHuman(next.seconds);
+  }
 
   PRAYER_ORDER.forEach(p=>{
-    $('time'+p).textContent=to12(timings[p]).full;
+    const adhan=$('time'+p);
+    const iqamah=$('iqamah'+p);
+    if(adhan)adhan.textContent=to12(timings[p]).full;
+    if(iqamah)iqamah.textContent=iqamahTimings[p]?to12(iqamahTimings[p]).full:'—';
   });
 
-  const current=activePrayer(next.name);
+  const current=next.unavailable?null:activePrayer(next.name);
   const activeChanged=current!==lastActivePrayerName;
-  document.querySelectorAll('.row').forEach(row=>{
+  document.querySelectorAll('#prayerPanel .row').forEach(row=>{
     const isCurrent=row.dataset.prayer===current;
     row.classList.toggle('active',isCurrent);
-    if(isCurrent && activeChanged){
+    if(isCurrent&&activeChanged){
       row.classList.remove('active-shift');
       void row.offsetWidth;
       row.classList.add('active-shift');
       setTimeout(()=>row.classList.remove('active-shift'),900);
-    }else if(!isCurrent){
-      row.classList.remove('active-shift');
-    }
+    }else if(!isCurrent){row.classList.remove('active-shift');}
   });
   lastActivePrayerName=current||'';
 
@@ -5173,6 +5380,7 @@ function render(){
   renderJumuahPanel();
   updateVolumeLabel();
   renderLocationControls();
+  renderTimingHealth();
 }
 
 
@@ -5202,7 +5410,7 @@ function applyAslimaRemoteSettings(data){
       saveTimingSourcePrefs();
       window.aslimaRemoteManualEnabled=true;
       window.aslimaRemoteManualTimings={...timings,...remoteTimings};
-      timings={...window.aslimaRemoteManualTimings};
+      applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:window.aslimaRemoteManualTimings,iqamah:{},jumuah:CONFIG.jumuah},'manual');
       lastVricSyncStatus='Manual prayer times active';
       if(window.renderTabletManualTimingUI)window.renderTabletManualTimingUI();
     }else if(data.mode==='vric' || data.mode==='calculated-location'){
@@ -5298,43 +5506,6 @@ function initAslimaFirebaseRemote(){
     });
     setTimeout(()=>showToast('Phone remote connected'),900);
   }catch(e){console.warn('Aslima Firebase remote unavailable',e);}
-}
-
-async function loadTimes(){
-  if(window.aslimaRemoteManualEnabled && window.aslimaRemoteManualTimings){
-    timings={...window.aslimaRemoteManualTimings};
-    lastVricSyncStatus='Phone remote: manual prayer times active';
-    render();
-    return;
-  }
-  let synced=false;
-  try{
-    synced=await syncConfiguredTimingSource();
-  }catch(e){
-    loadCachedVricTimes();
-    try{
-      const url=`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CONFIG.city)}&country=${encodeURIComponent(CONFIG.country)}&method=${CONFIG.method}`;
-      const r=await fetch(url,{cache:'no-store'});
-      const j=await r.json();
-      if(j && j.data && j.data.timings){
-        const t=j.data.timings;
-        timings={
-          Fajr:clean(t.Fajr),
-          Sunrise:clean(t.Sunrise),
-          Dhuhr:clean(t.Dhuhr),
-          Asr:clean(t.Asr),
-          Maghrib:clean(t.Maghrib),
-          Isha:clean(t.Isha)
-        };
-        lastVricSyncStatus='Live source unavailable; using AlAdhan fallback';
-        showToast('Live source unavailable — fallback times loaded');
-      }
-    }catch(err){
-      lastVricSyncStatus='Offline mode — using saved/demo times';
-      showToast('Offline mode');
-    }
-  }
-  render();
 }
 
 function updateVolumeLabel(){
@@ -5467,7 +5638,7 @@ function bindAzaanAudioControls(){
 
   const refresh=$('refreshTimes');
   const dashboard=$('dashboard15');
-  if(refresh)refresh.onclick=()=>{loadTimes();showAdmin();};
+  if(refresh)refresh.onclick=()=>{loadTimes({reason:'manual-refresh',userInitiated:true});showAdmin();};
   if(dashboard)dashboard.onclick=()=>{showToast('Clean premium display active');showAdmin();};
   updateVolumeLabel();
 }
@@ -5577,12 +5748,12 @@ renderAzaanControls();
 bindAzaanDrawer();
 bindLocationControls();
 if(window.bindPremiumTimingSourceUI)window.bindPremiumTimingSourceUI();
-loadTimes();
+loadTimes({reason:'startup'});
 render();
 setInterval(render,1000);
 setInterval(autoFireAzaan,30000);
 setInterval(autoFireSupplementaryPrayerBeep,15000);
-setInterval(loadTimes,6*60*60*1000);
+setInterval(checkTimingLifecycle,60000);
 setInterval(applyBurnInShift,60000);
 setTimeout(applyBurnInShift,12000);
 
@@ -6273,7 +6444,7 @@ setTimeout(applyBurnInShift,12000);
         saveTimingSourcePrefs();
         window.aslimaRemoteManualEnabled=true;
         window.aslimaRemoteManualTimings={...manual};
-        timings={...manual};
+        applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:manual,iqamah:{},jumuah:CONFIG.jumuah},'manual');
         render();
         await writeRemote({mode:'manual',timings:manual});
         if(typeof showToast==='function')showToast('Manual timing mode active');
@@ -6296,9 +6467,10 @@ setTimeout(applyBurnInShift,12000);
     const next=collectTimes();
     if(!['Fajr','Dhuhr','Asr','Maghrib','Isha'].every(k=>validTime(next[k]))){setStatus('Missing required prayer time. Fill Fajr, Dhuhr, Asr, Maghrib, and Isha.');return;}
     try{
-      timings={...timings,...next};
+      const merged={...timings,...next};
       window.aslimaRemoteManualEnabled=true;
-      window.aslimaRemoteManualTimings={...timings};
+      window.aslimaRemoteManualTimings={...merged};
+      applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:merged,iqamah:{},jumuah:CONFIG.jumuah},'manual');
       CONFIG.timingSource='manual';
       saveTimingSourcePrefs();
       await writeRemote({mode:'manual',timings:{...timings}});
@@ -6679,7 +6851,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=946').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=947').catch(console.warn);
   overlay(false);setPhase('idle');
 })();
 </script>
