@@ -1,1 +1,43 @@
 
+name: Update VRIC prayer times
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7 5,6 * * *'
+    - cron: '17 */3 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-vric-prayer-times
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refresh and validate VRIC timing mirror
+        run: python scripts/update_vric_times.py
+
+      - name: Commit changed timing file
+        run: |
+          if git diff --quiet -- data/vric-prayer-times.json; then
+            echo "No timing change to commit."
+            exit 0
+          fi
+          git config user.name "ASLIMA Timing Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/vric-prayer-times.json
+          git commit -m "Update VRIC prayer times"
+          git push
