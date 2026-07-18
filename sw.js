@@ -1,6 +1,6 @@
-const CACHE='aslima-v947-timing-integrity-docs-organized';
+const CACHE='aslima-v948-vric-rendered-source-fix';
 const CORE=[
-  './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json','./assets/js/prayer-warning-banners.js',
+  './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json',
   './assets/aslima-premium-bg.png',
   './assets/audio/azaan-1.mp3','./assets/audio/azaan-2.mp3',
   './assets/audio/azaan-3.mp3','./assets/audio/azaan-4.mp3',

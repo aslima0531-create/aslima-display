@@ -3672,7 +3672,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 </style>
 
 
-<style id="aslima-v9147-timing-integrity-ui">
+<style id="aslima-v9148-timing-integrity-ui">
 .timing-health{display:inline-flex;align-items:center;gap:.42vw;justify-content:flex-end;color:rgba(255,244,220,.76);font-size:clamp(9px,.72vw,12px);font-weight:760;letter-spacing:.12em;white-space:nowrap;margin-bottom:.45vh;text-shadow:0 1px 8px rgba(0,0,0,.35)}
 .timing-health-dot{width:7px;height:7px;border-radius:50%;background:#b7a98d;box-shadow:0 0 8px rgba(183,169,141,.28)}
 .timing-health[data-state="official"]{color:rgba(196,239,218,.90)}
@@ -3681,6 +3681,8 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 .timing-health[data-state="cached"] .timing-health-dot{background:#e6b85d;box-shadow:0 0 9px rgba(230,184,93,.42)}
 .timing-health[data-state="calculated"]{color:rgba(182,224,238,.90)}
 .timing-health[data-state="calculated"] .timing-health-dot{background:#65bdd8;box-shadow:0 0 9px rgba(101,189,216,.40)}
+.timing-health[data-state="hybrid"]{color:rgba(210,235,218,.94)}
+.timing-health[data-state="hybrid"] .timing-health-dot{background:#80d6a4;box-shadow:0 0 9px rgba(128,214,164,.44)}
 .timing-health[data-state="manual"] .timing-health-dot{background:#cba7ee}
 .timing-health[data-state="unavailable"]{color:#ffd1cb}
 .timing-health[data-state="unavailable"] .timing-health-dot{background:#ff7668;box-shadow:0 0 10px rgba(255,118,104,.50)}
@@ -4015,6 +4017,7 @@ const CONFIG={
   timezone:'America/Chicago',
   timingDataUrl:'./data/vric-prayer-times.json',
   liveFreshHours:12,
+  scheduleFallbackMaxDays:7,
   vricSyncMinutes:360,
   jumuah:['1:45 PM','3:00 PM','4:00 PM'],
   timingSource:'vric',
@@ -4440,6 +4443,7 @@ const TIMING_IQAMAH_PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const TIMING_CACHE_KEY='aslima_timing_cache_v2';
 const CALCULATED_CACHE_KEY='aslima_calculated_cache_v2';
 let timingLoadPromise=null;
+let timingScheduleFallback=null;
 let timingLastLoadedAt=0;
 let timingLastDateKey='';
 let timingLastNotice='';
@@ -4458,6 +4462,14 @@ function timingDateKey(date,timeZone){
 function timingAgeHours(iso){
   const parsed=Date.parse(iso||'');
   return Number.isFinite(parsed)?Math.max(0,(Date.now()-parsed)/3600000):Infinity;
+}
+
+function timingDateAgeDays(prayerDate){
+  const current=timingDateKey(new Date(),CONFIG.timezone);
+  const from=Date.parse(String(prayerDate||'')+'T12:00:00Z');
+  const to=Date.parse(String(current||'')+'T12:00:00Z');
+  if(!Number.isFinite(from)||!Number.isFinite(to))return Infinity;
+  return Math.max(0,Math.floor((to-from)/86400000));
 }
 
 function canonicalTimingValue(value){
@@ -4552,6 +4564,13 @@ function validateTimingDataset(raw,options){
     route:String(sourceRaw.route||'')
   };
   const jumuah=normalizeJumuahTimes(raw.jumuah);
+  const scheduleRaw=raw.scheduleMeta&&typeof raw.scheduleMeta==='object'?raw.scheduleMeta:{};
+  const scheduleMeta={
+    status:String(scheduleRaw.status||''),
+    prayerDate:String(scheduleRaw.prayerDate||prayerDate),
+    fetchedAt:String(scheduleRaw.fetchedAt||raw.fetchedAt||raw.generatedAt||''),
+    source:String(scheduleRaw.source||source.label||'')
+  };
   return {
     schemaVersion:TIMING_SCHEMA_VERSION,
     prayerDate,
@@ -4563,7 +4582,64 @@ function validateTimingDataset(raw,options){
     iqamah,
     jumuah,
     jumuahMeta:normalizeJumuahMeta(raw.jumuahMeta,jumuah,source.kind),
+    scheduleMeta,
     validation:{valid:true,validatedAt:new Date().toISOString()}
+  };
+}
+
+function extractVricScheduleFallback(raw){
+  try{
+    const normalized=validateTimingDataset(raw,{requireCurrentDate:false,requireIqamah:true});
+    if(normalized.source.id!=='vric')return null;
+    const ageDays=timingDateAgeDays(normalized.prayerDate);
+    if(!Number.isFinite(ageDays)||ageDays<0||ageDays>Number(CONFIG.scheduleFallbackMaxDays||7))return null;
+    return {
+      prayerDate:normalized.prayerDate,
+      fetchedAt:normalized.fetchedAt,
+      ageDays,
+      iqamah:{...normalized.iqamah},
+      jumuah:[...normalized.jumuah],
+      jumuahMeta:{
+        ...normalized.jumuahMeta,
+        status:normalized.jumuah.length?'retained':'unavailable',
+        checkedAt:new Date().toISOString(),
+        source:normalized.jumuahMeta.source||'Previous verified VRIC schedule'
+      },
+      scheduleMeta:{status:'retained',prayerDate:normalized.prayerDate,fetchedAt:normalized.fetchedAt,source:'VRIC'}
+    };
+  }catch(e){return null;}
+}
+
+function rememberVricScheduleFallback(raw){
+  const candidate=extractVricScheduleFallback(raw);
+  if(!candidate)return false;
+  if(!timingScheduleFallback||candidate.ageDays<timingScheduleFallback.ageDays||
+     (candidate.ageDays===timingScheduleFallback.ageDays&&Date.parse(candidate.fetchedAt||0)>Date.parse(timingScheduleFallback.fetchedAt||0))){
+    timingScheduleFallback=candidate;
+  }
+  return true;
+}
+
+function mergeVricScheduleIntoCalculated(dataset){
+  const fallback=timingScheduleFallback;
+  if(!fallback)return dataset;
+  const iqamah={};
+  TIMING_IQAMAH_PRAYERS.forEach(key=>{
+    const value=canonicalTimingValue(fallback.iqamah&&fallback.iqamah[key]);
+    if(!value)return;
+    const delta=timingMinutes(value)-timingMinutes(dataset.adhan&&dataset.adhan[key]);
+    if(delta>=0&&delta<=180)iqamah[key]=value;
+  });
+  const hasCompleteIqamah=TIMING_IQAMAH_PRAYERS.every(key=>iqamah[key]);
+  const jumuah=normalizeJumuahTimes(fallback.jumuah);
+  if(!hasCompleteIqamah&&!jumuah.length)return dataset;
+  return {
+    ...dataset,
+    source:{...dataset.source,id:'aladhan+vric',label:'Calculated Adhan with VRIC congregation schedule',kind:'calculated-with-vric-schedule'},
+    iqamah:hasCompleteIqamah?iqamah:{},
+    jumuah,
+    jumuahMeta:jumuah.length?{...fallback.jumuahMeta,status:'retained'}:{status:'unavailable',fetchedAt:'',checkedAt:new Date().toISOString(),source:''},
+    scheduleMeta:{...fallback.scheduleMeta,ageDays:fallback.ageDays}
   };
 }
 
@@ -4571,6 +4647,7 @@ function timingRuntimeStatus(dataset,forced){
   if(forced)return forced;
   const kind=dataset&&dataset.source?dataset.source.kind:'';
   if(kind==='manual')return 'manual';
+  if(kind==='calculated-with-vric-schedule')return 'hybrid';
   if(kind==='calculated')return 'calculated';
   if(kind==='official-mirror'||kind==='official-direct'){
     return timingAgeHours(dataset.fetchedAt)<=Number(CONFIG.liveFreshHours||12)?'official':'cached';
@@ -4587,6 +4664,10 @@ function timingStatusText(){
   }
   if(state==='official')return updated?`VRIC verified • updated ${updated}`:'VRIC verified';
   if(state==='cached')return updated?`VRIC cached for today • updated ${updated}`:'VRIC cached for today';
+  if(state==='hybrid'){
+    const date=timingDataset&&timingDataset.scheduleMeta&&timingDataset.scheduleMeta.prayerDate;
+    return date?`Calculated Adhan • VRIC Iqamah/Jumuah retained from ${date}`:'Calculated Adhan • previous VRIC congregation schedule';
+  }
   if(state==='calculated')return 'Calculated fallback • VRIC mirror unavailable';
   if(state==='manual')return 'Manual prayer times active';
   if(state==='unavailable')return 'Prayer times unavailable — refresh or check network';
@@ -4597,7 +4678,7 @@ function renderTimingHealth(){
   const chip=document.getElementById('timingHealthChip');
   const text=document.getElementById('timingHealthText');
   const state=timingDataset&&timingDataset.runtimeStatus||'loading';
-  const labels={official:'VRIC VERIFIED',cached:'VRIC CACHED',calculated:'CALCULATED',manual:'MANUAL',unavailable:'TIMES UNAVAILABLE',loading:'LOADING'};
+  const labels={official:'VRIC VERIFIED',cached:'VRIC CACHED',hybrid:'CALC + VRIC',calculated:'CALCULATED',manual:'MANUAL',unavailable:'TIMES UNAVAILABLE',loading:'LOADING'};
   if(chip){chip.dataset.state=state;chip.title=timingStatusText();}
   if(text)text.textContent=labels[state]||labels.loading;
   const status=document.getElementById('timingSourceStatus');
@@ -4605,7 +4686,7 @@ function renderTimingHealth(){
   const title=document.getElementById('timingCurrentTitle');
   const sub=document.getElementById('timingCurrentSub');
   if(CONFIG.timingSource==='vric'){
-    if(title)title.textContent=state==='calculated'?'VRIC Fallback Active':(state==='cached'?'VRIC Cached':'VRIC Live');
+    if(title)title.textContent=state==='hybrid'?'VRIC Schedule Fallback':(state==='calculated'?'VRIC Fallback Active':(state==='cached'?'VRIC Cached':'VRIC Live'));
     if(sub)sub.textContent=timingStatusText();
   }
 }
@@ -4656,6 +4737,7 @@ function loadCachedVricTimes(){
   try{
     const raw=JSON.parse(localStorage.getItem(TIMING_CACHE_KEY)||'null');
     if(!raw)return false;
+    rememberVricScheduleFallback(raw);
     const normalized=validateTimingDataset(raw,{requireCurrentDate:true,requireIqamah:true});
     if(!(normalized.source.kind==='official-mirror'||normalized.source.kind==='official-direct'))return false;
     applyTimingDataset(normalized,'cached');
@@ -4675,6 +4757,7 @@ async function fetchJsonWithTimeout(url,timeoutMs){
 
 async function fetchSameOriginVricMirror(){
   const raw=await fetchJsonWithTimeout(CONFIG.timingDataUrl||'./data/vric-prayer-times.json',9000);
+  rememberVricScheduleFallback(raw);
   const normalized=validateTimingDataset(raw,{requireCurrentDate:true,requireIqamah:true});
   if(normalized.source.id!=='vric')throw new Error('Same-origin timing file is not VRIC data');
   normalized.source.kind='official-mirror';
@@ -4746,7 +4829,7 @@ function alAdhanDatasetFromResponse(response,label){
   if(!response||!response.data||!response.data.timings)throw new Error('No calculated prayer times returned');
   const t=response.data.timings;
   const adhan={Fajr:t.Fajr,Sunrise:t.Sunrise,Dhuhr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Isha:t.Isha};
-  return validateTimingDataset({
+  const calculated=validateTimingDataset({
     schemaVersion:TIMING_SCHEMA_VERSION,
     prayerDate:timingDateKey(new Date(),CONFIG.timezone),
     timezone:response.data.meta&&response.data.meta.timezone||CONFIG.timezone,
@@ -4755,13 +4838,14 @@ function alAdhanDatasetFromResponse(response,label){
     adhan,iqamah:{},jumuah:[],
     jumuahMeta:{status:'unavailable',fetchedAt:'',source:'Calculated source does not provide Jumuah'}
   },{requireCurrentDate:true,requireIqamah:false});
+  return mergeVricScheduleIntoCalculated(calculated);
 }
 
 async function syncAlAdhanByCoordinates(lat,lon,label,method){
   const url=`https://api.aladhan.com/v1/timings?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&method=${encodeURIComponent(method||CONFIG.method)}`;
   const response=await fetchJsonWithTimeout(url,12000);
   const dataset=alAdhanDatasetFromResponse(response,label);
-  const applied=applyTimingDataset(dataset,'calculated');
+  const applied=applyTimingDataset(dataset,dataset.source.kind==='calculated-with-vric-schedule'?'hybrid':'calculated');
   persistCalculatedTimingDataset(applied);
   return true;
 }
@@ -4770,7 +4854,7 @@ async function syncAlAdhanByCity(){
   const url=`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(CONFIG.city)}&country=${encodeURIComponent(CONFIG.country)}&method=${encodeURIComponent(CONFIG.method)}`;
   const response=await fetchJsonWithTimeout(url,12000);
   const dataset=alAdhanDatasetFromResponse(response,`Calculated for ${CONFIG.city}`);
-  const applied=applyTimingDataset(dataset,'calculated');
+  const applied=applyTimingDataset(dataset,dataset.source.kind==='calculated-with-vric-schedule'?'hybrid':'calculated');
   persistCalculatedTimingDataset(applied);
   return true;
 }
@@ -4892,6 +4976,7 @@ async function loadTimes(options){
         const state=timingDataset&&timingDataset.runtimeStatus;
         if(state==='official')timingNoticeOnce('VRIC timings verified');
         else if(state==='cached')timingNoticeOnce('Using today’s saved VRIC timings');
+        else if(state==='hybrid')timingNoticeOnce('Using calculated Adhan with the previous verified VRIC Iqamah/Jumuah schedule');
         else if(state==='calculated')timingNoticeOnce('VRIC unavailable — calculated fallback loaded');
         else if(state==='unavailable')timingNoticeOnce('Prayer times are unavailable');
       }
@@ -6851,13 +6936,13 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=947').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=948').catch(console.warn);
   overlay(false);setPhase('idle');
 })();
 </script>
 
 
-<!-- ASLIMA_PRAYER_WARNING_BANNERS_V939 -->
-<script src="./assets/js/prayer-warning-banners.js?v=939"></script>
+<!-- Prayer-guidance warning addon intentionally disabled in v9.1.48.
+     Its free-floating placement was unstable on landscape tablets. -->
 </body>
 </html>
