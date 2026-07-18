@@ -3993,10 +3993,7 @@ let timings={...DEMO};
 let lastFired='';
 let lastVricSyncStatus='Not synced yet';
 let audioUnlocked=false;
-let activeAzaanPrayer='';
 let lastActivePrayerName='';
-let azaanVisualTimer=null;
-let azaanVisualIndex=0;
 let burnInIndex=0;
 const PRAYER_ORDER=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 let azaanEnabled={Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true};
@@ -4056,11 +4053,21 @@ function renderMuezzinControls(){
   const voice=getAzaanVoice(selectedAzaanVoice);
   const select=document.getElementById('drawerMuezzinSelect');
   if(select){
-    if(!select.options.length){
+    if(select.options.length!==AZAAN_VOICE_ORDER.length){
       select.innerHTML=AZAAN_VOICE_ORDER.map(id=>`<option value="${id}">${AZAAN_VOICES[id].name}</option>`).join('');
     }
     select.value=selectedAzaanVoice;
   }
+
+  const cards=document.getElementById('drawerMuezzinCards');
+  if(cards && cards.dataset.voiceListVersion!=='1'){
+    cards.innerHTML=AZAAN_VOICE_ORDER.map(id=>{
+      const item=AZAAN_VOICES[id];
+      return `<button type="button" class="muezzin-card" data-muezzin-card="${id}" aria-pressed="false"><span><b>${item.name}</b><span>${item.note||'Azaan voice'}</span></span><i class="check" aria-hidden="true">✓</i></button>`;
+    }).join('');
+    cards.dataset.voiceListVersion='1';
+  }
+
   const label='Current Azaan: '+voice.name.replace(/ Adhan$/,'');
   document.querySelectorAll('#drawerMuezzinNow,[data-current-azaan-label]').forEach(el=>{el.textContent=label;});
   document.querySelectorAll('[data-muezzin-card]').forEach(btn=>{
@@ -4071,21 +4078,37 @@ function renderMuezzinControls(){
   document.documentElement.setAttribute('data-selected-azaan-voice',selectedAzaanVoice);
 }
 
+function bindAzaanVoiceControls(){
+  const select=document.getElementById('drawerMuezzinSelect');
+  if(select && !select.__aslimaVoiceBound){
+    select.__aslimaVoiceBound=true;
+    select.addEventListener('change',()=>{
+      if(typeof window.setAzaanVoice==='function')window.setAzaanVoice(select.value,{pushRemote:true,preload:false});
+    });
+  }
+  const cards=document.getElementById('drawerMuezzinCards');
+  if(cards && !cards.__aslimaVoiceBound){
+    cards.__aslimaVoiceBound=true;
+    cards.addEventListener('click',event=>{
+      const button=event.target&&event.target.closest?event.target.closest('[data-muezzin-card]'):null;
+      if(!button || !cards.contains(button))return;
+      event.preventDefault();
+      event.stopPropagation();
+      const id=button.getAttribute('data-muezzin-card');
+      if(typeof window.setAzaanVoice==='function')window.setAzaanVoice(id,{pushRemote:true,preload:false});
+    });
+  }
+}
+
 function forceMuezzinUiSync(id){
   selectedAzaanVoice=normalizeAzaanVoiceId(id||selectedAzaanVoice);
   try{localStorage.setItem('aslima_azaan_voice',selectedAzaanVoice);}catch(e){}
   renderMuezzinControls();
-  if(typeof window.drawAslimaVoiceCards==='function')window.drawAslimaVoiceCards();
-  requestAnimationFrame(()=>{
-    renderMuezzinControls();
-    if(typeof window.drawAslimaVoiceCards==='function')window.drawAslimaVoiceCards();
-  });
-  setTimeout(()=>{
-    renderMuezzinControls();
-    if(typeof window.drawAslimaVoiceCards==='function')window.drawAslimaVoiceCards();
-  },100);
+  requestAnimationFrame(renderMuezzinControls);
+  setTimeout(renderMuezzinControls,100);
 }
 window.forceMuezzinUiSync=forceMuezzinUiSync;
+window.bindAzaanVoiceControls=bindAzaanVoiceControls;
 
 function prepareAzaanAudio(voiceId,force){
   const id=normalizeAzaanVoiceId(voiceId||selectedAzaanVoice);
@@ -4133,17 +4156,25 @@ function prepareAzaanAudio(voiceId,force){
   return azaanAudioLoadPromise;
 }
 
-function loadSelectedAzaanVoice(force){return prepareAzaanAudio(selectedAzaanVoice,!!force);}
-
 async function setAzaanVoice(id,options){
   options=options||{};
   const normalized=normalizeAzaanVoiceId(id);
   const changed=normalized!==selectedAzaanVoice;
   selectedAzaanVoice=normalized;
   try{localStorage.setItem('aslima_azaan_voice',normalized);}catch(e){}
+
+  // Keep the one authoritative playback state synchronized without replacing
+  // the setter later in the file.
+  const playbackState=window.aslimaPlaybackState;
+  if(playbackState)playbackState.voice=normalized;
+
   // UI synchronization is deliberately synchronous so Firebase changes are
-  // visible immediately even if the remote MP3 is slow or unavailable.
+  // visible immediately even if the MP3 is slow or unavailable.
   forceMuezzinUiSync(normalized);
+  if(playbackState && playbackState.phase==='playing'){
+    const label=document.getElementById('drawerMuezzinNow');
+    if(label)label.textContent='Selected for next Azaan: '+AZAAN_VOICES[normalized].name;
+  }
   if(options.preload===true && !audio.paused){
     // Never replace the source in the middle of a live Azaan.
   }else if(options.preload===true){
@@ -4162,10 +4193,8 @@ window.setAzaanVoice=setAzaanVoice;
 window.renderMuezzinControls=renderMuezzinControls;
 window.normalizeAzaanVoiceId=normalizeAzaanVoiceId;
 
-const drawerMuezzinSelectEl=document.getElementById('drawerMuezzinSelect');
-if(drawerMuezzinSelectEl){
-  drawerMuezzinSelectEl.addEventListener('change',()=>setAzaanVoice(drawerMuezzinSelectEl.value,{pushRemote:true,preload:false}));
-}
+renderMuezzinControls();
+bindAzaanVoiceControls();
 setTimeout(()=>forceMuezzinUiSync(selectedAzaanVoice),0);
 
 
@@ -5341,173 +5370,16 @@ async function unlockAudio(e){
 }
 
 
-const AZAAN_BASE_SEQUENCE=[
-  {key:'takbir1',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'takbir2',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'takbir3',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'takbir4',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'shahada1a',ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah'},
-  {key:'shahada1b',ar:'أشهد أن لا إله إلا الله', en:'I bear witness that there is no god but Allah'},
-  {key:'shahada2a',ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah'},
-  {key:'shahada2b',ar:'أشهد أن محمدًا رسول الله', en:'I bear witness that Muhammad is the Messenger of Allah'},
-  {key:'hayyaSalah1',ar:'حي على الصلاة', en:'Come to prayer'},
-  {key:'hayyaSalah2',ar:'حي على الصلاة', en:'Come to prayer'},
-  {key:'hayyaFalah1',ar:'حي على الفلاح', en:'Come to success'},
-  {key:'hayyaFalah2',ar:'حي على الفلاح', en:'Come to success'},
-  {key:'takbir5',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'takbir6',ar:'الله أكبر', en:'Allah is the Greatest'},
-  {key:'final',ar:'لا إله إلا الله', en:'There is no god but Allah'}
-];
-const FAJR_EXTRA_LINES=[
-  {key:'fajr1',ar:'الصلاة خير من النوم', en:'Prayer is better than sleep'},
-  {key:'fajr2',ar:'الصلاة خير من النوم', en:'Prayer is better than sleep'}
-];
-
-/* Per-recording phrase pacing. Values are relative phrase lengths and are
-   converted against the audio file's real duration, so the text remains tied
-   to playback even when recordings have different lengths. */
-const AZAAN_VISUAL_WEIGHTS={
-  madinah:[.72,.76,.78,.84,1.28,1.32,1.42,1.46,1.30,1.34,1.30,1.34,.82,.88,1.22],
-  makkah:[.82,.86,.90,.98,1.44,1.48,1.58,1.62,1.42,1.46,1.42,1.46,.92,.98,1.34],
-  abdulbasit:[.90,.94,.98,1.04,1.56,1.60,1.70,1.74,1.50,1.54,1.50,1.54,1.00,1.04,1.42],
-  minshawi:[.86,.90,.94,1.00,1.50,1.54,1.66,1.70,1.46,1.50,1.46,1.50,.96,1.00,1.38],
-  yusufislam:[.70,.74,.78,.82,1.20,1.24,1.32,1.36,1.18,1.22,1.18,1.22,.80,.84,1.12]
-};
-let azaanVisualFrameRequest=0;
-let azaanVisualTimeHandler=null;
-let azaanVisualMetaHandler=null;
-let azaanPlaybackRequestId=0;
-
-function getAzaanVisualSequence(prayerName){
-  const lines=AZAAN_BASE_SEQUENCE.map(x=>({...x}));
-  if(String(prayerName).toLowerCase()==='fajr')lines.splice(12,0,...FAJR_EXTRA_LINES.map(x=>({...x})));
-  const base=(AZAAN_VISUAL_WEIGHTS[selectedAzaanVoice]||AZAAN_VISUAL_WEIGHTS.madinah).slice();
-  if(String(prayerName).toLowerCase()==='fajr')base.splice(12,0,1.34,1.38);
-  return lines.map((line,i)=>({...line,weight:base[i]||1}));
-}
-function stopAzaanVisualSync(){
-  if(azaanVisualFrameRequest)cancelAnimationFrame(azaanVisualFrameRequest);
-  azaanVisualFrameRequest=0;
-  if(azaanVisualTimeHandler)audio.removeEventListener('timeupdate',azaanVisualTimeHandler);
-  if(azaanVisualMetaHandler)audio.removeEventListener('loadedmetadata',azaanVisualMetaHandler);
-  azaanVisualTimeHandler=null;
-  azaanVisualMetaHandler=null;
-}
-function startAzaanVisual(prayerName){
-  const sequence=getAzaanVisualSequence(prayerName);
-  stopAzaanVisualSync();
-  azaanVisualIndex=-1;
-
-  function paint(index){
-    index=Math.max(0,Math.min(sequence.length-1,index));
-    if(index===azaanVisualIndex)return;
-    azaanVisualIndex=index;
-    $('azaanArabic').textContent=sequence[index].ar;
-    $('azaanEnglish').textContent=sequence[index].en;
-  }
-  function sync(){
-    const duration=(Number.isFinite(audio.duration)&&audio.duration>20)?audio.duration:0;
-    const elapsed=Math.max(0,audio.currentTime||0);
-    if(!duration){paint(0);return;}
-    const totalWeight=sequence.reduce((sum,item)=>sum+item.weight,0);
-    const progress=Math.min(1,elapsed/duration);
-    let cursor=0,index=sequence.length-1;
-    for(let i=0;i<sequence.length;i++){
-      cursor+=sequence[i].weight/totalWeight;
-      if(progress<cursor){index=i;break;}
-    }
-    paint(index);
-  }
-  function loop(){sync();if(!audio.paused&&!audio.ended)azaanVisualFrameRequest=requestAnimationFrame(loop);}
-  azaanVisualTimeHandler=sync;
-  azaanVisualMetaHandler=sync;
-  audio.addEventListener('timeupdate',azaanVisualTimeHandler);
-  audio.addEventListener('loadedmetadata',azaanVisualMetaHandler);
-  sync();
-  azaanVisualFrameRequest=requestAnimationFrame(loop);
-}
-
+/* ASLIMA v9.1.46 — the superseded percentage-based Azaan controller was
+   removed. The exact-cue controller near the end of this file is now the only
+   playback owner. Keep prayer resolution here because the scheduler and the
+   final controller both use it. */
 function resolveAzaanPrayer(prayerName){
   if(prayerName)return prayerName;
   const next=getNext();
   return activePrayer(next.name)||next.name;
 }
-
-async function playAzaan(prayerName,options){
-  const prayer=resolveAzaanPrayer(prayerName);
-  options=options||{};
-  if(!options.force && !isAzaanEnabled(prayer)){
-    showToast(prayer+' Azaan is off');
-    return false;
-  }
-  const requestId=++azaanPlaybackRequestId;
-  activeAzaanPrayer=prayer;
-  try{
-    // Keep the overlay hidden until the selected recording is genuinely ready.
-    hideAzaanOverlay();
-    const voiceAtStart=selectedAzaanVoice;
-    await prepareAzaanAudio(voiceAtStart,true);
-    if(requestId!==azaanPlaybackRequestId)return false;
-    audio.muted=false;
-    const currentVolume=Number(audio.volume);
-    audio.volume=Number.isFinite(currentVolume)?Math.max(0,Math.min(1,currentVolume)):0.70;
-    try{audio.currentTime=0;}catch(e){}
-    const playResult=audio.play();
-    if(playResult && typeof playResult.then==='function')await playResult;
-    if(requestId!==azaanPlaybackRequestId){
-      try{audio.pause();audio.currentTime=0;}catch(e){}
-      return false;
-    }
-    $('overlayPrayer').textContent=prayer.toUpperCase();
-    $('adhanOverlay').classList.add('show');
-    document.body.classList.add('azaan-playing','adhan-playing','adhan-overlay-active');
-    startAzaanVisual(prayer);
-    showToast('Azaan playing for '+prayer);
-    return true;
-  }catch(e){
-    console.warn('Azaan playback failed',e);
-    if(requestId===azaanPlaybackRequestId){
-      hideAzaanOverlay();
-      showToast('Azaan could not play — tap Test Azaan once');
-    }
-    return false;
-  }
-}
-
-function hideAzaanOverlay(){
-  stopAzaanVisualSync();
-  const overlay=$('adhanOverlay');
-  if(overlay)overlay.classList.remove('show');
-  document.body.classList.remove('azaan-playing','adhan-playing','adhan-overlay-active');
-}
-
-function stopAzaan(){
-  azaanPlaybackRequestId++;
-  azaanAudioLoadToken++;
-  azaanAudioLoadPromise=null;
-  try{audio.pause();}catch(e){}
-  try{audio.currentTime=0;}catch(e){}
-  // Keep the source attached. Detaching it caused a race in Fully Kiosk where
-  // the next play request could show the overlay while the media element had no source.
-  audio.removeAttribute('autoplay');
-  activeAzaanPrayer='';
-  hideAzaanOverlay();
-  showToast('Azaan stopped');
-  return true;
-}
-
-window.playAzaan=playAzaan;
-window.stopAzaan=stopAzaan;
-audio.addEventListener('ended',()=>{activeAzaanPrayer='';hideAzaanOverlay();});
-audio.addEventListener('pause',()=>{
-  if(audio.currentTime===0 || audio.ended)hideAzaanOverlay();
-});
-audio.addEventListener('error',()=>{
-  const v=getAzaanVoice(selectedAzaanVoice);
-  console.warn('Azaan audio element error',audio.error);
-  hideAzaanOverlay();
-  showToast('Azaan audio failed: '+v.name);
-});
+window.resolveAzaanPrayer=resolveAzaanPrayer;
 
 
 function showAdmin(opts){
@@ -5562,6 +5434,7 @@ function bindAzaanAudioControls(){
   const test=$('testAzaan');
   const stop=$('stopAzaan');
   const overlayStop=$('overlayStop');
+  const stopCurrentAzaan=()=>typeof window.stopAzaan==='function'?window.stopAzaan():false;
   const volDown=$('volDown');
   const volUp=$('volUp');
   const drawerTest=$('drawerTestAzaan');
@@ -5570,8 +5443,8 @@ function bindAzaanAudioControls(){
   const drawerVolUp=$('drawerVolUp');
 
   if(test)test.onclick=()=>{window.playAzaan(null,{force:true});showAdmin();};
-  if(stop)stop.onclick=()=>{stopAzaan();showAdmin();};
-  if(overlayStop)overlayStop.onclick=stopAzaan;
+  if(stop)stop.onclick=()=>{stopCurrentAzaan();showAdmin();};
+  if(overlayStop)overlayStop.onclick=stopCurrentAzaan;
   if(volDown)volDown.onclick=()=>{setVolume(audio.volume-.1);showAdmin();};
   if(volUp)volUp.onclick=()=>{setVolume(audio.volume+.1);showAdmin();};
 
@@ -5581,7 +5454,7 @@ function bindAzaanAudioControls(){
   };
   if(drawerStop)drawerStop.onclick=(e)=>{
     if(e){e.preventDefault();e.stopPropagation();}
-    stopAzaan();
+    stopCurrentAzaan();
   };
   if(drawerVolDown)drawerVolDown.onclick=(e)=>{
     if(e){e.preventDefault();e.stopPropagation();}
@@ -5598,6 +5471,7 @@ function bindAzaanAudioControls(){
   if(dashboard)dashboard.onclick=()=>{showToast('Clean premium display active');showAdmin();};
   updateVolumeLabel();
 }
+window.bindAzaanAudioControls=bindAzaanAudioControls;
 bindAzaanAudioControls();
 
 document.addEventListener('pointerdown',e=>{unlockAudio(e);unlockReminderAudio();},{once:true,passive:true});
@@ -6618,53 +6492,11 @@ body.drawer-open #azaanDrawer.azaan-drawer{
     try{saved=localStorage.getItem('aslima_drawer_section')||'audio';}catch(e){}
     setSection(saved);
   }
-  function voiceData(){
-    var voices=window.AZAAN_VOICES || (typeof AZAAN_VOICES!=='undefined'?AZAAN_VOICES:null);
-    var order=window.AZAAN_VOICE_ORDER || (typeof AZAAN_VOICE_ORDER!=='undefined'?AZAAN_VOICE_ORDER:null);
-    return {voices:voices,order:order};
-  }
-  function currentVoiceId(){
-    try{
-      if(typeof selectedAzaanVoice!=='undefined')return selectedAzaanVoice;
-    }catch(e){}
-    try{return localStorage.getItem('aslima_azaan_voice')||'azaan1';}catch(e){return 'full';}
-  }
-  function drawVoiceCards(){
-    var box=document.getElementById('drawerMuezzinCards');
-    var data=voiceData();
-    if(!box || !data.voices || !data.order)return;
-    var current=currentVoiceId();
-    box.innerHTML=data.order.map(function(id){
-      var v=data.voices[id];
-      if(!v)return '';
-      var active=(id===current)?' active':'';
-      return '<button type="button" class="muezzin-card'+active+'" data-muezzin-card="'+id+'"><span><b>'+v.name+'</b><span>'+((v.note||'Azaan voice'))+'</span></span><i class="check">✓</i></button>';
-    }).join('');
-    box.querySelectorAll('[data-muezzin-card]').forEach(function(btn){
-      btn.addEventListener('click',function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        var id=btn.getAttribute('data-muezzin-card');
-        if(typeof setAzaanVoice==='function')setAzaanVoice(id,{pushRemote:true});
-        setTimeout(drawVoiceCards,30);
-      });
-    });
-  }
-  window.drawAslimaVoiceCards=drawVoiceCards;
-  var oldRender=null;
-  function hookMuezzinRender(){
-    try{
-      if(typeof renderMuezzinControls==='function' && renderMuezzinControls!==oldRender){
-        oldRender=renderMuezzinControls;
-        window.renderMuezzinControls=function(){oldRender();drawVoiceCards();};
-      }
-    }catch(e){}
-    drawVoiceCards();
-  }
-  window.addEventListener('load',function(){bindSections();hookMuezzinRender();setTimeout(hookMuezzinRender,500);setTimeout(hookMuezzinRender,1400);});
-  document.addEventListener('click',function(e){
-    if(e.target && e.target.closest && e.target.closest('#azaanDrawer'))setTimeout(function(){bindSections();hookMuezzinRender();},50);
-  },true);
+  /* Voice cards are rendered and event-delegated by the single canonical
+     renderMuezzinControls/bindAzaanVoiceControls pair. Rebinding on every drawer
+     click and monkey-patching the renderer caused the v9.1.45 recursion crash. */
+  bindSections();
+  window.addEventListener('load',bindSections,{once:true});
 })();
 </script>
 
@@ -6842,21 +6674,12 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     try{a.pause();a.currentTime=0;a.removeAttribute('src');a.load();}catch(e){}
     state.prayer='';overlay(false);setPhase('idle');showToast('Azaan stopped');return true;
   };
-  function bindStop(id){const old=document.getElementById(id);if(!old)return;const n=old.cloneNode(true);old.replaceWith(n);n.removeAttribute('onclick');n.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();window.stopAzaan();},{capture:true,passive:false});}
-  ['stopAzaan','drawerStopAzaan','overlayStop'].forEach(bindStop);
   a.addEventListener('ended',()=>{clearVisual();overlay(false);setPhase('idle');state.prayer='';});
   a.addEventListener('error',()=>{if(state.phase==='loading'||state.phase==='playing'){clearVisual();overlay(false);setPhase('idle');showToast('Local Azaan audio could not be opened');}});
-  window.setAzaanVoice=async function(id,opts){
-    opts=opts||{};const normalized=normalize(id);state.voice=normalized;selectedAzaanVoice=normalized;localStorage.setItem('aslima_azaan_voice',normalized);
-    if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(normalized);
-    if(state.phase==='playing'){const lbl=document.getElementById('drawerMuezzinNow');if(lbl)lbl.textContent='Selected for next Azaan: '+voice(normalized).name;}
-    if(opts.pushRemote&&window.aslimaRemoteRef)await window.aslimaRemoteRef.update({muezzin:normalized,updatedAt:new Date().toISOString()});
-    if(!opts.quiet)showToast('Azaan voice: '+voice(normalized).name);return true;
-  };
-  const sel=document.getElementById('drawerMuezzinSelect');if(sel){const n=sel.cloneNode(true);sel.replaceWith(n);n.addEventListener('change',()=>window.setAzaanVoice(n.value,{pushRemote:true}));}
-  document.querySelectorAll('[data-muezzin-card]').forEach(btn=>{const n=btn.cloneNode(true);btn.replaceWith(n);n.addEventListener('click',()=>window.setAzaanVoice(n.dataset.muezzinCard,{pushRemote:true}));});
+  if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
+  if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=928').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=946').catch(console.warn);
   overlay(false);setPhase('idle');
 })();
 </script>

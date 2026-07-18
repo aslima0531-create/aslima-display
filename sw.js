@@ -1,4 +1,4 @@
-const CACHE='aslima-v945-more-prayers-label';
+const CACHE='aslima-v946-controller-cleanup';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./assets/js/prayer-warning-banners.js',
   './assets/aslima-premium-bg.png',
