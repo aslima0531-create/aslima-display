@@ -1,9 +1,11 @@
-const CACHE='aslima-v951-refined-prayer-schedule';
+const CACHE='aslima-v952-prayer-aware-icons';
 const SCHEDULE_CSS='./assets/prayer-schedule-v951.css';
-const STYLE_MARKER='data-aslima-schedule-style="v951"';
+const ICONS_CSS='./assets/prayer-icons-v952.css';
+const SCHEDULE_MARKER='data-aslima-schedule-style="v951"';
+const ICONS_MARKER='data-aslima-prayer-icons="v952"';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json',
-  './assets/aslima-premium-bg.png',SCHEDULE_CSS,
+  './assets/aslima-premium-bg.png',SCHEDULE_CSS,ICONS_CSS,
   './assets/audio/azaan-1.mp3','./assets/audio/azaan-2.mp3',
   './assets/audio/azaan-3.mp3','./assets/audio/azaan-4.mp3',
   './assets/audio/azaan-5.mp3'
@@ -17,17 +19,19 @@ self.addEventListener('activate',event=>event.waitUntil(
 function isDisplayDocument(url){
   return /\/(?:index|preview)\.html$/i.test(url.pathname)||url.pathname.endsWith('/');
 }
-async function addScheduleStyles(response){
+async function addPrayerStyles(response){
   if(!response||!response.ok)return response;
   const type=response.headers.get('content-type')||'';
   if(!type.includes('text/html'))return response;
   let html=await response.text();
-  /* Remove any previous visual-only heading stylesheet before inserting this release. */
   html=html.replace(/<link[^>]+data-aslima-heading-style="v950"[^>]*>\s*/ig,'');
-  if(!html.includes(STYLE_MARKER)){
-    const link=`<link rel="stylesheet" href="${SCHEDULE_CSS}" ${STYLE_MARKER}>`;
-    html=/<\/head>/i.test(html)?html.replace(/<\/head>/i,`${link}\n</head>`):`${link}\n${html}`;
-  }
+  html=html.replace(/<link[^>]+data-aslima-schedule-style="v951"[^>]*>\s*/ig,'');
+  html=html.replace(/<link[^>]+data-aslima-prayer-icons="v952"[^>]*>\s*/ig,'');
+  const links=[
+    `<link rel="stylesheet" href="${SCHEDULE_CSS}" ${SCHEDULE_MARKER}>`,
+    `<link rel="stylesheet" href="${ICONS_CSS}" ${ICONS_MARKER}>`
+  ].join('\n');
+  html=/<\/head>/i.test(html)?html.replace(/<\/head>/i,`${links}\n</head>`):`${links}\n${html}`;
   const headers=new Headers(response.headers);
   headers.delete('content-length');
   headers.set('content-type','text/html; charset=utf-8');
@@ -51,14 +55,14 @@ self.addEventListener('fetch',event=>{
       try{
         response=await fetch(event.request);
         if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}
-      }catch(_error){response=await caches.match(event.request);}
+      }catch(_error){response=await caches.match(event.request,{ignoreSearch:true});}
       if(!response)throw new Error('Display document unavailable');
-      return addScheduleStyles(response);
+      return addPrayerStyles(response);
     })());
     return;
   }
   event.respondWith(fetch(event.request).then(response=>{
     if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));}
     return response;
-  }).catch(()=>caches.match(event.request)));
+  }).catch(()=>caches.match(event.request,{ignoreSearch:true})));
 });
