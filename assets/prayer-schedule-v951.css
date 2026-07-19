@@ -1,0 +1,273 @@
+/* ASLIMA v9.1.51 — refined prayer schedule card.
+   Visual-only. No timing, Iqamah, Jumuah, audio, remote, or scheduler logic changes. */
+
+/* The panel should feel like one composed schedule, not a spreadsheet. */
+.right{
+  width:min(40.5vw,700px)!important;
+}
+.prayer-panel{
+  position:relative!important;
+  overflow:hidden!important;
+  padding:clamp(12px,1.45vh,18px) clamp(14px,1.25vw,22px) clamp(10px,1.25vh,16px)!important;
+  border:1px solid rgba(241,189,101,.20)!important;
+  border-radius:clamp(16px,1.8vh,22px)!important;
+  background:linear-gradient(160deg,rgba(5,17,18,.89),rgba(0,8,9,.78))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 22px 54px rgba(0,0,0,.36)!important;
+  backdrop-filter:blur(16px) saturate(108%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(108%)!important;
+}
+.prayer-panel::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(circle at 78% -10%,rgba(241,189,101,.07),transparent 34%),
+    linear-gradient(120deg,rgba(255,255,255,.018),transparent 38%)!important;
+}
+
+/* Replace the redundant "Prayer" column label with a section title. */
+.prayer-panel-head{
+  position:relative!important;
+  z-index:2!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(82px,auto) minmax(82px,auto)!important;
+  align-items:end!important;
+  gap:clamp(10px,.9vw,18px)!important;
+  min-height:auto!important;
+  margin:0!important;
+  padding:2px 6px 12px calc(32px + 1vw)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:rgba(255,244,222,.72)!important;
+  line-height:1!important;
+}
+.prayer-panel-head::before{
+  content:"";
+  position:absolute;
+  left:calc(32px + 1vw);
+  right:4px;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,rgba(241,189,101,.28),rgba(255,255,255,.065) 52%,transparent);
+}
+.prayer-panel-head::after{
+  content:none!important;
+}
+.prayer-panel-head span{
+  display:block!important;
+  min-height:0!important;
+  white-space:nowrap!important;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+.prayer-panel-head span:first-child{
+  position:relative!important;
+  justify-self:start!important;
+  font-size:0!important;
+  color:rgba(255,244,222,.94)!important;
+}
+.prayer-panel-head span:first-child::before{
+  content:"";
+  display:inline-block;
+  width:6px;
+  height:6px;
+  margin:0 9px 2px 0;
+  border-radius:999px;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(241,189,101,.48);
+}
+.prayer-panel-head span:first-child::after{
+  content:"Prayer Schedule";
+  font-size:clamp(13px,1.05vw,17px)!important;
+  font-weight:620!important;
+  letter-spacing:.015em!important;
+  text-transform:none!important;
+}
+.prayer-panel-head span:nth-child(2),
+.prayer-panel-head span:nth-child(3){
+  justify-self:center!important;
+  text-align:center!important;
+  color:rgba(255,244,222,.58)!important;
+  font-size:clamp(10px,.82vw,13px)!important;
+  font-weight:600!important;
+  letter-spacing:.025em!important;
+  text-transform:none!important;
+}
+.prayer-panel-head span:nth-child(2)::before,
+.prayer-panel-head span:nth-child(3)::before{
+  content:none!important;
+}
+
+/* Calm, timeline-style rows. */
+#prayerPanel .row{
+  position:relative!important;
+  z-index:2!important;
+  display:grid!important;
+  grid-template-columns:minmax(28px,2vw) minmax(88px,1fr) auto!important;
+  align-items:center!important;
+  gap:clamp(9px,.82vw,15px)!important;
+  min-height:clamp(52px,6.6vh,66px)!important;
+  margin:0!important;
+  padding:clamp(8px,1.15vh,12px) 6px!important;
+  border:0!important;
+  border-radius:12px!important;
+  color:rgba(255,244,222,.95)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transition:background .22s ease,box-shadow .22s ease,color .22s ease!important;
+}
+#prayerPanel .row::after{
+  content:""!important;
+  position:absolute!important;
+  left:calc(32px + 1vw)!important;
+  right:6px!important;
+  bottom:0!important;
+  height:1px!important;
+  background:linear-gradient(90deg,rgba(255,255,255,.075),rgba(255,255,255,.035),transparent)!important;
+  opacity:1!important;
+  transform:none!important;
+}
+#prayerPanel .row:last-child::after{
+  display:none!important;
+}
+
+/* Replace mixed Unicode sun/moon glyphs with one consistent schedule marker. */
+#prayerPanel .icon{
+  position:relative!important;
+  width:26px!important;
+  min-width:26px!important;
+  height:26px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:transparent!important;
+  font-size:0!important;
+  border:1px solid rgba(255,244,222,.20)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.025)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+#prayerPanel .icon::before{
+  content:""!important;
+  width:6px!important;
+  height:6px!important;
+  border-radius:999px!important;
+  background:rgba(255,244,222,.62)!important;
+  box-shadow:none!important;
+}
+#prayerPanel .row:not(:last-child) .icon::after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:calc(100% + 1px)!important;
+  width:1px!important;
+  height:clamp(24px,3.4vh,34px)!important;
+  transform:translateX(-50%)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.025))!important;
+}
+
+#prayerPanel .pname{
+  color:rgba(255,244,222,.94)!important;
+  font-size:clamp(20px,1.92vw,32px)!important;
+  font-weight:590!important;
+  letter-spacing:.005em!important;
+  line-height:1!important;
+  text-transform:none!important;
+  text-shadow:none!important;
+  transform:none!important;
+}
+.ptime-group{
+  display:grid!important;
+  grid-template-columns:minmax(82px,auto) minmax(82px,auto)!important;
+  align-items:center!important;
+  gap:clamp(10px,.9vw,18px)!important;
+}
+#prayerPanel .ptime{
+  min-width:82px!important;
+  color:rgba(255,244,222,.96)!important;
+  font-size:clamp(17px,1.5vw,27px)!important;
+  font-weight:620!important;
+  letter-spacing:-.025em!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  font-variant-numeric:tabular-nums!important;
+  text-shadow:none!important;
+  transform:none!important;
+}
+#prayerPanel .iqamah-time{
+  color:rgba(244,210,149,.88)!important;
+  font-weight:570!important;
+}
+
+/* Active prayer: a quiet warm wash and illuminated marker, never a boxed selection. */
+#prayerPanel .row.active{
+  color:var(--gold)!important;
+  background:linear-gradient(90deg,rgba(241,189,101,.085),rgba(241,189,101,.028) 62%,transparent 100%)!important;
+  box-shadow:inset 3px 0 0 rgba(241,189,101,.72)!important;
+  border:0!important;
+  outline:0!important;
+}
+#prayerPanel .row.active::before{
+  content:none!important;
+}
+#prayerPanel .row.active .icon{
+  border-color:rgba(241,189,101,.48)!important;
+  background:rgba(241,189,101,.10)!important;
+  box-shadow:0 0 16px rgba(241,189,101,.12),inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#prayerPanel .row.active .icon::before{
+  background:var(--gold)!important;
+  box-shadow:0 0 10px rgba(241,189,101,.55)!important;
+}
+#prayerPanel .row.active .pname,
+#prayerPanel .row.active .ptime,
+#prayerPanel .row.active .iqamah-time{
+  color:#f7d78f!important;
+  text-shadow:none!important;
+}
+
+@media (max-width:920px){
+  .right{width:43vw!important}
+  .prayer-panel{padding:10px 10px 8px!important}
+  .prayer-panel-head{
+    grid-template-columns:minmax(0,1fr) 66px 66px!important;
+    gap:6px!important;
+    padding:1px 4px 9px calc(28px + .6vw)!important;
+  }
+  .prayer-panel-head::before{left:calc(28px + .6vw)}
+  .prayer-panel-head span:first-child::after{font-size:12px!important}
+  .prayer-panel-head span:nth-child(2),.prayer-panel-head span:nth-child(3){font-size:9px!important;letter-spacing:.015em!important}
+  #prayerPanel .row{grid-template-columns:26px minmax(62px,1fr) auto!important;gap:6px!important;min-height:46px!important;padding:7px 4px!important;border-radius:10px!important}
+  #prayerPanel .row::after{left:calc(28px + .6vw)!important}
+  #prayerPanel .icon{width:23px!important;min-width:23px!important;height:23px!important}
+  #prayerPanel .pname{font-size:clamp(16px,2.35vw,22px)!important}
+  .ptime-group{grid-template-columns:66px 66px!important;gap:6px!important}
+  #prayerPanel .ptime{min-width:66px!important;font-size:clamp(14px,2vw,19px)!important}
+}
+@media (max-width:820px){
+  .right{width:44.5vw!important}
+  .prayer-panel-head{grid-template-columns:minmax(0,1fr) 58px 58px!important;padding-left:29px!important}
+  .prayer-panel-head::before{left:29px}
+  .prayer-panel-head span:first-child::before{width:5px;height:5px;margin-right:6px}
+  .prayer-panel-head span:first-child::after{font-size:11px!important}
+  #prayerPanel .row{grid-template-columns:23px minmax(56px,1fr) auto!important;min-height:42px!important;gap:5px!important;padding:6px 3px!important}
+  #prayerPanel .row::after{left:29px!important}
+  #prayerPanel .icon{width:20px!important;min-width:20px!important;height:20px!important}
+  #prayerPanel .icon::before{width:5px!important;height:5px!important}
+  #prayerPanel .pname{font-size:15px!important}
+  .ptime-group{grid-template-columns:58px 58px!important;gap:5px!important}
+  #prayerPanel .ptime{min-width:58px!important;font-size:13px!important}
+}
+@media (min-width:1800px) and (min-height:1050px){
+  .right{width:min(41vw,780px)!important}
+  .prayer-panel{padding:18px 22px 16px!important}
+  .prayer-panel-head{grid-template-columns:minmax(0,1fr) 122px 122px!important;padding-bottom:15px!important}
+  .ptime-group{grid-template-columns:122px 122px!important}
+  #prayerPanel .ptime{min-width:122px!important}
+  #prayerPanel .row{min-height:76px!important}
+  #prayerPanel .pname{font-size:34px!important}
+}
