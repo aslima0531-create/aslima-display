@@ -1,11 +1,13 @@
-const CACHE='aslima-v952-prayer-aware-icons';
+const CACHE='aslima-v953-reliable-azaan-scheduler';
 const SCHEDULE_CSS='./assets/prayer-schedule-v951.css';
 const ICONS_CSS='./assets/prayer-icons-v952.css';
+const SCHEDULER_JS='./assets/js/azaan-scheduler-v953.js';
+const SCHEDULER_MARKER='data-aslima-azaan-scheduler="v953"';
 const SCHEDULE_MARKER='data-aslima-schedule-style="v951"';
 const ICONS_MARKER='data-aslima-prayer-icons="v952"';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json',
-  './assets/aslima-premium-bg.png',SCHEDULE_CSS,ICONS_CSS,
+  './assets/aslima-premium-bg.png',SCHEDULE_CSS,ICONS_CSS,SCHEDULER_JS,
   './assets/audio/azaan-1.mp3','./assets/audio/azaan-2.mp3',
   './assets/audio/azaan-3.mp3','./assets/audio/azaan-4.mp3',
   './assets/audio/azaan-5.mp3'
@@ -27,11 +29,17 @@ async function addPrayerStyles(response){
   html=html.replace(/<link[^>]+data-aslima-heading-style="v950"[^>]*>\s*/ig,'');
   html=html.replace(/<link[^>]+data-aslima-schedule-style="v951"[^>]*>\s*/ig,'');
   html=html.replace(/<link[^>]+data-aslima-prayer-icons="v952"[^>]*>\s*/ig,'');
+  html=html.replace(/<script[^>]+data-aslima-azaan-scheduler="v953"[^>]*><\/script>\s*/ig,'');
+  // Disable the legacy exact-minute polling interval. The function remains in
+  // the source for rollback compatibility, but it is no longer scheduled.
+  html=html.replace(/setInterval\(\s*autoFireAzaan\s*,\s*30000\s*\);/g,'/* legacy automatic Azaan interval disabled by v9.1.53 */');
   const links=[
     `<link rel="stylesheet" href="${SCHEDULE_CSS}" ${SCHEDULE_MARKER}>`,
     `<link rel="stylesheet" href="${ICONS_CSS}" ${ICONS_MARKER}>`
   ].join('\n');
   html=/<\/head>/i.test(html)?html.replace(/<\/head>/i,`${links}\n</head>`):`${links}\n${html}`;
+  const schedulerTag=`<script src="${SCHEDULER_JS}" ${SCHEDULER_MARKER}></script>`;
+  html=/<\/body>/i.test(html)?html.replace(/<\/body>/i,`${schedulerTag}\n</body>`):`${html}\n${schedulerTag}`;
   const headers=new Headers(response.headers);
   headers.delete('content-length');
   headers.set('content-type','text/html; charset=utf-8');
