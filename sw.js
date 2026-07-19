@@ -1,4 +1,4 @@
-const CACHE='aslima-v948-vric-rendered-source-fix';
+const CACHE='aslima-v949-prayer-card-refinement';
 const CORE=[
   './','./index.html','./preview.html','./admin.html','./data/vric-prayer-times.json',
   './assets/aslima-premium-bg.png',
