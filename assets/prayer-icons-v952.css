@@ -1,0 +1,51 @@
+/* ASLIMA v9.1.52 — prayer-aware day-cycle icons.
+   Visual-only override for the v9.1.51 schedule card. */
+
+/* Restore meaningful sun/moon markers while keeping one consistent line-icon language. */
+#prayerPanel .icon{
+  width:28px!important;
+  min-width:28px!important;
+  height:28px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:rgba(255,244,222,.68)!important;
+  opacity:.94!important;
+}
+#prayerPanel .icon::before{
+  content:""!important;
+  width:24px!important;
+  height:24px!important;
+  border-radius:0!important;
+  background:currentColor!important;
+  box-shadow:none!important;
+  -webkit-mask-image:var(--prayer-icon)!important;
+  mask-image:var(--prayer-icon)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+  -webkit-mask-position:center!important;
+  mask-position:center!important;
+  -webkit-mask-size:contain!important;
+  mask-size:contain!important;
+}
+#prayerPanel .icon::after{display:none!important}
+#prayerPanel .row[data-prayer="Fajr"] .icon{--prayer-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3.5%2018.5h17%22%2F%3E%3Cpath%20d%3D%22M6.5%2015.5a5.5%205.5%200%200%201%2011%200%22%2F%3E%3Cpath%20d%3D%22M12%203.5v3%22%2F%3E%3Cpath%20d%3D%22m5.5%207%202.1%202.1%22%2F%3E%3Cpath%20d%3D%22m18.5%207-2.1%202.1%22%2F%3E%3Cpath%20d%3D%22M9.5%2021h5%22%2F%3E%3C%2Fsvg%3E");}
+#prayerPanel .row[data-prayer="Dhuhr"] .icon{--prayer-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223.8%22%2F%3E%3Cpath%20d%3D%22M12%202.5v3M12%2018.5v3M2.5%2012h3M18.5%2012h3M5.3%205.3l2.1%202.1M16.6%2016.6l2.1%202.1M18.7%205.3l-2.1%202.1M7.4%2016.6l-2.1%202.1%22%2F%3E%3C%2Fsvg%3E");}
+#prayerPanel .row[data-prayer="Asr"] .icon{--prayer-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2214.5%22%20cy%3D%229%22%20r%3D%223.4%22%2F%3E%3Cpath%20d%3D%22M14.5%202.5v2M14.5%2013.5v2M8%209h2M19%209h2M9.9%204.4l1.4%201.4M17.7%2012.2l1.4%201.4M19.1%204.4l-1.4%201.4M11.3%2012.2l-1.4%201.4%22%2F%3E%3Cpath%20d%3D%22M3.5%2018.5h17%22%2F%3E%3Cpath%20d%3D%22M7%2015.5h8%22%2F%3E%3C%2Fsvg%3E");}
+#prayerPanel .row[data-prayer="Maghrib"] .icon{--prayer-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3.5%2014.5h17%22%2F%3E%3Cpath%20d%3D%22M6.5%2014.5a5.5%205.5%200%200%201%2011%200%22%2F%3E%3Cpath%20d%3D%22M12%204v3%22%2F%3E%3Cpath%20d%3D%22m5.5%207.5%202.1%202.1%22%2F%3E%3Cpath%20d%3D%22m18.5%207.5-2.1%202.1%22%2F%3E%3Cpath%20d%3D%22M5%2018h14M8%2021h8%22%2F%3E%3C%2Fsvg%3E");}
+#prayerPanel .row[data-prayer="Isha"] .icon{--prayer-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18.6%2015.3A7.8%207.8%200%200%201%208.7%205.4%208%208%200%201%200%2018.6%2015.3Z%22%2F%3E%3Cpath%20d%3D%22m17.5%204.2.5%201.1%201.1.5-1.1.5-.5%201.1-.5-1.1-1.1-.5%201.1-.5.5-1.1Z%22%2F%3E%3C%2Fsvg%3E");}
+
+#prayerPanel .row.active .icon{
+  color:#f4c96f!important;
+  filter:drop-shadow(0 0 7px rgba(241,189,101,.32))!important;
+  transform:scale(1.04)!important;
+}
+#prayerPanel .row:not(.active) .icon{filter:drop-shadow(0 1px 2px rgba(0,0,0,.24))!important}
+@media (max-width:920px){
+  #prayerPanel .icon{width:24px!important;min-width:24px!important;height:24px!important}
+  #prayerPanel .icon::before{width:21px!important;height:21px!important}
+}
+@media (prefers-reduced-motion:reduce){#prayerPanel .icon{transition:none!important}}
