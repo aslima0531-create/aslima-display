@@ -17,19 +17,22 @@ import shutil
 import sys
 import tempfile
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from zoneinfo import ZoneInfo
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:  # Python 3.8 developer machines; Actions uses Python 3.12.
+    from pytz import timezone as ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "vric-prayer-times.json"
 TIMEZONE = "America/Chicago"
 OFFICIAL_URLS = (
-    "https://vric.org/",
     "https://vric.org/prayertimes/",
-    "https://vric.org/home-2/",
+    "https://vric.org/",
 )
+MAX_SAFE_AGE_DAYS = 2
 PRAYERS = ("Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha")
 IQAMAH_PRAYERS = ("Fajr", "Dhuhr", "Asr", "Maghrib", "Isha")
 ALIASES = {
@@ -61,12 +64,67 @@ class TextExtractor(HTMLParser):
             self.parts.append(data)
 
 
+class TableRowExtractor(HTMLParser):
+    """Extract visible cell text without depending on MasjidApps CSS classes."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.rows: list[list[str]] = []
+        self._row: list[str] | None = None
+        self._cell: list[str] | None = None
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        tag = tag.lower()
+        if tag == "tr":
+            self._row = []
+        elif tag in {"td", "th"} and self._row is not None:
+            self._cell = []
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        if tag in {"td", "th"} and self._row is not None and self._cell is not None:
+            self._row.append(re.sub(r"\s+", " ", " ".join(self._cell)).strip())
+            self._cell = None
+        elif tag == "tr" and self._row is not None:
+            if self._row:
+                self.rows.append(self._row)
+            self._row = None
+
+    def handle_data(self, data: str) -> None:
+        if self._cell is not None:
+            self._cell.append(data)
+
+
 def normalize_source(payload: str) -> str:
     if "<" in payload and ">" in payload:
         parser = TextExtractor()
         parser.feed(payload)
         payload = " ".join(parser.parts)
     return re.sub(r"\s+", " ", html.unescape(payload)).strip()
+
+
+def source_rows(payload: str) -> list[list[str]]:
+    """Return schedule rows from either captured HTML or rendered row text."""
+    rows: list[list[str]] = []
+    if "<tr" in payload.lower():
+        parser = TableRowExtractor()
+        parser.feed(payload)
+        rows.extend(parser.rows)
+    for line in payload.splitlines():
+        clean = html.unescape(line).strip()
+        if not clean:
+            continue
+        cells = [part.strip() for part in re.split(r"\s*(?:\||\t)\s*", clean) if part.strip()]
+        if len(cells) >= 2:
+            rows.append(cells)
+    return rows
+
+
+def canonical_prayer(label: str) -> str:
+    for prayer, pattern in ALIASES.items():
+        if re.fullmatch(pattern, label.strip(), re.I):
+            return prayer
+    return ""
 
 
 def canonical_time(value: str) -> str:
@@ -102,6 +160,32 @@ def to_12(value: str) -> str:
 
 
 def parse_source(payload: str) -> dict:
+    adhan: dict[str, str] = {}
+    iqamah: dict[str, str] = {}
+    jumuah: list[str] = []
+
+    # The official VRIC page currently embeds MasjidApps. Parse its semantic
+    # table rows, not nearby page text (which contains duplicate prayer names).
+    for cells in source_rows(payload):
+        label = cells[0].strip()
+        prayer = canonical_prayer(label)
+        times = [canonical_time(cell) for cell in cells[1:]]
+        times = [value for value in times if value]
+        if prayer:
+            if times:
+                adhan[prayer] = times[0]
+            if prayer != "Sunrise" and len(times) >= 2:
+                iqamah[prayer] = times[1]
+            continue
+        if re.fullmatch(r"Jum(?:mah|u[’'`]?ah)(?:\s*[1-4])?", label, re.I) and times:
+            value = to_12(times[0])
+            if value not in jumuah:
+                jumuah.append(value)
+
+    if adhan:
+        return {"adhan": adhan, "iqamah": iqamah, "jumuah": jumuah[:4], "text": normalize_source(payload)}
+
+    # Backward-compatible fallback for old captures that contain prose only.
     text = normalize_source(payload)
     positions: list[tuple[int, int, str]] = []
     for prayer, pattern in ALIASES.items():
@@ -109,8 +193,8 @@ def parse_source(payload: str) -> dict:
             positions.append((match.start(), match.end(), prayer))
     positions.sort()
 
-    adhan: dict[str, str] = {}
-    iqamah: dict[str, str] = {}
+    adhan = {}
+    iqamah = {}
     for index, (_, end, prayer) in enumerate(positions):
         next_start = positions[index + 1][0] if index + 1 < len(positions) else min(len(text), end + 220)
         segment = text[end : min(next_start, end + 220)]
@@ -124,7 +208,7 @@ def parse_source(payload: str) -> dict:
         if prayer != "Sunrise" and len(times) > 1 and prayer not in iqamah:
             iqamah[prayer] = times[1]
 
-    jumuah: list[str] = []
+    jumuah = []
     # Handles rows such as "1st Jummah 1:45 PM" and "Jummah 1 Khutbah 1:45 PM".
     numbered = re.compile(
         r"(?:Jummah|Jumu[’'`]?ah)\s*(?:Prayer\s*)?(?:#?\s*(?:[1-4]|I{1,4}|first|second|third|fourth|1st|2nd|3rd|4th))[^0-9]{0,55}(\d{1,2}:\d{2}\s*(?:AM|PM))",
@@ -167,7 +251,7 @@ def validate(parsed: dict) -> None:
         raise ValueError("Adhan times are not chronological")
     for prayer in IQAMAH_PRAYERS:
         delta = to_minutes(parsed["iqamah"][prayer]) - to_minutes(parsed["adhan"][prayer])
-        if not 0 <= delta <= 180:
+        if not 1 <= delta <= 180:
             raise ValueError(f"Implausible {prayer} Iqamah delta")
 
 
@@ -228,11 +312,12 @@ def fetch_rendered(url: str) -> str:
                 chunks: list[str] = []
                 for frame in page.frames:
                     try:
-                        body = frame.locator("body")
-                        if body.count():
-                            visible = body.inner_text(timeout=2_000).strip()
-                            if visible:
-                                chunks.append(visible)
+                        rows = frame.locator("table tr")
+                        if rows.count():
+                            for row in rows.all():
+                                cells = [value.strip() for value in row.locator("th, td").all_inner_texts()]
+                                if cells:
+                                    chunks.append(" | ".join(cells))
                     except Exception:
                         continue
                 candidate = "\n".join(chunks)
@@ -262,6 +347,37 @@ def current_jumuah() -> tuple[list[str], dict]:
     except Exception:
         pass
     return [], {"status": "unavailable", "fetchedAt": "", "checkedAt": "", "source": ""}
+
+
+def stored_age_days(today: date | None = None) -> int | None:
+    """Return stored schedule age in Chicago calendar days, or None if unsafe."""
+    try:
+        existing = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        if existing.get("validation", {}).get("valid") is not True:
+            return None
+        stored = date.fromisoformat(str(existing["prayerDate"]))
+        local_today = today or datetime.now(ZoneInfo(TIMEZONE)).date()
+        return (local_today - stored).days
+    except Exception:
+        return None
+
+
+def retain_or_escalate(errors: list[str]) -> int:
+    age = stored_age_days()
+    detail = "; ".join(errors)
+    if age is not None and 0 <= age <= MAX_SAFE_AGE_DAYS:
+        print(
+            f"::warning title=VRIC data retained::Source refresh failed; retained known-good "
+            f"JSON aged {age} day(s). {detail}"
+        )
+        return 0
+    age_label = "unknown" if age is None else str(age)
+    print(
+        f"::error title=VRIC data stale::Source refresh failed and stored data age "
+        f"({age_label} day(s)) exceeds the {MAX_SAFE_AGE_DAYS}-day maximum-safe age. {detail}",
+        file=sys.stderr,
+    )
+    return 1
 
 
 def write_output(parsed: dict, selected: dict) -> None:
@@ -364,10 +480,7 @@ def main() -> int:
                 errors.append(f"rendered {url}: {exc}")
 
     if not parsed or not selected:
-        print("VRIC refresh failed; previous known-good JSON was retained.", file=sys.stderr)
-        for error in errors:
-            print("- " + error, file=sys.stderr)
-        return 1
+        return retain_or_escalate(errors)
 
     write_output(parsed, selected)
     return 0

@@ -3,8 +3,10 @@ name: Update VRIC prayer times
 on:
   workflow_dispatch:
   schedule:
-    - cron: '7 5,6 * * *'
-    - cron: '17 */3 * * *'
+    # 05:07 CST / 06:07 CDT America/Chicago, after VRIC's daily rollover.
+    - cron: '7 11 * * *'
+    # One limited retry four hours later; temporary outages remain warnings.
+    - cron: '17 15 * * *'
 
 permissions:
   contents: write
@@ -35,6 +37,9 @@ jobs:
 
       - name: Refresh and validate VRIC timing mirror
         run: python scripts/update_vric_times.py
+
+      - name: Run updater tests
+        run: python -m unittest discover -s tests -v
 
       - name: Commit changed timing file
         run: |
