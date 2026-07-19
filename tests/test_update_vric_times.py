@@ -1,6 +1,8 @@
 import json
+import io
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import date
 from pathlib import Path
 from unittest import mock
@@ -52,7 +54,8 @@ class VricUpdaterTests(unittest.TestCase):
             original = b'{"prayerDate":"2026-07-19","validation":{"valid":true}}\n'
             output.write_bytes(original)
             with mock.patch.object(updater, "OUTPUT", output), mock.patch.object(updater, "fetch", side_effect=OSError("offline")), mock.patch.object(updater, "fetch_rendered", side_effect=OSError("offline")), mock.patch.object(updater, "stored_age_days", return_value=0):
-                self.assertEqual(updater.main(), 0)
+                with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                    self.assertEqual(updater.main(), 0)
             self.assertEqual(output.read_bytes(), original)
 
     def test_jumuah_retained_when_temporarily_unavailable(self):
@@ -69,7 +72,8 @@ class VricUpdaterTests(unittest.TestCase):
 
     def test_stale_data_escalation(self):
         with mock.patch.object(updater, "stored_age_days", return_value=updater.MAX_SAFE_AGE_DAYS + 1):
-            self.assertEqual(updater.retain_or_escalate(["offline"]), 1)
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                self.assertEqual(updater.retain_or_escalate(["offline"]), 1)
 
     def test_stored_age_uses_prayer_date(self):
         with tempfile.TemporaryDirectory() as directory:
