@@ -11,6 +11,7 @@ const schedulerSource=fs.readFileSync(path.join(ROOT,'assets/js/azaan-scheduler-
 const diagnosticsSource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-diagnostics-v957.js'),'utf8');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
+const admin=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
 const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-controller">([\s\S]*?)<\/script>/)[1];
 const volumeSyncSource=html.match(/(function updateVolumeLabel\(\)\{[\s\S]*?)async function unlockAudio/)[1];
 
@@ -222,7 +223,7 @@ test('Stop clears all playback metadata and restores idle overlay state',async()
 });
 
 test('fresh HTML loads scheduler after playback API and service worker does not inject another',()=>{
-  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=957"></script>';
+  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=958"></script>';
   assert.equal((html.match(/assets\/js\/azaan-scheduler-v953\.js/g)||[]).length,1);assert.ok(html.indexOf('window.playAzaan=async function')<html.indexOf(tag));assert.doesNotMatch(sw,/const schedulerTag=/);assert.doesNotMatch(sw,/SCHEDULER_JS=/);assert.match(sw,/data-aslima-azaan-scheduler/);
 });
 
@@ -254,15 +255,15 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v957 service-worker upgrade removes older caches and precaches runtime diagnostics and every Azaan recording',async()=>{
+test('v958 service-worker upgrade removes older caches and precaches runtime diagnostics and every Azaan recording',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[];
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
-  const caches={open:async()=>cache,keys:async()=>['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
+  const caches={open:async()=>cache,keys:async()=>['aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics','aslima-v958-remote-health'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
   const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
   vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout,clearTimeout,console},{filename:'sw.js'});
   let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
   let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
-  assert.deepEqual(deleted,['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability']);
+  assert.deepEqual(deleted,['aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics']);
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v957.js'));
@@ -336,6 +337,26 @@ test('remote volume application does not call tablet write-back and create a Fir
   assert.match(applyBlock,/audio\.volume=Math\.max\(0,Math\.min\(1,data\.volume\)\)/);
   assert.doesNotMatch(applyBlock,/setVolume\(/);
   assert.doesNotMatch(applyBlock,/aslimaRemoteRef\.update/);
+});
+
+test('tablet health uses an isolated Firebase path and server-timestamped bounded heartbeat cadence',()=>{
+  assert.match(html,/path: 'aslima\/devices\/home\/settings'/);
+  assert.match(html,/statusPath: 'aslima\/devices\/home\/status\/display'/);
+  assert.match(html,/aslimaHealthRef=firebase\.database\(\)\.ref\(window\.ASLIMA_REMOTE\.statusPath\)/);
+  assert.match(html,/ref\('\.info\/connected'\)\.on\('value'/);
+  assert.match(html,/snapshot\.val\(\)!==true/);
+  assert.match(html,/onDisconnect\(\)\.update\(\{online:false,visible:false,lastSeen:firebase\.database\.ServerValue\.TIMESTAMP\}\)/);
+  assert.match(html,/publishAslimaHealth\('firebase-connected'\)/);
+  assert.match(html,/setInterval\(\(\)=>publishAslimaHealth\('heartbeat'\),60000\)/);
+  assert.match(html,/lastSeen:firebase\.database\.ServerValue\.TIMESTAMP/);
+});
+
+test('phone health view reads only status and expires stale online heartbeats',()=>{
+  assert.match(admin,/const STATUS_PATH='aslima\/devices\/home\/status\/display'/);
+  assert.match(admin,/firebase\.database\(\)\.ref\(STATUS_PATH\)\.on\('value'/);
+  assert.match(admin,/health\.online!==false&&age<=150000/);
+  assert.match(admin,/id="deviceHealth"/);
+  assert.doesNotMatch(admin,/ref\(STATUS_PATH\)\.(?:set|update|remove)\(/);
 });
 
 test('repeated lifecycle reconciliation does not register additional scheduler listeners',async()=>{

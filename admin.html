@@ -16,6 +16,7 @@
 @media(max-width:390px){body{padding-left:12px;padding-right:12px}.title{font-size:29px}.row{grid-template-columns:1fr 124px}.tabs{gap:6px}.tabBtn{font-size:11px}}
 
 .voiceGrid{display:grid;gap:10px}.voiceCard{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.055);padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.voiceCard.active{border-color:rgba(245,200,107,.80);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.06));box-shadow:0 0 28px rgba(245,200,107,.12)}.voiceCard .voiceName{font-weight:950;font-size:16px}.voiceCard .voiceMeta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}.voiceBadge{border:1px solid rgba(245,200,107,.44);color:var(--gold);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950;letter-spacing:.04em}.voiceCard button{appearance:none;border:0;background:transparent;color:inherit;text-align:left;width:100%;padding:0}
+.deviceHealth{border:1px solid var(--line);border-radius:22px;background:rgba(0,0,0,.20);padding:14px;margin-top:13px}.deviceHealthHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.deviceHealthTitle{font-size:13px;font-weight:950}.deviceHealthState{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:var(--muted)}.deviceHealthState::before{content:"";width:8px;height:8px;border-radius:50%;background:#777}.deviceHealth[data-state="online"] .deviceHealthState{color:var(--green)}.deviceHealth[data-state="online"] .deviceHealthState::before{background:var(--green);box-shadow:0 0 12px rgba(73,230,164,.7)}.deviceHealth[data-state="offline"] .deviceHealthState{color:var(--red)}.deviceHealth[data-state="offline"] .deviceHealthState::before{background:var(--red)}.deviceHealthGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.healthItem{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px;background:rgba(255,255,255,.035)}.healthLabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900}.healthValue{font-size:13px;font-weight:900;margin-top:4px;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -32,6 +33,7 @@
       <div class="nextMain"><div class="nextName" id="nextPrayerName">—</div><div class="nextTime" id="nextPrayerTime">--:--</div></div>
       <div class="nextMeta"><span class="nextCountdown" id="nextPrayerCountdown">Calculating…</span><span id="heroVoice">Azaan 1 selected</span></div>
     </div>
+    <div class="deviceHealth" id="deviceHealth" data-state="waiting" aria-live="polite"><div class="deviceHealthHead"><div class="deviceHealthTitle">Tablet health</div><div class="deviceHealthState" id="deviceHealthState">Waiting for tablet</div></div><div class="deviceHealthGrid"><div class="healthItem"><div class="healthLabel">Last contact</div><div class="healthValue" id="healthLastSeen">—</div></div><div class="healthItem"><div class="healthLabel">Version</div><div class="healthValue" id="healthVersion">—</div></div><div class="healthItem"><div class="healthLabel">Timing</div><div class="healthValue" id="healthTiming">—</div></div><div class="healthItem"><div class="healthLabel">Playback</div><div class="healthValue" id="healthPlayback">—</div></div></div></div>
   </section>
 
   <nav class="tabs" aria-label="Admin sections">
@@ -66,15 +68,29 @@
 <script>
 const firebaseConfig={apiKey:"AIzaSyBqe4PHKA3ZaiZuGuX65G9sh-I40yz_aOI",authDomain:"aslima-azaan.firebaseapp.com",databaseURL:"https://aslima-azaan-default-rtdb.firebaseio.com",projectId:"aslima-azaan",storageBucket:"aslima-azaan.firebasestorage.app",messagingSenderId:"282650902479",appId:"1:282650902479:web:75149538ae561dbbaedcba"};
 const PATH='aslima/devices/home/settings';
+const STATUS_PATH='aslima/devices/home/status/display';
 const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const AZAAN_VOICES={azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13'},azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06'},azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21'},azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57'},azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32'}};
 const AZAAN_VOICE_ORDER=['azaan1','azaan2','azaan3','azaan4','azaan5'];
 const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.70,muezzin:'azaan1'};
 let state=JSON.parse(JSON.stringify(DEFAULT));
+let tabletHealth=null;
 const $=id=>document.getElementById(id); function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000)}
 function setStatus(txt,cls){const s=$('status');s.className='status '+(cls||'');s.innerHTML='<span class="dot"></span>'+txt}
 function command(type,extra){const now=Date.now();return {type,id:String(now)+'-'+Math.random().toString(16).slice(2),createdAt:now,expiresAt:now+120000,...(extra||{})}}
 function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
+function renderTabletHealth(){
+ const health=tabletHealth&&typeof tabletHealth==='object'?tabletHealth:null;
+ const lastSeen=health&&Number(health.lastSeen)||0;
+ const age=lastSeen?Date.now()-lastSeen:Infinity;
+ const online=!!(health&&health.online!==false&&age<=150000);
+ const panel=$('deviceHealth');panel.dataset.state=online?'online':'offline';
+ $('deviceHealthState').textContent=online?'Tablet online':(lastSeen?'Tablet offline':'Waiting for tablet');
+ $('healthLastSeen').textContent=lastSeen?(age<65000?'Just now':Math.max(1,Math.round(age/60000))+' min ago'):'No heartbeat yet';
+ $('healthVersion').textContent=health&&health.appVersion?'v'+health.appVersion:'—';
+ $('healthTiming').textContent=health?(String(health.timingMode||'unknown')+' · '+String(health.timingStatus||'unknown')):'—';
+ $('healthPlayback').textContent=health?(health.playbackPhase==='playing'?(health.activePrayer||'Azaan')+' playing':String(health.playbackPhase||'idle')):'—';
+}
 function updateNextPrayer(){
  const names=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
  const now=new Date(); let next=null;
@@ -124,7 +140,7 @@ function collect(){
  state.volume=parseInt($('volume').value,10)/100; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
  return state;
 }
-build(); render(); setInterval(updateNextPrayer,30000);
+build(); render(); renderTabletHealth(); setInterval(updateNextPrayer,30000); setInterval(renderTabletHealth,30000);
 
 function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('goTimes').onclick=()=>switchTab('timesPage');
@@ -134,7 +150,7 @@ function saveRemote(label){
 }
 $('modeVric').onclick=()=>{state.mode='vric';render(); if(window.ref)saveRemote('VRIC Live sent to tablet')}; $('modeLocation').onclick=()=>{state.mode='calculated-location';render(); if(window.ref)saveRemote('Location mode sent to tablet')}; $('modeManual').onclick=()=>{state.mode='manual';render(); if(window.ref)saveRemote('Manual mode sent to tablet')}; $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%'};
 $('unlock').onclick=()=>{if($('pin').value.trim()==='7860'){localStorage.setItem('aslima_admin_unlocked','1');$('lock').style.display='none'}else toast('Wrong PIN')}; if(localStorage.getItem('aslima_admin_unlocked')==='1')$('lock').style.display='none';
-try{firebase.initializeApp(firebaseConfig); const ref=firebase.database().ref(PATH); window.ref=ref; ref.child('muezzin').on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}}); ref.on('value',snap=>{setStatus('Live','ok'); const v=snap.val(); if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}}; render();}},err=>setStatus('Error','bad'));
+try{firebase.initializeApp(firebaseConfig); const ref=firebase.database().ref(PATH); window.ref=ref; firebase.database().ref(STATUS_PATH).on('value',snap=>{tabletHealth=snap.val();renderTabletHealth();},()=>{tabletHealth=null;renderTabletHealth();}); ref.child('muezzin').on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}}); ref.on('value',snap=>{setStatus('Live','ok'); const v=snap.val(); if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}}; render();}},err=>setStatus('Error','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
  $('test').onclick=()=>{ref.child('command').set(command('testAzaan')).then(()=>toast('Test sent to tablet')).catch(()=>toast('Test command failed'))};
