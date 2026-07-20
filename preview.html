@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
 <title>ASLIMA V9.1.49</title>
+<script src="./assets/js/runtime-diagnostics-v957.js?v=957"></script>
 <style>
 :root{
   --gold:#f1bd65;
@@ -4846,6 +4847,7 @@ function applyTimingDataset(dataset,forcedStatus){
 }
 
 function setTimingUnavailable(reason){
+  if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('timings','unavailable',{message:reason&&reason.message||reason});
   const now=new Date();
   const dateKey=timingDateKey(now,CONFIG.timezone);
   timings={Fajr:'',Sunrise:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:''};
@@ -5711,6 +5713,7 @@ function initAslimaFirebaseRemote(){
     if(!firebase.apps.length)firebase.initializeApp(window.ASLIMA_REMOTE.config);
     const ref=firebase.database().ref(window.ASLIMA_REMOTE.path);
     window.aslimaRemoteRef=ref;
+    if(pendingTabletVolume!=null)syncTabletVolumeToRemote();
     // Dedicated voice listener makes phone selections apply immediately and
     // updates the active playback controller without requiring Save Settings.
     ref.child('muezzin').on('value',snap=>{
@@ -5747,10 +5750,11 @@ function initAslimaFirebaseRemote(){
       applyAslimaRemoteSettings(snap.val());
     },err=>{
       lastVricSyncStatus='Phone remote unavailable: '+(err && err.message ? err.message : 'Firebase error');
+      if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','listener-error',{message:err&&err.message||err});
       render();
     });
     setTimeout(()=>showToast('Phone remote connected'),900);
-  }catch(e){console.warn('Aslima Firebase remote unavailable',e);}
+  }catch(e){if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','initialization-error',{message:e&&e.message||e});console.warn('Aslima Firebase remote unavailable',e);}
 }
 
 function updateVolumeLabel(){
@@ -5761,10 +5765,28 @@ function updateVolumeLabel(){
   if(drawerPct)drawerPct.textContent=pct;
 }
 
+let pendingTabletVolume=null;
+let tabletVolumeSyncTimer=0;
+function syncTabletVolumeToRemote(){
+  clearTimeout(tabletVolumeSyncTimer);
+  tabletVolumeSyncTimer=setTimeout(()=>{
+    tabletVolumeSyncTimer=0;
+    if(pendingTabletVolume==null||!window.aslimaRemoteRef)return;
+    const volume=pendingTabletVolume;
+    pendingTabletVolume=null;
+    window.aslimaRemoteRef.update({volume,updatedAt:new Date().toISOString()}).catch(error=>{
+      pendingTabletVolume=volume;
+      if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','volume-sync-error',{message:error&&error.message||error});
+    });
+  },180);
+}
+
 function setVolume(v){
   audio.volume=Math.max(0,Math.min(1,v));
   audio.muted=false;
   try{localStorage.setItem('aslima_azaan_volume',String(audio.volume));}catch(e){}
+  pendingTabletVolume=audio.volume;
+  syncTabletVolumeToRemote();
   updateVolumeLabel();
   showToast('Volume '+Math.round(audio.volume*100)+'%');
 }
@@ -7132,12 +7154,14 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=956').catch(console.warn);
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=957').then(registration=>{
+    if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'957',reason:registration.active?'active':'installing'});
+  }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
 })();
 </script>
 
-<script src="./assets/js/azaan-scheduler-v953.js?v=956"></script>
+<script src="./assets/js/azaan-scheduler-v953.js?v=957"></script>
 
 
 <!-- Prayer-guidance warning addon intentionally disabled in v9.1.48.
