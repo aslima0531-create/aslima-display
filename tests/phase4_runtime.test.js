@@ -14,6 +14,7 @@ const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
 const admin=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
 const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-controller">([\s\S]*?)<\/script>/)[1];
 const volumeSyncSource=html.match(/(function updateVolumeLabel\(\)\{[\s\S]*?)async function unlockAudio/)[1];
+const backupValidationSource=admin.match(/(function isBackupClock\(value\)\{[\s\S]*?)function formatClock/)[1];
 
 function storage(seed){
   const values=new Map(seed?Array.from(seed.entries()):[]);
@@ -357,6 +358,42 @@ test('phone health view reads only status and expires stale online heartbeats',(
   assert.match(admin,/health\.online!==false&&age<=150000/);
   assert.match(admin,/id="deviceHealth"/);
   assert.doesNotMatch(admin,/ref\(STATUS_PATH\)\.(?:set|update|remove)\(/);
+});
+
+function backupValidator(){
+  const context={PRAYERS:['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'],AZAAN:['Fajr','Dhuhr','Asr','Maghrib','Isha'],AZAAN_VOICES:{azaan1:{},azaan2:{},azaan3:{},azaan4:{},azaan5:{}},Number,Array,String,Error};
+  vm.runInNewContext(`${backupValidationSource};globalThis.validateSettingsBackup=validateSettingsBackup;`,context,{filename:'backup-validator-production.js'});
+  return context.validateSettingsBackup;
+}
+
+function validBackup(){return {schemaVersion:1,app:'aslima-display',settings:{mode:'vric',timings:{Fajr:'05:15',Sunrise:'06:30',Dhuhr:'13:34',Asr:'17:17',Maghrib:'20:35',Isha:'21:54'},jumuah:['1:45 PM','3:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.7,muezzin:'azaan1'}}}
+
+test('configuration backup validator accepts only the explicit safe settings schema',()=>{
+  const validate=backupValidator(),input=validBackup();input.settings.command={type:'stopAzaan'};input.settings.diagnostics=['private'];input.extra='ignored';
+  const result=validate(input);
+  assert.deepEqual(Object.keys(result).sort(),['azaanEnabled','jumuah','mode','muezzin','timings','volume']);
+  assert.equal('command' in result,false);assert.equal('diagnostics' in result,false);
+});
+
+test('configuration restore rejects malformed, partial, unsafe, and nonchronological backups',()=>{
+  const validate=backupValidator();
+  for(const mutate of [
+    value=>{value.schemaVersion=2;},
+    value=>{delete value.settings.timings.Fajr;},
+    value=>{value.settings.timings.Asr='25:10';},
+    value=>{value.settings.timings.Dhuhr='04:00';},
+    value=>{value.settings.jumuah=['not-a-time'];},
+    value=>{value.settings.azaanEnabled.Fajr='yes';},
+    value=>{value.settings.volume=2;},
+    value=>{value.settings.muezzin='remote-url';}
+  ]){const value=validBackup();mutate(value);assert.throws(()=>validate(value));}
+});
+
+test('configuration restore is size-limited, confirmed, and updates only the settings reference',()=>{
+  assert.match(admin,/file\.size>65536/);
+  assert.match(admin,/window\.confirm\('Restore this backup and replace the current tablet settings\?'\)/);
+  assert.match(admin,/await window\.ref\.update\(\{\.\.\.restored,updatedAt:/);
+  assert.doesNotMatch(admin,/STATUS_PATH[\s\S]{0,200}restoreSettingsBackup/);
 });
 
 test('repeated lifecycle reconciliation does not register additional scheduler listeners',async()=>{
