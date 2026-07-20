@@ -5713,6 +5713,7 @@ function initAslimaFirebaseRemote(){
     if(!firebase.apps.length)firebase.initializeApp(window.ASLIMA_REMOTE.config);
     const ref=firebase.database().ref(window.ASLIMA_REMOTE.path);
     window.aslimaRemoteRef=ref;
+    if(pendingTabletVolume!=null)syncTabletVolumeToRemote();
     // Dedicated voice listener makes phone selections apply immediately and
     // updates the active playback controller without requiring Save Settings.
     ref.child('muezzin').on('value',snap=>{
@@ -5764,10 +5765,28 @@ function updateVolumeLabel(){
   if(drawerPct)drawerPct.textContent=pct;
 }
 
+let pendingTabletVolume=null;
+let tabletVolumeSyncTimer=0;
+function syncTabletVolumeToRemote(){
+  clearTimeout(tabletVolumeSyncTimer);
+  tabletVolumeSyncTimer=setTimeout(()=>{
+    tabletVolumeSyncTimer=0;
+    if(pendingTabletVolume==null||!window.aslimaRemoteRef)return;
+    const volume=pendingTabletVolume;
+    pendingTabletVolume=null;
+    window.aslimaRemoteRef.update({volume,updatedAt:new Date().toISOString()}).catch(error=>{
+      pendingTabletVolume=volume;
+      if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','volume-sync-error',{message:error&&error.message||error});
+    });
+  },180);
+}
+
 function setVolume(v){
   audio.volume=Math.max(0,Math.min(1,v));
   audio.muted=false;
   try{localStorage.setItem('aslima_azaan_volume',String(audio.volume));}catch(e){}
+  pendingTabletVolume=audio.volume;
+  syncTabletVolumeToRemote();
   updateVolumeLabel();
   showToast('Volume '+Math.round(audio.volume*100)+'%');
 }

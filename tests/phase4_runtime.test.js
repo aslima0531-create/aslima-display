@@ -12,6 +12,7 @@ const diagnosticsSource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-diagno
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
 const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-controller">([\s\S]*?)<\/script>/)[1];
+const volumeSyncSource=html.match(/(function updateVolumeLabel\(\)\{[\s\S]*?)async function unlockAudio/)[1];
 
 function storage(seed){
   const values=new Map(seed?Array.from(seed.entries()):[]);
@@ -312,6 +313,29 @@ test('caught timing and Firebase failures are routed into persistent diagnostics
   assert.match(html,/ASLIMADiagnostics\.record\('timings','unavailable'/);
   assert.match(html,/ASLIMADiagnostics\.record\('firebase','listener-error'/);
   assert.match(html,/ASLIMADiagnostics\.record\('firebase','initialization-error'/);
+});
+
+test('tablet volume changes update Firebase after the debounce and remain normalized',async()=>{
+  let queued=null,payload=null;
+  const audio={volume:.7,muted:false};
+  const elements={volumePct:{textContent:''},drawerVolumePct:{textContent:''}};
+  const window={aslimaRemoteRef:{update:async value=>{payload=value;}},ASLIMADiagnostics:{record(){}}};
+  const context={window,audio,localStorage:storage(),showToast(){},$:id=>elements[id]||null,Date,setTimeout:fn=>{queued=fn;return 1;},clearTimeout(){}};
+  vm.runInNewContext(`${volumeSyncSource};globalThis.setVolume=setVolume;`,context,{filename:'volume-sync-production.js'});
+  context.setVolume(1.4);
+  assert.equal(audio.volume,1);
+  assert.equal(elements.volumePct.textContent,'100%');
+  assert.ok(queued);
+  await queued();
+  assert.equal(payload.volume,1);
+  assert.match(payload.updatedAt,/^\d{4}-\d{2}-\d{2}T/);
+});
+
+test('remote volume application does not call tablet write-back and create a Firebase loop',()=>{
+  const applyBlock=html.match(/function applyAslimaRemoteSettings\(data\)\{([\s\S]*?)function initAslimaFirebaseRemote/)[1];
+  assert.match(applyBlock,/audio\.volume=Math\.max\(0,Math\.min\(1,data\.volume\)\)/);
+  assert.doesNotMatch(applyBlock,/setVolume\(/);
+  assert.doesNotMatch(applyBlock,/aslimaRemoteRef\.update/);
 });
 
 test('repeated lifecycle reconciliation does not register additional scheduler listeners',async()=>{
