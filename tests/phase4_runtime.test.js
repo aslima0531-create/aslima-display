@@ -272,3 +272,11 @@ test('calculated and manual modes hide congregation-only presentation',()=>{
   assert.match(html,/body\[data-congregation-schedule="hidden"\] #jumuahZone/);
   assert.match(html,/body\[data-congregation-schedule="hidden"\] #prayerPanel \.ptime-group/);
 });
+
+test('calculated failure falls back and unavailable state still permits Manual mode',()=>{
+  assert.match(html,/try\{pos=await getDevicePosition\(\);\}catch\(locationError\)/);
+  assert.match(html,/await syncAlAdhanByCity\(\);/);
+  assert.match(html,/const hasCompleteManualSeed=\['Fajr','Dhuhr','Asr','Maghrib','Isha'\]\.every/);
+  assert.match(html,/window\.aslimaRemoteManualTimings=hasCompleteManualSeed\?\{\.\.\.manual\}:null/);
+  assert.match(html,/writeRemote\(hasCompleteManualSeed\?\{mode:'manual',timings:manual\}:\{mode:'manual'\}\)/);
+});

@@ -5026,7 +5026,16 @@ async function syncSelectedMasjid(){
 }
 
 async function syncDeviceLocation(){
-  const pos=await getDevicePosition();
+  let pos=null;
+  try{pos=await getDevicePosition();}catch(locationError){
+    if(Number.isFinite(Number(CONFIG.geoLat))&&Number.isFinite(Number(CONFIG.geoLon))){
+      pos={lat:Number(CONFIG.geoLat),lon:Number(CONFIG.geoLon)};
+    }else{
+      await syncAlAdhanByCity();
+      renderLocationControls();
+      return true;
+    }
+  }
   CONFIG.geoLat=pos.lat;
   CONFIG.geoLon=pos.lon;
   saveTimingSourcePrefs();
@@ -6682,11 +6691,13 @@ setTimeout(applyBurnInShift,12000);
         CONFIG.timingSource='manual';
         saveTimingSourcePrefs();
         window.aslimaRemoteManualEnabled=true;
-        window.aslimaRemoteManualTimings={...manual};
-        applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:manual,iqamah:{},jumuah:CONFIG.jumuah},'manual');
+        const hasCompleteManualSeed=['Fajr','Dhuhr','Asr','Maghrib','Isha'].every(k=>validTime(manual[k]));
+        window.aslimaRemoteManualTimings=hasCompleteManualSeed?{...manual}:null;
+        if(hasCompleteManualSeed)applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:manual,iqamah:{},jumuah:CONFIG.jumuah},'manual');
         render();
-        await writeRemote({mode:'manual',timings:manual});
+        await writeRemote(hasCompleteManualSeed?{mode:'manual',timings:manual}:{mode:'manual'});
         if(typeof showToast==='function')showToast('Manual timing mode active');
+        if(!hasCompleteManualSeed)setStatus('Manual mode active. Enter prayer times and press Save Times.');
         if(typeof window.render==='function')window.render(); else if(typeof render==='function')render();
       }else{
         CONFIG.timingSource=mode;
