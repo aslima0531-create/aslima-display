@@ -215,3 +215,60 @@ test('fresh HTML loads scheduler after playback API and service worker does not 
 });
 
 test('index and preview remain byte-identical',()=>assert.equal(html,preview));
+
+test('cross-tab lease permits only one automatic attempt for an occurrence',async()=>{
+  const shared=storage(),first=schedulerHarness(shared),second=schedulerHarness(shared);
+  let releaseFirst,secondCalls=0;
+  first.window.playAzaan=()=>new Promise(resolve=>{releaseFirst=resolve;});
+  second.window.playAzaan=async()=>{secondCalls++;return true;};
+  const pending=first.scheduler.reconcile(at(13,0),'first-tab');
+  await Promise.resolve();
+  assert.equal(await second.scheduler.reconcile(at(13,0),'second-tab'),false);
+  assert.equal(secondCalls,0);
+  assert.equal(second.scheduler.state.retryKey,second.scheduler.eventsFor(at(13,0))[1].key);
+  releaseFirst(false);
+  await pending;
+  first.scheduler.stop();second.scheduler.stop();
+});
+
+test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
+  const shared=storage();
+  shared.setItem('aslima_azaan_scheduler_v953_lease',JSON.stringify({key:'2026-07-19|Dhuhr|13:00',owner:'crashed-tab',expiresAt:Date.now()-1}));
+  const h=schedulerHarness(shared);let calls=0;
+  h.window.playAzaan=async(prayer,opts)=>{calls++;h.audio.paused=false;h.window.aslimaPlaybackState={phase:'playing',prayer,source:opts.source,occurrenceKey:opts.occurrenceKey};return true;};
+  assert.equal(await h.scheduler.reconcile(at(13,0),'recovery'),true);
+  assert.equal(calls,1);
+  assert.equal(shared.getItem('aslima_azaan_scheduler_v953_lease'),null);
+  h.scheduler.stop();
+});
+
+test('v956 service-worker upgrade removes v955 cache and precaches every Azaan recording',async()=>{
+  const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[];
+  const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
+  const caches={open:async()=>cache,keys:async()=>['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
+  const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
+  vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout,clearTimeout,console},{filename:'sw.js'});
+  let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
+  let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
+  assert.deepEqual(deleted,['aslima-v955-runtime-reliability']);
+  for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
+  assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
+  assert.ok(precache.includes('./data/vric-prayer-times.json'));
+});
+
+test('repeated lifecycle reconciliation does not register additional scheduler listeners',async()=>{
+  const h=schedulerHarness();h.scheduler.start();
+  const initial={document:h.listeners.document.length,window:h.listeners.window.length};
+  for(let i=0;i<500;i++)await h.scheduler.reconcile(at(12,0),'soak-simulation');
+  assert.deepEqual({document:h.listeners.document.length,window:h.listeners.window.length},initial);
+  assert.equal(h.scheduler.state.inFlightKey,'');
+  h.scheduler.stop();
+});
+
+test('calculated and manual modes hide congregation-only presentation',()=>{
+  assert.match(html,/const congregationVisible=CONFIG\.timingSource==='vric'/);
+  assert.match(html,/zone\.hidden=!congregationVisible/);
+  assert.match(html,/body\[data-congregation-schedule="hidden"\] #prayerPanel \.iqamah-time/);
+  assert.match(html,/body\[data-congregation-schedule="hidden"\] #jumuahZone/);
+  assert.match(html,/body\[data-congregation-schedule="hidden"\] #prayerPanel \.ptime-group/);
+});

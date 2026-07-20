@@ -3815,6 +3815,20 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   color:#f7cf81!important;
   text-shadow:0 0 1.2vh rgba(241,189,101,.16)!important;
 }
+
+/* Calculated and manual sources provide Adhan times only. Collapse the
+   congregation-only UI instead of presenting unavailable placeholders. */
+body[data-congregation-schedule="hidden"] .prayer-panel-head{
+  grid-template-columns:minmax(0,1fr) minmax(82px,auto)!important;
+}
+body[data-congregation-schedule="hidden"] .prayer-panel-head span:nth-child(3),
+body[data-congregation-schedule="hidden"] #prayerPanel .iqamah-time,
+body[data-congregation-schedule="hidden"] #jumuahZone{
+  display:none!important;
+}
+body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
+  grid-template-columns:minmax(82px,auto)!important;
+}
 @media (max-width:920px){
   .right{width:43vw!important}
   .prayer-panel{padding:.86vh .85vw 1vh!important}
@@ -5355,6 +5369,16 @@ function renderJumuahPanel(){
   syncFridayJumuahState();
   const list=$('jumuah'), panel=$('jumuahPanel'), pill=$('jumuahPill'), label=$('jumuahPillLabel'), zone=$('jumuahZone'), subtitle=$('jumuahPanelSubtitle');
   if(!list||!panel||!pill||!label||!zone)return;
+  const congregationVisible=CONFIG.timingSource==='vric';
+  document.body.dataset.congregationSchedule=congregationVisible?'visible':'hidden';
+  zone.hidden=!congregationVisible;
+  if(!congregationVisible){
+    jumuahPanelOpen=false;
+    panel.hidden=true;
+    pill.setAttribute('aria-expanded','false');
+    syncDockDetailState();
+    return;
+  }
   const entries=(timingDataset&&Array.isArray(timingDataset.jumuah)?timingDataset.jumuah:[]).filter(Boolean);
   const ordinals=['1st','2nd','3rd','4th'];
   list.style.setProperty('--jumuah-count',String(Math.max(1,entries.length)));

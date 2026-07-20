@@ -9,12 +9,15 @@
   const FIRED_KEY='aslima_azaan_scheduler_v953_fired';
   const DISMISSED_KEY='aslima_azaan_scheduler_v953_dismissed';
   const LEGACY_FIRED_KEY='aslima_last_fired_azaan';
+  const LEASE_KEY='aslima_azaan_scheduler_v953_lease';
+  const LEASE_MS=45000;
   const GRACE_MS=3*60*1000;
   const EARLY_TOLERANCE_MS=1200;
   const WATCHDOG_MS=30000;
   const BUSY_RETRY_MS=5000;
   const FAILURE_RETRY_MS=[10000,30000,60000];
   const MAX_TIMER_MS=2147480000;
+  const INSTANCE_ID=`${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
   if(window.ASLIMAAzaanScheduler&&window.ASLIMAAzaanScheduler.version===VERSION)return;
 
@@ -37,6 +40,34 @@
     lastReconcileAt:0,
     lastPlaybackAt:0
   };
+
+  function readLease(){
+    try{
+      const parsed=JSON.parse(localStorage.getItem(LEASE_KEY)||'null');
+      return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:null;
+    }catch(_error){return null;}
+  }
+
+  function acquireLease(key){
+    const now=Date.now(),current=readLease();
+    if(current&&current.key===key&&current.owner!==INSTANCE_ID&&Number(current.expiresAt)>now)return false;
+    const lease={key,owner:INSTANCE_ID,expiresAt:now+LEASE_MS};
+    try{
+      localStorage.setItem(LEASE_KEY,JSON.stringify(lease));
+      const confirmed=readLease();
+      return !!(confirmed&&confirmed.key===key&&confirmed.owner===INSTANCE_ID&&Number(confirmed.expiresAt)>now);
+    }catch(_error){
+      // Storage can be unavailable in hardened/private WebViews. The normal
+      // fired-map protection still applies, but the kiosk should remain usable.
+      return true;
+    }
+  }
+
+  function releaseLease(key){
+    const current=readLease();
+    if(!current||current.owner!==INSTANCE_ID||(key&&current.key!==key))return;
+    try{localStorage.removeItem(LEASE_KEY);}catch(_error){}
+  }
 
   function nowValue(override){
     if(override instanceof Date)return new Date(override.getTime());
@@ -254,6 +285,11 @@
       scheduleRetry(FAILURE_RETRY_MS[0],'controller-unavailable',event,0);
       return false;
     }
+    if(!acquireLease(event.key)){
+      setStatus('deferred','Another display tab owns this occurrence',event);
+      scheduleRetry(BUSY_RETRY_MS,'cross-tab-busy',event,0);
+      return false;
+    }
 
     state.inFlightKey=event.key;
     const generation=++state.attemptGeneration;
@@ -271,11 +307,12 @@
       if(generation===state.attemptGeneration&&state.inFlightKey===event.key)state.inFlightKey='';
     }
 
-    if(generation!==state.attemptGeneration||state.stopped||isDismissed(event))return false;
+    if(generation!==state.attemptGeneration||state.stopped||isDismissed(event)){releaseLease(event.key);return false;}
 
     if(started===true&&(audioIsActuallyPlaying()||playbackState().phase==='playing')){
       if(state.activeAttempt&&state.activeAttempt.attemptGeneration===generation)state.activeAttempt.status='playing';
       markFired(event,reason||'scheduled');
+      releaseLease(event.key);
       return true;
     }
 
@@ -291,6 +328,7 @@
       setStatus('error',`${event.prayer} Azaan did not start`,event);
       showMessage(`${event.prayer} Azaan could not play`);
     }
+    releaseLease(event.key);
     return false;
   }
 
@@ -355,6 +393,7 @@
     clearRetryTimer();
     clearInterval(state.watchdogTimer);
     state.watchdogTimer=0;
+    releaseLease(state.activeAttempt&&state.activeAttempt.occurrenceKey);
     setStatus('stopped','Scheduler stopped',null);
   }
 
@@ -370,6 +409,7 @@
     ++state.attemptGeneration;
     if(state.retryKey===key)clearRetryTimer();
     if(state.inFlightKey===key)state.inFlightKey='';
+    releaseLease(key);
     state.activeAttempt=null;
     delete state.attempts[key];
     setStatus('dismissed',reason||'stopped',null);
