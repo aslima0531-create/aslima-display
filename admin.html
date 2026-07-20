@@ -209,7 +209,7 @@ try{
  firebase.initializeApp(firebaseConfig);
  const auth=firebase.auth();
  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
- $('signIn').onclick=()=>{showAuthError('');const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});auth.signInWithRedirect(provider).catch(error=>showAuthError(error&&error.message?'Sign-in failed: '+error.message:'Sign-in failed.'))};
+ $('signIn').onclick=()=>{showAuthError('');const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});auth.signInWithPopup(provider).catch(error=>showAuthError(error&&error.message?'Sign-in failed: '+error.message:'Sign-in failed.'))};
  $('signOut').onclick=()=>auth.signOut();
  auth.onAuthStateChanged(async user=>{
    if(user&&!isAuthorizedAdmin(user)){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;showAuthError('This Google account is not authorized.');await auth.signOut();return;}
