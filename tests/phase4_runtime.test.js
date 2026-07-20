@@ -425,7 +425,7 @@ test('calculated failure falls back and unavailable state still permits Manual m
 test('admin remote uses Google authentication and contains no reusable PIN bypass',()=>{
   assert.match(admin,/firebase-auth-compat\.js/);
   assert.match(admin,/const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail\.com'/);
-  assert.match(admin,/auth\.signInWithRedirect\(provider\)/);
+  assert.match(admin,/auth\.signInWithPopup\(provider\)/);
   assert.match(admin,/auth\.onAuthStateChanged\(async user=>/);
   assert.doesNotMatch(admin,/7860|aslima_admin_unlocked|Enter admin PIN/);
 });
