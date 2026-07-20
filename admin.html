@@ -17,6 +17,7 @@
 
 .voiceGrid{display:grid;gap:10px}.voiceCard{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.055);padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.voiceCard.active{border-color:rgba(245,200,107,.80);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.06));box-shadow:0 0 28px rgba(245,200,107,.12)}.voiceCard .voiceName{font-weight:950;font-size:16px}.voiceCard .voiceMeta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}.voiceBadge{border:1px solid rgba(245,200,107,.44);color:var(--gold);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950;letter-spacing:.04em}.voiceCard button{appearance:none;border:0;background:transparent;color:inherit;text-align:left;width:100%;padding:0}
 .deviceHealth{border:1px solid var(--line);border-radius:22px;background:rgba(0,0,0,.20);padding:14px;margin-top:13px}.deviceHealthHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.deviceHealthTitle{font-size:13px;font-weight:950}.deviceHealthState{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:var(--muted)}.deviceHealthState::before{content:"";width:8px;height:8px;border-radius:50%;background:#777}.deviceHealth[data-state="online"] .deviceHealthState{color:var(--green)}.deviceHealth[data-state="online"] .deviceHealthState::before{background:var(--green);box-shadow:0 0 12px rgba(73,230,164,.7)}.deviceHealth[data-state="offline"] .deviceHealthState{color:var(--red)}.deviceHealth[data-state="offline"] .deviceHealthState::before{background:var(--red)}.deviceHealthGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.healthItem{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px;background:rgba(255,255,255,.035)}.healthLabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900}.healthValue{font-size:13px;font-weight:900;margin-top:4px;overflow-wrap:anywhere}
+.backupActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backupStatus{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}.backupStatus.error{color:var(--red)}.backupStatus.ok{color:var(--green)}
 </style>
 </head>
 <body>
@@ -45,6 +46,7 @@
   <section class="page active" id="timesPage">
     <section class="card"><h2>Prayer Times</h2><div class="sectionHint" id="timeHint">Manual overrides are only editable in Manual mode. VRIC and Location modes control timings automatically.</div><div class="lockNote" id="timeLockNote">Timing edits are locked because automatic timing mode is active. Switch to Manual if you intentionally want to override the tablet.</div><div class="grid" id="timeGrid"></div></section>
     <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
+    <section class="card"><h2>Configuration Backup</h2><div class="sectionHint">Download a safe copy of timing mode, prayer settings, Azaan toggles, volume, and voice. Restore validates everything before changing the tablet.</div><div class="backupActions"><button class="ghost" id="exportBackup" type="button">Export Backup</button><button class="ghost" id="restoreBackup" type="button">Restore Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" hidden><div class="backupStatus" id="backupStatus" aria-live="polite"></div></section>
   </section>
 
   <section class="page" id="azaanPage">
@@ -78,6 +80,38 @@ let tabletHealth=null;
 const $=id=>document.getElementById(id); function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000)}
 function setStatus(txt,cls){const s=$('status');s.className='status '+(cls||'');s.innerHTML='<span class="dot"></span>'+txt}
 function command(type,extra){const now=Date.now();return {type,id:String(now)+'-'+Math.random().toString(16).slice(2),createdAt:now,expiresAt:now+120000,...(extra||{})}}
+function isBackupClock(value){if(typeof value!=='string'||!/^\d{2}:\d{2}$/.test(value))return false;const parts=value.split(':').map(Number);return parts[0]>=0&&parts[0]<=23&&parts[1]>=0&&parts[1]<=59}
+function backupMinutes(value){const parts=value.split(':').map(Number);return parts[0]*60+parts[1]}
+function validateSettingsBackup(input){
+ if(!input||typeof input!=='object'||Array.isArray(input))throw new Error('Backup must be a JSON object');
+ if(input.schemaVersion!==1||input.app!=='aslima-display')throw new Error('Unsupported ASLIMA backup');
+ const settings=input.settings;if(!settings||typeof settings!=='object'||Array.isArray(settings))throw new Error('Backup settings are missing');
+ if(!['vric','calculated-location','manual'].includes(settings.mode))throw new Error('Timing mode is invalid');
+ const timings={};for(const prayer of PRAYERS){if(!isBackupClock(settings.timings&&settings.timings[prayer]))throw new Error(prayer+' time is invalid');timings[prayer]=settings.timings[prayer]}
+ for(let index=1;index<PRAYERS.length;index++)if(backupMinutes(timings[PRAYERS[index]])<=backupMinutes(timings[PRAYERS[index-1]]))throw new Error('Prayer times must be chronological');
+ if(!Array.isArray(settings.jumuah)||settings.jumuah.length>4)throw new Error('Jumu’ah times are invalid');
+ const jumuah=settings.jumuah.map(value=>String(value||'').trim().toUpperCase());
+ if(jumuah.some(value=>!/^(?:0?[1-9]|1[0-2]):[0-5]\d\s?(?:AM|PM)$/.test(value)))throw new Error('Jumu’ah time format is invalid');
+ const azaanEnabled={};for(const prayer of AZAAN){if(typeof (settings.azaanEnabled&&settings.azaanEnabled[prayer])!=='boolean')throw new Error(prayer+' Azaan setting is invalid');azaanEnabled[prayer]=settings.azaanEnabled[prayer]}
+ if(typeof settings.volume!=='number'||!Number.isFinite(settings.volume)||settings.volume<0||settings.volume>1)throw new Error('Volume is invalid');
+ if(typeof settings.muezzin!=='string'||!AZAAN_VOICES[settings.muezzin])throw new Error('Azaan voice is invalid');
+ return {mode:settings.mode,timings,jumuah,azaanEnabled,volume:settings.volume,muezzin:settings.muezzin};
+}
+function currentBackup(){
+ const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,jumuah:state.jumuah,azaanEnabled:state.azaanEnabled,volume:Number(state.volume),muezzin:state.muezzin}});
+ return {schemaVersion:1,app:'aslima-display',exportedAt:new Date().toISOString(),settings};
+}
+function setBackupStatus(message,kind){const element=$('backupStatus');element.textContent=message||'';element.className='backupStatus '+(kind||'')}
+function exportSettingsBackup(){
+ try{const blob=new Blob([JSON.stringify(currentBackup(),null,2)],{type:'application/json'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='aslima-settings-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(link.href),1000);setBackupStatus('Backup downloaded.','ok')}catch(error){setBackupStatus(error.message||'Backup failed.','error')}
+}
+async function restoreSettingsBackup(file){
+ if(!file||file.size>65536)throw new Error('Select an ASLIMA backup smaller than 64 KB');
+ const parsed=JSON.parse(await file.text());const restored=validateSettingsBackup(parsed);
+ if(!window.ref)throw new Error('Phone is not connected to Firebase');
+ if(!window.confirm('Restore this backup and replace the current tablet settings?'))return false;
+ await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...DEFAULT,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled},jumuah:[...restored.jumuah]};render();return true;
+}
 function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
 function renderTabletHealth(){
  const health=tabletHealth&&typeof tabletHealth==='object'?tabletHealth:null;
@@ -144,6 +178,7 @@ build(); render(); renderTabletHealth(); setInterval(updateNextPrayer,30000); se
 
 function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('goTimes').onclick=()=>switchTab('timesPage');
+$('exportBackup').onclick=exportSettingsBackup;$('restoreBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};$('backupFile').onchange=async event=>{try{const restored=await restoreSettingsBackup(event.target.files&&event.target.files[0]);if(restored)setBackupStatus('Backup restored to the tablet.','ok')}catch(error){setBackupStatus(error.message||'Restore failed.','error')}};
 function saveRemote(label){
  const payload=collect();
  return window.ref.update(payload).then(()=>toast(label||'Saved to tablet')).catch(e=>toast('Save failed'));
