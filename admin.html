@@ -17,13 +17,13 @@
 
 .voiceGrid{display:grid;gap:10px}.voiceCard{border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.055);padding:14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.voiceCard.active{border-color:rgba(245,200,107,.80);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.06));box-shadow:0 0 28px rgba(245,200,107,.12)}.voiceCard .voiceName{font-weight:950;font-size:16px}.voiceCard .voiceMeta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}.voiceBadge{border:1px solid rgba(245,200,107,.44);color:var(--gold);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950;letter-spacing:.04em}.voiceCard button{appearance:none;border:0;background:transparent;color:inherit;text-align:left;width:100%;padding:0}
 .deviceHealth{border:1px solid var(--line);border-radius:22px;background:rgba(0,0,0,.20);padding:14px;margin-top:13px}.deviceHealthHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.deviceHealthTitle{font-size:13px;font-weight:950}.deviceHealthState{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:var(--muted)}.deviceHealthState::before{content:"";width:8px;height:8px;border-radius:50%;background:#777}.deviceHealth[data-state="online"] .deviceHealthState{color:var(--green)}.deviceHealth[data-state="online"] .deviceHealthState::before{background:var(--green);box-shadow:0 0 12px rgba(73,230,164,.7)}.deviceHealth[data-state="offline"] .deviceHealthState{color:var(--red)}.deviceHealth[data-state="offline"] .deviceHealthState::before{background:var(--red)}.deviceHealthGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.healthItem{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px;background:rgba(255,255,255,.035)}.healthLabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900}.healthValue{font-size:13px;font-weight:900;margin-top:4px;overflow-wrap:anywhere}
-.backupActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backupStatus{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}.backupStatus.error{color:var(--red)}.backupStatus.ok{color:var(--green)}
+.backupActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backupStatus{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}.backupStatus.error{color:var(--red)}.backupStatus.ok{color:var(--green)}.accountAction{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:800;padding:6px 0;text-decoration:underline;text-underline-offset:3px}.authError{min-height:18px;color:var(--red);font-size:12px;line-height:1.35;margin-top:10px}
 </style>
 </head>
 <body>
-<div class="lock" id="lock"><div class="lockbox"><div class="eyebrow">Aslima Remote</div><h1>Enter admin PIN</h1><p>This keeps random people in your house from changing times from your phone shortcut.</p><input id="pin" inputmode="numeric" autocomplete="off" placeholder="PIN" type="text"><div style="height:12px"></div><button class="primary" id="unlock" style="width:100%">Unlock Remote</button><div class="small">Default PIN is <b>7860</b>. We can change this later.</div></div></div>
+<div class="lock" id="lock"><div class="lockbox"><div class="eyebrow">Aslima Remote</div><h1>Sign in to Admin</h1><p>Use the authorized ASLIMA Google account to control the tablet.</p><button class="primary" id="signIn" style="width:100%">Continue with Google</button><div class="authError" id="authError" role="alert" aria-live="polite"></div></div></div>
 <div class="shell">
-  <div class="top"><div><div class="eyebrow">Aslima Admin</div><div class="title">Azaan Remote</div><div class="sub">Clean controls for the tablet. Azaan voice changes apply instantly—no Save tap required.</div></div><div class="status" id="status"><span class="dot"></span>Connecting</div></div>
+  <div class="top"><div><div class="eyebrow">Aslima Admin</div><div class="title">Azaan Remote</div><div class="sub">Clean controls for the tablet. Azaan voice changes apply instantly—no Save tap required.</div><button class="accountAction" id="signOut" type="button" hidden>Sign out</button></div><div class="status" id="status"><span class="dot"></span>Sign in required</div></div>
 
   <section class="hero">
     <div class="heroTop"><div class="pill" id="modePill">● VRIC Live</div><div class="pill" id="syncPill">Synced</div></div>
@@ -66,9 +66,11 @@
 <div class="bottomBar"><div class="bottomInner"><button class="ghost" id="goTimes">Edit Times</button></div></div>
 <div class="toast" id="toast">Saved</div>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 <script>
 const firebaseConfig={apiKey:"AIzaSyBqe4PHKA3ZaiZuGuX65G9sh-I40yz_aOI",authDomain:"aslima-azaan.firebaseapp.com",databaseURL:"https://aslima-azaan-default-rtdb.firebaseio.com",projectId:"aslima-azaan",storageBucket:"aslima-azaan.firebasestorage.app",messagingSenderId:"282650902479",appId:"1:282650902479:web:75149538ae561dbbaedcba"};
+const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail.com';
 const PATH='aslima/devices/home/settings';
 const STATUS_PATH='aslima/devices/home/status/display';
 const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
@@ -184,18 +186,37 @@ function saveRemote(label){
  return window.ref.update(payload).then(()=>toast(label||'Saved to tablet')).catch(e=>toast('Save failed'));
 }
 $('modeVric').onclick=()=>{state.mode='vric';render(); if(window.ref)saveRemote('VRIC Live sent to tablet')}; $('modeLocation').onclick=()=>{state.mode='calculated-location';render(); if(window.ref)saveRemote('Location mode sent to tablet')}; $('modeManual').onclick=()=>{state.mode='manual';render(); if(window.ref)saveRemote('Manual mode sent to tablet')}; $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%'};
-$('unlock').onclick=()=>{if($('pin').value.trim()==='7860'){localStorage.setItem('aslima_admin_unlocked','1');$('lock').style.display='none'}else toast('Wrong PIN')}; if(localStorage.getItem('aslima_admin_unlocked')==='1')$('lock').style.display='none';
-try{firebase.initializeApp(firebaseConfig); const ref=firebase.database().ref(PATH); window.ref=ref; firebase.database().ref(STATUS_PATH).on('value',snap=>{tabletHealth=snap.val();renderTabletHealth();},()=>{tabletHealth=null;renderTabletHealth();}); ref.child('muezzin').on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}}); ref.on('value',snap=>{setStatus('Live','ok'); const v=snap.val(); if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}}; render();}},err=>setStatus('Error','bad'));
+function showAuthError(message){$('authError').textContent=message||''}
+function isAuthorizedAdmin(user){return !!(user&&user.email&&user.email.toLowerCase()===AUTHORIZED_ADMIN_EMAIL)}
+function disconnectRemote(){if(window.statusRef)window.statusRef.off();if(window.voiceRef)window.voiceRef.off();if(window.ref)window.ref.off();window.statusRef=null;window.voiceRef=null;window.ref=null;tabletHealth=null;renderTabletHealth();setStatus('Sign in required','bad')}
+function initializeAuthorizedRemote(){
+ if(window.ref)return;
+ const ref=firebase.database().ref(PATH);const statusRef=firebase.database().ref(STATUS_PATH);const voiceRef=ref.child('muezzin');window.ref=ref;window.statusRef=statusRef;window.voiceRef=voiceRef;
+ statusRef.on('value',snap=>{tabletHealth=snap.val();renderTabletHealth();},()=>{tabletHealth=null;renderTabletHealth();});
+ voiceRef.on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}});
+ ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}};render();}},()=>setStatus('Access denied','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
  $('test').onclick=()=>{ref.child('command').set(command('testAzaan')).then(()=>toast('Test sent to tablet')).catch(()=>toast('Test command failed'))};
  $('stop').onclick=()=>{ref.child('command').set(command('stopAzaan')).then(()=>toast('Stop sent to tablet')).catch(()=>toast('Stop command failed'))};
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.onchange=()=>{state.azaanEnabled[p]=el.checked;pushPatch({azaanEnabled:state.azaanEnabled},p+' updated')}});
  const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
- $('volume').addEventListener('input',pushVolume);
+ $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%';pushVolume()};
  PRAYERS.forEach(p=>{const el=$('time_'+p);if(el)el.onchange=()=>{if(state.mode!=='manual')return;state.timings[p]=el.value||state.timings[p];pushPatch({timings:state.timings},p+' time updated')}});
  ['jum1','jum2','jum3'].forEach((id,i)=>{const el=$(id);if(el)el.onchange=()=>{const j=[$('jum1').value,$('jum2').value,$('jum3').value].map(x=>x.trim()).filter(Boolean);state.jumuah=j;pushPatch({jumuah:j},'Jumu’ah times updated')}});
-}catch(e){setStatus('Offline','bad');toast('Firebase failed')}
+}
+try{
+ firebase.initializeApp(firebaseConfig);
+ const auth=firebase.auth();
+ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+ $('signIn').onclick=()=>{showAuthError('');const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});auth.signInWithRedirect(provider).catch(error=>showAuthError(error&&error.message?'Sign-in failed: '+error.message:'Sign-in failed.'))};
+ $('signOut').onclick=()=>auth.signOut();
+ auth.onAuthStateChanged(async user=>{
+   if(user&&!isAuthorizedAdmin(user)){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;showAuthError('This Google account is not authorized.');await auth.signOut();return;}
+   if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
+   showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
+ });
+}catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>
 </html>
