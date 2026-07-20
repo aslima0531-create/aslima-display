@@ -7,6 +7,7 @@
   const VERSION='9.1.53';
   const PRAYERS=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
   const FIRED_KEY='aslima_azaan_scheduler_v953_fired';
+  const DISMISSED_KEY='aslima_azaan_scheduler_v953_dismissed';
   const LEGACY_FIRED_KEY='aslima_last_fired_azaan';
   const GRACE_MS=3*60*1000;
   const EARLY_TOLERANCE_MS=1200;
@@ -24,7 +25,11 @@
     exactTimer:0,
     watchdogTimer:0,
     retryTimer:0,
+    retryKey:'',
+    retryGeneration:0,
     inFlightKey:'',
+    attemptGeneration:0,
+    activeAttempt:null,
     attempts:Object.create(null),
     nextEvent:null,
     lastSignature:'',
@@ -113,6 +118,29 @@
     try{localStorage.setItem(FIRED_KEY,JSON.stringify(map));}catch(_error){}
   }
 
+  function firedByKey(key){return !!(key&&readFired()[key]);}
+
+  function readDismissed(){
+    try{
+      const parsed=JSON.parse(localStorage.getItem(DISMISSED_KEY)||'{}');
+      return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{};
+    }catch(_error){return {};}
+  }
+
+  function writeDismissed(map){
+    const cutoff=Date.now()-4*24*60*60*1000;
+    Object.keys(map).forEach(key=>{if(!Number.isFinite(Number(map[key]))||Number(map[key])<cutoff)delete map[key];});
+    try{localStorage.setItem(DISMISSED_KEY,JSON.stringify(map));}catch(_error){}
+  }
+
+  function isDismissed(eventOrKey){
+    const key=typeof eventOrKey==='string'?eventOrKey:eventOrKey&&eventOrKey.key;
+    if(!key)return false;
+    const dismissed=readDismissed();
+    if(firedByKey(key)&&dismissed[key]){delete dismissed[key];writeDismissed(dismissed);return false;}
+    return !!dismissed[key];
+  }
+
   function isFired(event){
     const map=readFired();
     if(map[event.key])return true;
@@ -124,8 +152,11 @@
     const map=readFired();
     map[event.key]=nowValue().getTime();
     writeFired(map);
+    const dismissed=readDismissed();
+    if(dismissed[event.key]){delete dismissed[event.key];writeDismissed(dismissed);}
     try{localStorage.setItem(LEGACY_FIRED_KEY,event.legacyKey);}catch(_error){}
     delete state.attempts[event.key];
+    if(state.activeAttempt&&state.activeAttempt.occurrenceKey===event.key)state.activeAttempt=null;
     state.lastPlaybackAt=Date.now();
     setStatus('played',reason||event.prayer,event);
     try{window.dispatchEvent(new CustomEvent('aslima:scheduled-azaan-started',{detail:{version:VERSION,event,reason:reason||'scheduled'}}));}catch(_error){}
@@ -147,8 +178,8 @@
 
   function playbackState(){
     const p=window.aslimaPlaybackState;
-    if(!p||typeof p!=='object')return {phase:'idle',prayer:''};
-    return {phase:String(p.phase||'idle'),prayer:String(p.prayer||'')};
+    if(!p||typeof p!=='object')return {phase:'idle',prayer:'',source:'',occurrenceKey:''};
+    return {phase:String(p.phase||'idle'),prayer:String(p.prayer||''),source:String(p.source||''),occurrenceKey:String(p.occurrenceKey||'')};
   }
 
   function audioIsActuallyPlaying(){
@@ -157,12 +188,27 @@
   }
 
   function clearExactTimer(){if(state.exactTimer){clearTimeout(state.exactTimer);state.exactTimer=0;}}
-  function clearRetryTimer(){if(state.retryTimer){clearTimeout(state.retryTimer);state.retryTimer=0;}}
+  function clearRetryTimer(){if(state.retryTimer)clearTimeout(state.retryTimer);state.retryTimer=0;state.retryKey='';state.retryGeneration=0;}
 
-  function scheduleRetry(delay,reason){
+  function scheduleRetry(delay,reason,event,generation){
     clearRetryTimer();
     if(state.stopped)return;
-    state.retryTimer=setTimeout(()=>{state.retryTimer=0;reconcile(undefined,reason||'retry');},Math.max(0,delay));
+    const key=event&&event.key||'';
+    state.retryKey=key;
+    state.retryGeneration=Number(generation)||0;
+    if(key&&state.activeAttempt&&state.activeAttempt.occurrenceKey===key&&state.activeAttempt.attemptGeneration===state.retryGeneration)state.activeAttempt.status='awaiting-retry';
+    state.retryTimer=setTimeout(()=>{
+      state.retryTimer=0;
+      const retryKey=state.retryKey,retryGeneration=state.retryGeneration;
+      state.retryKey='';state.retryGeneration=0;
+      if(state.stopped)return;
+      if(!retryKey){reconcile(undefined,reason||'retry');return;}
+      if(isDismissed(retryKey))return;
+      if(retryGeneration&&retryGeneration!==state.attemptGeneration)return;
+      const currentEvent=eventsFor(nowValue()).find(item=>item.key===retryKey);
+      if(!currentEvent||isFired(currentEvent))return;
+      reconcile(undefined,reason||'retry');
+    },Math.max(0,delay));
   }
 
   function armNext(now,events){
@@ -186,7 +232,7 @@
   function candidateFor(now,events){
     const current=now.getTime();
     return events.filter(event=>{
-      if(!prayerEnabled(event.prayer)||isFired(event))return false;
+      if(!prayerEnabled(event.prayer)||isFired(event)||isDismissed(event))return false;
       return current>=event.at-EARLY_TOLERANCE_MS&&current<=event.at+GRACE_MS;
     }).sort((a,b)=>a.at-b.at)[0]||null;
   }
@@ -194,36 +240,41 @@
   async function attemptPlayback(event,reason){
     if(state.inFlightKey)return false;
     const playback=playbackState();
-    if(playback.phase==='playing'&&playback.prayer.toLowerCase()===event.prayer.toLowerCase()&&audioIsActuallyPlaying()){
+    if(playback.phase==='playing'&&playback.source==='automatic-scheduler'&&playback.occurrenceKey===event.key&&playback.prayer.toLowerCase()===event.prayer.toLowerCase()&&audioIsActuallyPlaying()){
       markFired(event,'already-playing');
       return true;
     }
     if(['loading','playing','paused','stopping'].includes(playback.phase)){
       setStatus('deferred',`Audio busy: ${playback.phase}`,event);
-      scheduleRetry(BUSY_RETRY_MS,'audio-busy');
+      scheduleRetry(BUSY_RETRY_MS,'audio-busy',event,0);
       return false;
     }
     if(typeof window.playAzaan!=='function'){
       setStatus('error','Azaan controller unavailable',event);
-      scheduleRetry(FAILURE_RETRY_MS[0],'controller-unavailable');
+      scheduleRetry(FAILURE_RETRY_MS[0],'controller-unavailable',event,0);
       return false;
     }
 
     state.inFlightKey=event.key;
+    const generation=++state.attemptGeneration;
+    state.activeAttempt={occurrenceKey:event.key,attemptGeneration:generation,status:'loading',event};
     const attempt=(state.attempts[event.key]||0)+1;
     state.attempts[event.key]=attempt;
     setStatus('starting',`${event.prayer} attempt ${attempt}`,event);
     let started=false;
     try{
-      started=await window.playAzaan(event.prayer,{source:'automatic-scheduler',scheduledAt:event.at});
+      started=await window.playAzaan(event.prayer,{source:'automatic-scheduler',scheduledAt:event.at,occurrenceKey:event.key,attemptGeneration:generation});
     }catch(error){
       console.error('Scheduled Azaan failed',error);
       started=false;
     }finally{
-      state.inFlightKey='';
+      if(generation===state.attemptGeneration&&state.inFlightKey===event.key)state.inFlightKey='';
     }
 
+    if(generation!==state.attemptGeneration||state.stopped||isDismissed(event))return false;
+
     if(started===true&&(audioIsActuallyPlaying()||playbackState().phase==='playing')){
+      if(state.activeAttempt&&state.activeAttempt.attemptGeneration===generation)state.activeAttempt.status='playing';
       markFired(event,reason||'scheduled');
       return true;
     }
@@ -234,8 +285,9 @@
       const delay=FAILURE_RETRY_MS[Math.min(attempt-1,FAILURE_RETRY_MS.length-1)];
       setStatus('retrying',`Playback failed; retry ${attempt}`,event);
       if(attempt===1)showMessage(`${event.prayer} Azaan could not start — retrying`);
-      scheduleRetry(delay,'playback-retry');
+      scheduleRetry(delay,'playback-retry',event,generation);
     }else{
+      if(state.activeAttempt&&state.activeAttempt.attemptGeneration===generation)state.activeAttempt=null;
       setStatus('error',`${event.prayer} Azaan did not start`,event);
       showMessage(`${event.prayer} Azaan could not play`);
     }
@@ -306,9 +358,29 @@
     setStatus('stopped','Scheduler stopped',null);
   }
 
+  function cancelOccurrence(key,generation,reason){
+    key=String(key||'');
+    generation=Number(generation);
+    const active=state.activeAttempt;
+    if(!key||!Number.isInteger(generation)||!active||active.occurrenceKey!==key||active.attemptGeneration!==generation)return false;
+    if(!['loading','pending-playback','playing','awaiting-retry'].includes(active.status)||firedByKey(key))return false;
+    const map=readDismissed();
+    map[key]=Date.now();
+    writeDismissed(map);
+    ++state.attemptGeneration;
+    if(state.retryKey===key)clearRetryTimer();
+    if(state.inFlightKey===key)state.inFlightKey='';
+    state.activeAttempt=null;
+    delete state.attempts[key];
+    setStatus('dismissed',reason||'stopped',null);
+    setTimeout(()=>reconcile(undefined,'occurrence-dismissed'),0);
+    return true;
+  }
+
   function clearFiredForTesting(){
-    try{localStorage.removeItem(FIRED_KEY);localStorage.removeItem(LEGACY_FIRED_KEY);}catch(_error){}
+    try{localStorage.removeItem(FIRED_KEY);localStorage.removeItem(DISMISSED_KEY);localStorage.removeItem(LEGACY_FIRED_KEY);}catch(_error){}
     state.attempts=Object.create(null);
+    state.activeAttempt=null;
   }
 
   window.ASLIMAAzaanScheduler={
@@ -322,7 +394,9 @@
     parseTime,
     dateKey,
     isFired,
+    isDismissed,
     markFired,
+    cancelOccurrence,
     clearFiredForTesting
   };
 
