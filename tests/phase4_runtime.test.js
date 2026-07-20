@@ -8,6 +8,7 @@ const vm=require('node:vm');
 
 const ROOT=path.resolve(__dirname,'..');
 const schedulerSource=fs.readFileSync(path.join(ROOT,'assets/js/azaan-scheduler-v953.js'),'utf8');
+const diagnosticsSource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-diagnostics-v957.js'),'utf8');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
 const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-controller">([\s\S]*?)<\/script>/)[1];
@@ -52,6 +53,16 @@ function controllerHarness(){
   const context={window,document,localStorage,navigator:{},console,showToast(){},azaanAudioFallbackGeneration:0,requestAnimationFrame:fn=>{raf++;return raf;},cancelAnimationFrame(){},setTimeout,clearTimeout};
   vm.runInNewContext(controllerSource,context,{filename:'inline-controller.js'});
   return {window,audio:elements.get('athan'),elements,body,cancelled};
+}
+
+function diagnosticsHarness(seed,storageOverride){
+  const listeners={window:new Map(),document:new Map()};
+  const localStorage=storageOverride||storage(seed);
+  const on=(target,type,fn)=>{if(!listeners[target].has(type))listeners[target].set(type,[]);listeners[target].get(type).push(fn);};
+  const document={hidden:false,visibilityState:'visible',documentElement:{dataset:{aslimaIntegration:'v957'}},addEventListener:(type,fn)=>on('document',type,fn)};
+  const window={document,localStorage,addEventListener:(type,fn)=>on('window',type,fn)};
+  vm.runInNewContext(diagnosticsSource,{window,document,localStorage,navigator:{onLine:true},console,Date,JSON,Object},{filename:'runtime-diagnostics-v957.js'});
+  return {window,document,localStorage,listeners,emit:(target,type,event={})=>(listeners[target].get(type)||[]).forEach(fn=>fn(event))};
 }
 
 const at=(hour,minute)=>new Date(2026,6,19,hour,minute,0,0);
@@ -210,7 +221,7 @@ test('Stop clears all playback metadata and restores idle overlay state',async()
 });
 
 test('fresh HTML loads scheduler after playback API and service worker does not inject another',()=>{
-  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=956"></script>';
+  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=957"></script>';
   assert.equal((html.match(/assets\/js\/azaan-scheduler-v953\.js/g)||[]).length,1);assert.ok(html.indexOf('window.playAzaan=async function')<html.indexOf(tag));assert.doesNotMatch(sw,/const schedulerTag=/);assert.doesNotMatch(sw,/SCHEDULER_JS=/);assert.match(sw,/data-aslima-azaan-scheduler/);
 });
 
@@ -242,18 +253,65 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v956 service-worker upgrade removes v955 cache and precaches every Azaan recording',async()=>{
+test('v957 service-worker upgrade removes older caches and precaches runtime diagnostics and every Azaan recording',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[];
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
-  const caches={open:async()=>cache,keys:async()=>['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
+  const caches={open:async()=>cache,keys:async()=>['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
   const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
   vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout,clearTimeout,console},{filename:'sw.js'});
   let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
   let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
-  assert.deepEqual(deleted,['aslima-v955-runtime-reliability']);
+  assert.deepEqual(deleted,['aslima-v955-runtime-reliability','aslima-v956-runtime-reliability']);
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
+  assert.ok(precache.includes('./assets/js/runtime-diagnostics-v957.js'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
+});
+
+test('runtime diagnostics persist a bounded seven-day event history and survive malformed storage',()=>{
+  const h=diagnosticsHarness(new Map([['aslima_runtime_diagnostics_v957','not-json']]));
+  assert.equal(h.window.ASLIMADiagnostics.version,'957');
+  for(let i=0;i<100;i++)h.window.ASLIMADiagnostics.record('test','event',{message:String(i)});
+  const snapshot=h.window.ASLIMADiagnostics.snapshot();
+  assert.equal(snapshot.entries.length,80);
+  assert.equal(snapshot.entries.at(-1).detail.message,'99');
+  assert.doesNotThrow(()=>JSON.parse(h.window.ASLIMADiagnostics.export()));
+});
+
+test('runtime diagnostics capture lifecycle, scheduler, network, and runtime failures without duplicate floods',()=>{
+  const h=diagnosticsHarness();
+  h.emit('window','offline');
+  h.emit('window','offline');
+  h.emit('window','error',{message:'test failure'});
+  h.emit('window','unhandledrejection',{reason:new Error('test rejection')});
+  h.emit('window','aslima:scheduler-state',{detail:{status:'armed',reason:'test',event:{prayer:'Asr',key:'2026-07-20|Asr|17:17'}}});
+  const entries=h.window.ASLIMADiagnostics.snapshot().entries;
+  assert.equal(entries.filter(entry=>entry.category==='network'&&entry.status==='offline').length,1);
+  assert.ok(entries.some(entry=>entry.category==='runtime'&&entry.status==='error'));
+  assert.ok(entries.some(entry=>entry.category==='runtime'&&entry.status==='unhandled-rejection'));
+  assert.ok(entries.some(entry=>entry.category==='scheduler'&&entry.status==='armed'));
+});
+
+test('runtime diagnostics remain invisible, load before application code, and expose explicit clearing',()=>{
+  const tag='<script src="./assets/js/runtime-diagnostics-v957.js?v=957"></script>';
+  assert.ok(html.indexOf(tag)>0&&html.indexOf(tag)<html.indexOf('<style>'));
+  assert.doesNotMatch(diagnosticsSource,/innerHTML|appendChild|createElement/);
+  const h=diagnosticsHarness();h.window.ASLIMADiagnostics.record('test','clear-me');h.window.ASLIMADiagnostics.clear();
+  assert.deepEqual(h.window.ASLIMADiagnostics.snapshot().entries,[]);
+});
+
+test('runtime diagnostics retain bounded in-memory history when localStorage writes fail',()=>{
+  const values=new Map(),broken={getItem:key=>values.has(key)?values.get(key):null,setItem(){throw new Error('quota');},removeItem:key=>values.delete(key)};
+  const h=diagnosticsHarness(null,broken);
+  h.window.ASLIMADiagnostics.record('storage','fallback',{message:'retained'});
+  const entries=h.window.ASLIMADiagnostics.snapshot().entries;
+  assert.ok(entries.some(entry=>entry.category==='storage'&&entry.detail.message==='retained'));
+});
+
+test('caught timing and Firebase failures are routed into persistent diagnostics',()=>{
+  assert.match(html,/ASLIMADiagnostics\.record\('timings','unavailable'/);
+  assert.match(html,/ASLIMADiagnostics\.record\('firebase','listener-error'/);
+  assert.match(html,/ASLIMADiagnostics\.record\('firebase','initialization-error'/);
 });
 
 test('repeated lifecycle reconciliation does not register additional scheduler listeners',async()=>{
