@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "aslima": {
+      "devices": {
+        "home": {
+          "settings": {
+            ".read": true,
+            ".write": "auth != null && auth.token.email == 'aslima0531@gmail.com'"
+          },
+          "status": {
+            "display": {
+              ".read": "auth != null && auth.token.email == 'aslima0531@gmail.com'",
+              ".write": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -354,7 +354,8 @@ test('tablet health uses an isolated Firebase path and server-timestamped bounde
 
 test('phone health view reads only status and expires stale online heartbeats',()=>{
   assert.match(admin,/const STATUS_PATH='aslima\/devices\/home\/status\/display'/);
-  assert.match(admin,/firebase\.database\(\)\.ref\(STATUS_PATH\)\.on\('value'/);
+  assert.match(admin,/const statusRef=firebase\.database\(\)\.ref\(STATUS_PATH\)/);
+  assert.match(admin,/statusRef\.on\('value'/);
   assert.match(admin,/health\.online!==false&&age<=150000/);
   assert.match(admin,/id="deviceHealth"/);
   assert.doesNotMatch(admin,/ref\(STATUS_PATH\)\.(?:set|update|remove)\(/);
@@ -419,4 +420,40 @@ test('calculated failure falls back and unavailable state still permits Manual m
   assert.match(html,/const hasCompleteManualSeed=\['Fajr','Dhuhr','Asr','Maghrib','Isha'\]\.every/);
   assert.match(html,/window\.aslimaRemoteManualTimings=hasCompleteManualSeed\?\{\.\.\.manual\}:null/);
   assert.match(html,/writeRemote\(hasCompleteManualSeed\?\{mode:'manual',timings:manual\}:\{mode:'manual'\}\)/);
+});
+
+test('admin remote uses Google authentication and contains no reusable PIN bypass',()=>{
+  assert.match(admin,/firebase-auth-compat\.js/);
+  assert.match(admin,/const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail\.com'/);
+  assert.match(admin,/auth\.signInWithRedirect\(provider\)/);
+  assert.match(admin,/auth\.onAuthStateChanged\(async user=>/);
+  assert.doesNotMatch(admin,/7860|aslima_admin_unlocked|Enter admin PIN/);
+});
+
+test('Firebase database listeners initialize only after the exact admin account is authorized',()=>{
+  const authStart=admin.indexOf('function isAuthorizedAdmin(user)');
+  const initStart=admin.indexOf('function initializeAuthorizedRemote()');
+  const observerStart=admin.indexOf('auth.onAuthStateChanged(async user=>');
+  assert.ok(authStart>0&&initStart>authStart&&observerStart>initStart);
+  assert.match(admin,/user\.email\.toLowerCase\(\)===AUTHORIZED_ADMIN_EMAIL/);
+  assert.match(admin,/if\(user&&!isAuthorizedAdmin\(user\)\)[\s\S]*?await auth\.signOut\(\)/);
+  assert.match(admin,/if\(!user\)[\s\S]*?return;[\s\S]*?initializeAuthorizedRemote\(\)/);
+  assert.equal((admin.match(/firebase\.database\(\)\.ref\(PATH\)/g)||[]).length,1);
+});
+
+test('admin sign-out detaches settings, voice, and health listeners',()=>{
+  assert.match(admin,/function disconnectRemote\(\)\{if\(window\.statusRef\)window\.statusRef\.off\(\);if\(window\.voiceRef\)window\.voiceRef\.off\(\);if\(window\.ref\)window\.ref\.off\(\)/);
+  assert.match(admin,/\$\('signOut'\)\.onclick=\(\)=>auth\.signOut\(\)/);
+  assert.doesNotMatch(admin,/addEventListener\('input',pushVolume\)/);
+});
+
+test('database rules protect settings writes while preserving required tablet access',()=>{
+  const rules=JSON.parse(fs.readFileSync(path.join(ROOT,'database.rules.json'),'utf8')).rules;
+  const home=rules.aslima.devices.home;
+  assert.equal(rules['.read'],false);assert.equal(rules['.write'],false);
+  assert.equal(home.settings['.read'],true);
+  assert.match(home.settings['.write'],/auth != null/);
+  assert.match(home.settings['.write'],/auth\.token\.email == 'aslima0531@gmail\.com'/);
+  assert.match(home.status.display['.read'],/auth\.token\.email/);
+  assert.equal(home.status.display['.write'],true);
 });
