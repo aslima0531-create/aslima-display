@@ -1,9 +1,9 @@
 (function(){
   'use strict';
-  if(window.ASLIMADiagnostics&&window.ASLIMADiagnostics.version==='960')return;
+  if(window.ASLIMADiagnostics&&window.ASLIMADiagnostics.version==='961')return;
 
-  const VERSION='960';
-  const STORAGE_KEY='aslima_runtime_diagnostics_v957';
+  const VERSION='961';
+  const STORAGE_KEY='aslima_runtime_diagnostics_v961';
   const MAX_ENTRIES=80;
   const MAX_AGE_MS=7*24*60*60*1000;
   const SUMMARY_AGE_MS=24*60*60*1000;
