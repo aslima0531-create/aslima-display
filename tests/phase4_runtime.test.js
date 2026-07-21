@@ -63,7 +63,7 @@ function diagnosticsHarness(seed,storageOverride){
   const listeners={window:new Map(),document:new Map()};
   const localStorage=storageOverride||storage(seed);
   const on=(target,type,fn)=>{if(!listeners[target].has(type))listeners[target].set(type,[]);listeners[target].get(type).push(fn);};
-  const document={hidden:false,visibilityState:'visible',documentElement:{dataset:{aslimaIntegration:'v960'}},addEventListener:(type,fn)=>on('document',type,fn)};
+  const document={hidden:false,visibilityState:'visible',documentElement:{dataset:{aslimaIntegration:'v961'}},addEventListener:(type,fn)=>on('document',type,fn)};
   const window={document,localStorage,addEventListener:(type,fn)=>on('window',type,fn)};
   vm.runInNewContext(diagnosticsSource,{window,document,localStorage,navigator:{onLine:true},console,Date,JSON,Object},{filename:'runtime-diagnostics-v960.js'});
   return {window,document,localStorage,listeners,emit:(target,type,event={})=>(listeners[target].get(type)||[]).forEach(fn=>fn(event))};
@@ -238,7 +238,7 @@ test('Stop clears all playback metadata and restores idle overlay state',async()
 });
 
 test('fresh HTML loads scheduler after playback API and service worker does not inject another',()=>{
-  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=960"></script>';
+  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=961"></script>';
   assert.equal((html.match(/assets\/js\/azaan-scheduler-v953\.js/g)||[]).length,1);assert.ok(html.indexOf('window.playAzaan=async function')<html.indexOf(tag));assert.doesNotMatch(sw,/const schedulerTag=/);assert.doesNotMatch(sw,/SCHEDULER_JS=/);assert.match(sw,/data-aslima-azaan-scheduler/);
 });
 
@@ -270,16 +270,16 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v960 service-worker upgrade removes older caches and precaches diagnostics, recovery, and every Azaan recording',async()=>{
+test('v961 service-worker upgrade removes older caches and precaches diagnostics, recovery, and every Azaan recording',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
-  const caches={open:async()=>cache,keys:async()=>['aslima-v958-remote-health','aslima-v959-self-healing','aslima-v960-operational-alerts'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
+  const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
   const client={postMessage:value=>messages.push(value),url:'https://example.test/index.html?aslima_integrated=958',navigate:async()=>{}};
   const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[client]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
   vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout:fn=>{fallbackRefresh=fn;return 1;},clearTimeout,console},{filename:'sw.js'});
   let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
   let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
-  assert.deepEqual(deleted,['aslima-v958-remote-health','aslima-v959-self-healing']);
+  assert.deepEqual(deleted,['aslima-v959-self-healing','aslima-v960-operational-alerts']);
   assert.equal(messages.length,1);assert.equal(messages[0].type,'aslima-runtime-update');assert.equal(typeof fallbackRefresh,'function');
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
@@ -289,8 +289,8 @@ test('v960 service-worker upgrade removes older caches and precaches diagnostics
 });
 
 test('runtime diagnostics persist a bounded seven-day event history and survive malformed storage',()=>{
-  const h=diagnosticsHarness(new Map([['aslima_runtime_diagnostics_v957','not-json']]));
-  assert.equal(h.window.ASLIMADiagnostics.version,'960');
+  const h=diagnosticsHarness(new Map([['aslima_runtime_diagnostics_v961','not-json']]));
+  assert.equal(h.window.ASLIMADiagnostics.version,'961');
   for(let i=0;i<100;i++)h.window.ASLIMADiagnostics.record('test','event',{message:String(i)});
   const snapshot=h.window.ASLIMADiagnostics.snapshot();
   assert.equal(snapshot.entries.length,80);
@@ -313,7 +313,7 @@ test('runtime diagnostics capture lifecycle, scheduler, network, and runtime fai
 });
 
 test('runtime diagnostics remain invisible, load before application code, and expose explicit clearing',()=>{
-  const tag='<script src="./assets/js/runtime-diagnostics-v960.js?v=960"></script>';
+  const tag='<script src="./assets/js/runtime-diagnostics-v960.js?v=961"></script>';
   assert.ok(html.indexOf(tag)>0&&html.indexOf(tag)<html.indexOf('<style>'));
   assert.doesNotMatch(diagnosticsSource,/innerHTML|appendChild|createElement/);
   const h=diagnosticsHarness();h.window.ASLIMADiagnostics.record('test','clear-me');h.window.ASLIMADiagnostics.clear();
@@ -330,7 +330,7 @@ test('runtime diagnostics retain bounded in-memory history when localStorage wri
 
 test('operational summary reports only actionable issues from the last 24 hours',()=>{
   const old=Date.now()-25*60*60*1000;
-  const seed=new Map([['aslima_runtime_diagnostics_v957',JSON.stringify([{at:old,category:'runtime',status:'error',detail:{message:'expired'}}])]]),h=diagnosticsHarness(seed);
+  const seed=new Map([['aslima_runtime_diagnostics_v961',JSON.stringify([{at:old,category:'runtime',status:'error',detail:{message:'expired'}}])]]),h=diagnosticsHarness(seed);
   h.window.ASLIMADiagnostics.record('network','offline');
   h.window.ASLIMADiagnostics.record('lifecycle','hidden');
   h.window.ASLIMADiagnostics.record('runtime','error',{message:'private stack text'});
@@ -359,7 +359,7 @@ test('tablet volume changes update Firebase after the debounce and remain normal
   let queued=null,payload=null;
   const audio={volume:.7,muted:false};
   const elements={volumePct:{textContent:''},drawerVolumePct:{textContent:''}};
-  const window={aslimaRemoteRef:{update:async value=>{payload=value;}},ASLIMADiagnostics:{record(){}}};
+  const window={aslimaRemoteRef:{child:key=>{assert.equal(key,'volume');return {set:async value=>{payload=value;}};}},ASLIMADiagnostics:{record(){}}};
   const context={window,audio,localStorage:storage(),showToast(){},$:id=>elements[id]||null,Date,setTimeout:fn=>{queued=fn;return 1;},clearTimeout(){}};
   vm.runInNewContext(`${volumeSyncSource};globalThis.setVolume=setVolume;`,context,{filename:'volume-sync-production.js'});
   context.setVolume(1.4);
@@ -367,8 +367,8 @@ test('tablet volume changes update Firebase after the debounce and remain normal
   assert.equal(elements.volumePct.textContent,'100%');
   assert.ok(queued);
   await queued();
-  assert.equal(payload.volume,1);
-  assert.match(payload.updatedAt,/^\d{4}-\d{2}-\d{2}T/);
+  assert.equal(payload,1);
+  assert.doesNotMatch(volumeSyncSource,/updatedAt|\.update\(/);
 });
 
 test('remote volume application does not call tablet write-back and create a Firebase loop',()=>{
@@ -492,6 +492,10 @@ test('database rules protect settings writes while preserving required tablet ac
   assert.equal(home.settings['.read'],true);
   assert.match(home.settings['.write'],/auth != null/);
   assert.match(home.settings['.write'],/auth\.token\.email == 'aslima0531@gmail\.com'/);
+  assert.match(home.settings.volume['.write'],/newData\.isNumber\(\)/);
+  assert.match(home.settings.volume['.write'],/newData\.val\(\) >= 0/);
+  assert.match(home.settings.volume['.write'],/newData\.val\(\) <= 1/);
+  assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','volume']);
   assert.match(home.status.display['.read'],/auth\.token\.email/);
   assert.equal(home.status.display['.write'],true);
 });
