@@ -9,6 +9,7 @@ const vm=require('node:vm');
 const ROOT=path.resolve(__dirname,'..');
 const schedulerSource=fs.readFileSync(path.join(ROOT,'assets/js/azaan-scheduler-v953.js'),'utf8');
 const diagnosticsSource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-diagnostics-v957.js'),'utf8');
+const recoverySource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-recovery-v959.js'),'utf8');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
 const admin=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -66,6 +67,19 @@ function diagnosticsHarness(seed,storageOverride){
   const window={document,localStorage,addEventListener:(type,fn)=>on('window',type,fn)};
   vm.runInNewContext(diagnosticsSource,{window,document,localStorage,navigator:{onLine:true},console,Date,JSON,Object},{filename:'runtime-diagnostics-v957.js'});
   return {window,document,localStorage,listeners,emit:(target,type,event={})=>(listeners[target].get(type)||[]).forEach(fn=>fn(event))};
+}
+
+function recoveryHarness(options={}){
+  const listeners={window:new Map(),document:new Map(),serviceWorker:new Map()},timeouts=[],intervals=[];
+  const on=(target,type,fn)=>{if(!listeners[target].has(type))listeners[target].set(type,[]);listeners[target].get(type).push(fn);};
+  const localStorage=storage(options.seed);
+  const document={hidden:false,addEventListener:(type,fn)=>on('document',type,fn)};
+  let reloads=0,updates=0,timingChecks=0,timingLoads=0,reconciles=0,healthPublishes=0;
+  const window={document,localStorage,aslimaPlaybackState:{phase:options.phase||'idle'},ASLIMA_TIMING:{checkTimingLifecycle(){timingChecks++;},getState:()=>({runtimeStatus:options.timingStatus||'official'}),loadTimes:async()=>{timingLoads++;return true;}},ASLIMAAzaanScheduler:{state:{},reconcile:async()=>{reconciles++;return true;}},ASLIMADiagnostics:{record(){}},publishAslimaHealth:async()=>{healthPublishes++;return true;},addEventListener:(type,fn)=>on('window',type,fn),dispatchEvent(){}};
+  const navigator={onLine:true,serviceWorker:{getRegistration:async()=>({update:async()=>{updates++;}}),addEventListener:(type,fn)=>on('serviceWorker',type,fn)}};
+  const context={window,document,localStorage,navigator,location:{reload(){reloads++;}},CustomEvent:class{constructor(type,init){this.type=type;this.detail=init&&init.detail;}},Date,JSON,Object,Promise,setTimeout:fn=>{timeouts.push(fn);return timeouts.length;},clearTimeout(){},setInterval:fn=>{intervals.push(fn);return intervals.length;},clearInterval(){},console};
+  vm.runInNewContext(recoverySource,context,{filename:'runtime-recovery-v959.js'});
+  return {window,document,localStorage,listeners,timeouts,intervals,metrics:()=>({reloads,updates,timingChecks,timingLoads,reconciles,healthPublishes}),emit:(target,type,event={})=>(listeners[target].get(type)||[]).forEach(fn=>fn(event))};
 }
 
 const at=(hour,minute)=>new Date(2026,6,19,hour,minute,0,0);
@@ -224,7 +238,7 @@ test('Stop clears all playback metadata and restores idle overlay state',async()
 });
 
 test('fresh HTML loads scheduler after playback API and service worker does not inject another',()=>{
-  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=958"></script>';
+  const sw=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),tag='<script src="./assets/js/azaan-scheduler-v953.js?v=959"></script>';
   assert.equal((html.match(/assets\/js\/azaan-scheduler-v953\.js/g)||[]).length,1);assert.ok(html.indexOf('window.playAzaan=async function')<html.indexOf(tag));assert.doesNotMatch(sw,/const schedulerTag=/);assert.doesNotMatch(sw,/SCHEDULER_JS=/);assert.match(sw,/data-aslima-azaan-scheduler/);
 });
 
@@ -256,18 +270,21 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v958 service-worker upgrade removes older caches and precaches runtime diagnostics and every Azaan recording',async()=>{
-  const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[];
+test('v959 service-worker upgrade removes older caches and precaches diagnostics, recovery, and every Azaan recording',async()=>{
+  const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
-  const caches={open:async()=>cache,keys:async()=>['aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics','aslima-v958-remote-health'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
-  const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
-  vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout,clearTimeout,console},{filename:'sw.js'});
+  const caches={open:async()=>cache,keys:async()=>['aslima-v957-runtime-diagnostics','aslima-v958-remote-health','aslima-v959-self-healing'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
+  const client={postMessage:value=>messages.push(value),url:'https://example.test/index.html?aslima_integrated=958',navigate:async()=>{}};
+  const self={location:{origin:'https://example.test'},clients:{claim:async()=>{},matchAll:async()=>[client]},skipWaiting:async()=>{},addEventListener:(type,fn)=>{handlers[type]=fn;}};
+  vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout:fn=>{fallbackRefresh=fn;return 1;},clearTimeout,console},{filename:'sw.js'});
   let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
   let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
-  assert.deepEqual(deleted,['aslima-v956-runtime-reliability','aslima-v957-runtime-diagnostics']);
+  assert.deepEqual(deleted,['aslima-v957-runtime-diagnostics','aslima-v958-remote-health']);
+  assert.equal(messages.length,1);assert.equal(messages[0].type,'aslima-runtime-update');assert.equal(typeof fallbackRefresh,'function');
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v957.js'));
+  assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
 });
 
@@ -456,4 +473,45 @@ test('database rules protect settings writes while preserving required tablet ac
   assert.match(home.settings['.write'],/auth\.token\.email == 'aslima0531@gmail\.com'/);
   assert.match(home.status.display['.read'],/auth\.token\.email/);
   assert.equal(home.status.display['.write'],true);
+});
+
+test('recovery coordinator performs soft wake and network recovery without duplicating listeners',async()=>{
+  const h=recoveryHarness({timingStatus:'unavailable'});
+  const initial={window:Array.from(h.listeners.window.values()).flat().length,document:Array.from(h.listeners.document.values()).flat().length,serviceWorker:Array.from(h.listeners.serviceWorker.values()).flat().length};
+  for(let index=0;index<200;index++)await h.window.ASLIMARecovery.softRecover('soak-cycle');
+  assert.deepEqual({window:Array.from(h.listeners.window.values()).flat().length,document:Array.from(h.listeners.document.values()).flat().length,serviceWorker:Array.from(h.listeners.serviceWorker.values()).flat().length},initial);
+  const metrics=h.metrics();assert.equal(metrics.timingChecks,200);assert.equal(metrics.timingLoads,200);assert.equal(metrics.reconciles,200);assert.equal(metrics.updates,200);
+  assert.equal(h.window.ASLIMARecovery.snapshot().status,'healthy');
+});
+
+test('unavailable prayer timings receive a bounded periodic recovery attempt',async()=>{
+  const h=recoveryHarness({timingStatus:'unavailable'});assert.equal(h.intervals.length,1);
+  h.intervals[0]();for(let index=0;index<6;index++)await Promise.resolve();
+  const first=h.metrics();assert.equal(first.timingLoads,1);assert.equal(first.reconciles,1);
+  h.intervals[0]();for(let index=0;index<6;index++)await Promise.resolve();
+  assert.equal(h.metrics().timingLoads,1);
+});
+
+test('safe reload waits for playback to become idle and persists its loop guard before reload',()=>{
+  const h=recoveryHarness({phase:'playing'});
+  assert.equal(h.window.ASLIMARecovery.requestReload('phone-command'),false);
+  assert.equal(h.window.ASLIMARecovery.snapshot().status,'waiting-for-idle');assert.equal(h.timeouts.length,0);
+  h.window.aslimaPlaybackState.phase='idle';h.emit('window','aslima:playback-state');
+  assert.equal(h.window.ASLIMARecovery.snapshot().status,'reloading');assert.equal(h.timeouts.length,1);
+  const persisted=JSON.parse(h.localStorage.getItem('aslima_runtime_recovery_v959'));assert.equal(persisted.reloads.length,1);assert.equal(persisted.lastReason,'phone-command');
+  h.timeouts[0]();assert.equal(h.metrics().reloads,1);
+});
+
+test('recovery reload guard blocks loops after two reloads in six hours',()=>{
+  const now=Date.now(),seed=new Map([['aslima_runtime_recovery_v959',JSON.stringify({reloads:[now-40*60*1000,now-31*60*1000]})]]),h=recoveryHarness({seed});
+  assert.equal(h.window.ASLIMARecovery.requestReload('loop-test'),false);
+  assert.equal(h.window.ASLIMARecovery.snapshot().status,'reload-cooldown');assert.equal(h.timeouts.length,0);assert.equal(h.metrics().reloads,0);
+});
+
+test('Phase 11 reports recovery health and handles only deduplicated safe reload commands',()=>{
+  assert.match(html,/recoveryStatus:recovery\.status\|\|'starting'/);
+  assert.match(html,/lastRecoveryAt:Number\(recovery\.lastRecoveryAt\)\|\|0/);
+  const persist=html.indexOf("localStorage.setItem('aslima_last_remote_command',id)");const reload=html.indexOf("c.type==='reloadDisplay'");assert.ok(persist>0&&reload>persist);
+  assert.match(admin,/id="reloadDisplay"/);assert.match(admin,/command\('reloadDisplay'\)/);assert.match(admin,/id="healthRecovery"/);
+  assert.match(admin,/Reload waits until Azaan playback is idle/);
 });

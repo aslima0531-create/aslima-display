@@ -5646,15 +5646,20 @@ window.aslimaRemoteManualTimings=null;
 function aslimaHealthPayload(online){
   const playback=window.aslimaPlaybackState||{};
   const scheduler=window.ASLIMAAzaanScheduler&&window.ASLIMAAzaanScheduler.state||{};
+  const recovery=window.ASLIMARecovery&&window.ASLIMARecovery.snapshot?window.ASLIMARecovery.snapshot():{};
   return {
     online:online!==false&&navigator.onLine!==false,
-    appVersion:'958',
-    integrationVersion:document.documentElement.dataset.aslimaIntegration||'958',
+    appVersion:'959',
+    integrationVersion:document.documentElement.dataset.aslimaIntegration||'959',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
     playbackPhase:playback.phase||'idle',
     activePrayer:playback.prayer||'',
     schedulerStatus:scheduler.status||'starting',
+    recoveryStatus:recovery.status||'starting',
+    recoveryReason:recovery.reason||'',
+    lastRecoveryAt:Number(recovery.lastRecoveryAt)||0,
+    recoveryReloadCount:Number(recovery.reloadCount)||0,
     visible:!document.hidden,
     lastSeen:firebase.database.ServerValue.TIMESTAMP
   };
@@ -5667,6 +5672,7 @@ function publishAslimaHealth(reason){
     return false;
   });
 }
+window.publishAslimaHealth=publishAslimaHealth;
 function initAslimaHealth(){
   if(!window.firebase||!window.ASLIMA_REMOTE||!window.ASLIMA_REMOTE.statusPath)return;
   aslimaHealthRef=firebase.database().ref(window.ASLIMA_REMOTE.statusPath);
@@ -5794,6 +5800,7 @@ function initAslimaFirebaseRemote(){
       try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
       if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command'});
       if(c.type==='stopAzaan'&&typeof window.stopAzaan==='function')window.stopAzaan();
+      if(c.type==='reloadDisplay'&&window.ASLIMARecovery&&typeof window.ASLIMARecovery.requestReload==='function')window.ASLIMARecovery.requestReload('phone-command');
     });
     ref.on('value',snap=>{
       aslimaRemoteReady=true;
@@ -7097,7 +7104,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
 
   function normalize(v){return window.normalizeAzaanVoiceId?window.normalizeAzaanVoiceId(v):(VOICES[v]?v:'azaan1');}
   function voice(id){return VOICES[normalize(id)]||VOICES.azaan1;}
-  function setPhase(v){state.phase=v;document.documentElement.dataset.azaanPlayback=v;}
+  function setPhase(v){state.phase=v;document.documentElement.dataset.azaanPlayback=v;try{window.dispatchEvent(new CustomEvent('aslima:playback-state',{detail:{phase:v,generation:state.generation}}));}catch(_error){}}
   function overlay(show){
     const el=document.getElementById('adhanOverlay');if(el)el.classList.toggle('show',!!show);
     document.body.classList.toggle('azaan-playing',!!show);
@@ -7204,14 +7211,15 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=958').then(registration=>{
-    if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'958',reason:registration.active?'active':'installing'});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=959').then(registration=>{
+    if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'959',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
 })();
 </script>
 
-<script src="./assets/js/azaan-scheduler-v953.js?v=958"></script>
+<script src="./assets/js/azaan-scheduler-v953.js?v=959"></script>
+<script src="./assets/js/runtime-recovery-v959.js?v=959"></script>
 
 
 <!-- Prayer-guidance warning addon intentionally disabled in v9.1.48.
