@@ -34,7 +34,7 @@
       <div class="nextMain"><div class="nextName" id="nextPrayerName">—</div><div class="nextTime" id="nextPrayerTime">--:--</div></div>
       <div class="nextMeta"><span class="nextCountdown" id="nextPrayerCountdown">Calculating…</span><span id="heroVoice">Azaan 1 selected</span></div>
     </div>
-    <div class="deviceHealth" id="deviceHealth" data-state="waiting" aria-live="polite"><div class="deviceHealthHead"><div class="deviceHealthTitle">Tablet health</div><div class="deviceHealthState" id="deviceHealthState">Waiting for tablet</div></div><div class="deviceHealthGrid"><div class="healthItem"><div class="healthLabel">Last contact</div><div class="healthValue" id="healthLastSeen">—</div></div><div class="healthItem"><div class="healthLabel">Version</div><div class="healthValue" id="healthVersion">—</div></div><div class="healthItem"><div class="healthLabel">Timing</div><div class="healthValue" id="healthTiming">—</div></div><div class="healthItem"><div class="healthLabel">Playback</div><div class="healthValue" id="healthPlayback">—</div></div></div></div>
+    <div class="deviceHealth" id="deviceHealth" data-state="waiting" aria-live="polite"><div class="deviceHealthHead"><div class="deviceHealthTitle">Tablet health</div><div class="deviceHealthState" id="deviceHealthState">Waiting for tablet</div></div><div class="deviceHealthGrid"><div class="healthItem"><div class="healthLabel">Last contact</div><div class="healthValue" id="healthLastSeen">—</div></div><div class="healthItem"><div class="healthLabel">Version</div><div class="healthValue" id="healthVersion">—</div></div><div class="healthItem"><div class="healthLabel">Timing</div><div class="healthValue" id="healthTiming">—</div></div><div class="healthItem"><div class="healthLabel">Playback</div><div class="healthValue" id="healthPlayback">—</div></div><div class="healthItem"><div class="healthLabel">Recovery</div><div class="healthValue" id="healthRecovery">—</div></div></div></div>
   </section>
 
   <nav class="tabs" aria-label="Admin sections">
@@ -56,7 +56,7 @@
 
   <section class="page" id="voicePage">
     <section class="card"><h2>Azaan Voice</h2><div class="sectionHint">Choose the Azaan recording used by the tablet. Selection syncs immediately.</div><div class="voiceGrid" id="voiceGrid"></div></section>
-    <section class="card"><h2>Volume & Quick Commands</h2><div class="row"><div><div class="name">Tablet Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div><div style="height:11px"></div><div class="miniRow"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button></div><div class="small">Commands are sent directly to the tablet through Firebase.</div></section>
+    <section class="card"><h2>Volume & Quick Commands</h2><div class="row"><div><div class="name">Tablet Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div><div style="height:11px"></div><div class="miniRow"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button></div><div style="height:10px"></div><button class="ghost" id="reloadDisplay" type="button" style="width:100%">Reload Tablet Display</button><div class="small">Commands are sent directly to the tablet through Firebase. Reload waits until Azaan playback is idle.</div></section>
   </section>
 
   <section class="page" id="jumuahPage">
@@ -125,7 +125,8 @@ function renderTabletHealth(){
  $('healthLastSeen').textContent=lastSeen?(age<65000?'Just now':Math.max(1,Math.round(age/60000))+' min ago'):'No heartbeat yet';
  $('healthVersion').textContent=health&&health.appVersion?'v'+health.appVersion:'—';
  $('healthTiming').textContent=health?(String(health.timingMode||'unknown')+' · '+String(health.timingStatus||'unknown')):'—';
- $('healthPlayback').textContent=health?(health.playbackPhase==='playing'?(health.activePrayer||'Azaan')+' playing':String(health.playbackPhase||'idle')):'—';
+  $('healthPlayback').textContent=health?(health.playbackPhase==='playing'?(health.activePrayer||'Azaan')+' playing':String(health.playbackPhase||'idle')):'—';
+ $('healthRecovery').textContent=health?(String(health.recoveryStatus||'starting')+(health.recoveryReason?' · '+String(health.recoveryReason):'')):'—';
 }
 function updateNextPrayer(){
  const names=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
@@ -199,6 +200,7 @@ function initializeAuthorizedRemote(){
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
  $('test').onclick=()=>{ref.child('command').set(command('testAzaan')).then(()=>toast('Test sent to tablet')).catch(()=>toast('Test command failed'))};
  $('stop').onclick=()=>{ref.child('command').set(command('stopAzaan')).then(()=>toast('Stop sent to tablet')).catch(()=>toast('Stop command failed'))};
+ $('reloadDisplay').onclick=()=>{if(!window.confirm('Reload the tablet display? It will wait until Azaan playback is idle.'))return;ref.child('command').set(command('reloadDisplay')).then(()=>toast('Safe reload sent to tablet')).catch(()=>toast('Reload command failed'))};
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.onchange=()=>{state.azaanEnabled[p]=el.checked;pushPatch({azaanEnabled:state.azaanEnabled},p+' updated')}});
  const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
  $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%';pushVolume()};
