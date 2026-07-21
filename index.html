@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
 <title>ASLIMA V9.1.49</title>
-<script src="./assets/js/runtime-diagnostics-v957.js?v=957"></script>
+<script src="./assets/js/runtime-diagnostics-v960.js?v=960"></script>
 <style>
 :root{
   --gold:#f1bd65;
@@ -5647,10 +5647,12 @@ function aslimaHealthPayload(online){
   const playback=window.aslimaPlaybackState||{};
   const scheduler=window.ASLIMAAzaanScheduler&&window.ASLIMAAzaanScheduler.state||{};
   const recovery=window.ASLIMARecovery&&window.ASLIMARecovery.snapshot?window.ASLIMARecovery.snapshot():{};
+  const diagnostics=window.ASLIMADiagnostics&&window.ASLIMADiagnostics.summary?window.ASLIMADiagnostics.summary():{};
+  const lastIssue=diagnostics.lastIssue&&typeof diagnostics.lastIssue==='object'?diagnostics.lastIssue:{};
   return {
     online:online!==false&&navigator.onLine!==false,
-    appVersion:'959',
-    integrationVersion:document.documentElement.dataset.aslimaIntegration||'959',
+    appVersion:'960',
+    integrationVersion:document.documentElement.dataset.aslimaIntegration||'960',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
     playbackPhase:playback.phase||'idle',
@@ -5660,6 +5662,11 @@ function aslimaHealthPayload(online){
     recoveryReason:recovery.reason||'',
     lastRecoveryAt:Number(recovery.lastRecoveryAt)||0,
     recoveryReloadCount:Number(recovery.reloadCount)||0,
+    sessionStartedAt:Number(diagnostics.sessionStartedAt)||0,
+    runtimeIssueCount:Math.max(0,Number(diagnostics.issueCount)||0),
+    lastRuntimeIssueAt:Number(lastIssue.at)||0,
+    lastRuntimeIssueCategory:String(lastIssue.category||'').slice(0,40),
+    lastRuntimeIssueStatus:String(lastIssue.status||'').slice(0,40),
     visible:!document.hidden,
     lastSeen:firebase.database.ServerValue.TIMESTAMP
   };
@@ -7211,15 +7218,15 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=959').then(registration=>{
-    if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'959',reason:registration.active?'active':'installing'});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=960').then(registration=>{
+    if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'960',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
 })();
 </script>
 
-<script src="./assets/js/azaan-scheduler-v953.js?v=959"></script>
-<script src="./assets/js/runtime-recovery-v959.js?v=959"></script>
+<script src="./assets/js/azaan-scheduler-v953.js?v=960"></script>
+<script src="./assets/js/runtime-recovery-v959.js?v=960"></script>
 
 
 <!-- Prayer-guidance warning addon intentionally disabled in v9.1.48.
