@@ -1,0 +1,6 @@
+name = "aslima-masjid-search"
+main = "src/worker.mjs"
+compatibility_date = "2026-07-21"
+
+[vars]
+ALLOWED_ORIGINS = "https://aslima0531-create.github.io,http://127.0.0.1:8765,http://localhost:8765"

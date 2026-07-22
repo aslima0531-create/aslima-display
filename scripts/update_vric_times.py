@@ -163,6 +163,7 @@ def parse_source(payload: str) -> dict:
     adhan: dict[str, str] = {}
     iqamah: dict[str, str] = {}
     jumuah: list[str] = []
+    jumuah_schedule: list[dict[str, str]] = []
 
     # The official VRIC page currently embeds MasjidApps. Parse its semantic
     # table rows, not nearby page text (which contains duplicate prayer names).
@@ -181,9 +182,11 @@ def parse_source(payload: str) -> dict:
             value = to_12(times[0])
             if value not in jumuah:
                 jumuah.append(value)
+            if len(times) >= 2:
+                jumuah_schedule.append({"adhan": to_12(times[0]), "iqamah": to_12(times[1])})
 
     if adhan:
-        return {"adhan": adhan, "iqamah": iqamah, "jumuah": jumuah[:4], "text": normalize_source(payload)}
+        return {"adhan": adhan, "iqamah": iqamah, "jumuah": jumuah[:4], "jumuahSchedule": jumuah_schedule[:4], "text": normalize_source(payload)}
 
     # Backward-compatible fallback for old captures that contain prose only.
     text = normalize_source(payload)
@@ -236,7 +239,7 @@ def parse_source(payload: str) -> dict:
                 if value and to_12(value) not in jumuah:
                     jumuah.append(to_12(value))
 
-    return {"adhan": adhan, "iqamah": iqamah, "jumuah": jumuah[:4], "text": text}
+    return {"adhan": adhan, "iqamah": iqamah, "jumuah": jumuah[:4], "jumuahSchedule": [], "text": text}
 
 
 def validate(parsed: dict) -> None:
@@ -253,6 +256,11 @@ def validate(parsed: dict) -> None:
         delta = to_minutes(parsed["iqamah"][prayer]) - to_minutes(parsed["adhan"][prayer])
         if not 1 <= delta <= 180:
             raise ValueError(f"Implausible {prayer} Iqamah delta")
+    for index, item in enumerate(parsed.get("jumuahSchedule", []), start=1):
+        adhan = canonical_time(str(item.get("adhan") or ""))
+        iqamah = canonical_time(str(item.get("iqamah") or ""))
+        if not adhan or not iqamah or not 1 <= to_minutes(iqamah) - to_minutes(adhan) <= 180:
+            raise ValueError(f"Implausible Jumuah {index} Iqamah delta")
 
 
 def fetch(url: str) -> str:
@@ -336,17 +344,23 @@ def fetch_rendered(url: str) -> str:
             browser.close()
 
 
-def current_jumuah() -> tuple[list[str], dict]:
+def current_jumuah() -> tuple[list[str], list[dict[str, str]], dict]:
     try:
         existing = json.loads(OUTPUT.read_text(encoding="utf-8"))
         values = existing.get("jumuah")
+        schedule = existing.get("jumuahSchedule")
         meta = existing.get("jumuahMeta") if isinstance(existing.get("jumuahMeta"), dict) else {}
         clean = [str(value) for value in values if str(value).strip()][:4] if isinstance(values, list) else []
+        clean_schedule = [
+            {"adhan": str(item.get("adhan") or ""), "iqamah": str(item.get("iqamah") or "")}
+            for item in schedule[:4]
+            if isinstance(item, dict) and item.get("adhan") and item.get("iqamah")
+        ] if isinstance(schedule, list) else []
         if clean:
-            return clean, meta
+            return clean, clean_schedule, meta
     except Exception:
         pass
-    return [], {"status": "unavailable", "fetchedAt": "", "checkedAt": "", "source": ""}
+    return [], [], {"status": "unavailable", "fetchedAt": "", "checkedAt": "", "source": ""}
 
 
 def stored_age_days(today: date | None = None) -> int | None:
@@ -386,6 +400,7 @@ def write_output(parsed: dict, selected: dict) -> None:
     stamp = now.isoformat().replace("+00:00", "Z")
     if len(parsed["jumuah"]) >= 2:
         jumuah = parsed["jumuah"]
+        jumuah_schedule = parsed.get("jumuahSchedule", [])
         jumuah_meta = {
             "status": "verified",
             "fetchedAt": stamp,
@@ -393,7 +408,7 @@ def write_output(parsed: dict, selected: dict) -> None:
             "source": "VRIC rendered official page",
         }
     else:
-        jumuah, previous_meta = current_jumuah()
+        jumuah, jumuah_schedule, previous_meta = current_jumuah()
         if jumuah:
             jumuah_meta = {
                 "status": "retained",
@@ -425,6 +440,7 @@ def write_output(parsed: dict, selected: dict) -> None:
         "adhan": parsed["adhan"],
         "iqamah": parsed["iqamah"],
         "jumuah": jumuah,
+        "jumuahSchedule": jumuah_schedule,
         "jumuahMeta": jumuah_meta,
         "scheduleMeta": {
             "status": "verified",

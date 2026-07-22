@@ -346,9 +346,28 @@ button{font:inherit}
 .supp-context-item:first-child{border-top:0;padding-top:0}
 .supp-context-item-icon{font-size:clamp(18px,1.3vw,24px);color:rgba(255,241,210,.82);width:1.4vw;min-width:18px;text-align:center}
 .supp-context-item-name{color:rgba(255,241,210,.95);font-size:clamp(15px,1.08vw,18px);font-weight:560;letter-spacing:.03em;text-transform:uppercase}
+.supp-context-item-title{display:flex;align-items:center;gap:.45vw;min-width:0}
+.supp-prayer-info-button{display:inline-grid;place-items:center;width:clamp(22px,1.55vw,28px);height:clamp(22px,1.55vw,28px);padding:0;border:1px solid rgba(241,189,101,.34);border-radius:999px;background:rgba(241,189,101,.07);color:var(--gold);font:700 clamp(12px,.78vw,14px)/1 Georgia,serif;cursor:pointer;touch-action:manipulation}
+.supp-prayer-info-button:focus-visible{outline:2px solid rgba(52,232,159,.8);outline-offset:2px}
 .supp-context-item-meta{margin-top:.18vh;color:rgba(255,241,210,.66);font-size:clamp(11px,.82vw,14px)}
 .supp-context-item-time{color:rgba(255,241,210,.88);font-size:clamp(12px,.92vw,15px);font-weight:560;white-space:nowrap;font-variant-numeric:tabular-nums}
 .supp-context-item.active .supp-context-item-name,.supp-context-item.active .supp-context-item-time,.supp-context-item.active .supp-context-item-icon{color:var(--gold)}
+.supp-prayer-info-backdrop{display:none;position:fixed;inset:0;z-index:1000002;background:rgba(0,0,0,.68);backdrop-filter:blur(7px)}
+.supp-prayer-info-backdrop.open{display:block}
+.supp-prayer-info-dialog{display:none;position:fixed;left:50%;top:50%;z-index:1000003;transform:translate(-50%,-50%);width:min(560px,calc(100vw - 44px));max-height:calc(100vh - 44px);overflow:auto;padding:clamp(20px,2.2vw,30px);box-sizing:border-box;border:1px solid rgba(241,189,101,.42);border-radius:clamp(18px,1.8vw,26px);background:linear-gradient(145deg,rgba(7,20,20,.99),rgba(1,8,9,.98));color:rgba(255,247,230,.95);box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.04)}
+.supp-prayer-info-dialog.open{display:block}
+.supp-prayer-info-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px}
+.supp-prayer-info-kicker{color:var(--gold);font-size:clamp(9px,.7vw,12px);font-weight:700;letter-spacing:.15em;text-transform:uppercase}
+.supp-prayer-info-title{margin:4px 0 0;color:#fff4d9;font-size:clamp(25px,2.1vw,34px);font-weight:620;line-height:1.05}
+.supp-prayer-info-close{display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;padding:0;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.04);color:#fff4d9;font-size:25px;line-height:1;cursor:pointer}
+.supp-prayer-info-summary{margin:0 0 16px;color:rgba(255,247,230,.76);font-size:clamp(13px,1vw,16px);line-height:1.5}
+.supp-prayer-info-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.supp-prayer-info-fact{padding:12px 14px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.025)}
+.supp-prayer-info-fact small{display:block;margin-bottom:4px;color:rgba(241,189,101,.76);font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase}
+.supp-prayer-info-fact strong{color:#fff4d9;font-size:14px;font-weight:590;line-height:1.35}
+.supp-prayer-info-steps{margin:0;padding-left:20px;color:rgba(255,247,230,.86);font-size:clamp(13px,.96vw,15px);line-height:1.55}
+.supp-prayer-info-note{margin:16px 0 0;padding-top:13px;border-top:1px solid rgba(255,255,255,.08);color:rgba(255,247,230,.58);font-size:11px;line-height:1.45}
+@media (max-width:620px){.supp-prayer-info-facts{grid-template-columns:1fr}.supp-prayer-info-dialog{width:calc(100vw - 24px);max-height:calc(100vh - 24px)}}
 .bottom-right-actions{position:relative;justify-self:end;align-self:end;width:auto;display:grid;justify-items:end;gap:.65vh;margin-right:.3vw;margin-bottom:6.6vh;z-index:5}
 .jumuah-pill{display:inline-flex;align-items:center;gap:.42vw;border:1px solid rgba(241,189,101,.22);border-radius:999px;background:rgba(0,8,9,.58);color:rgba(255,241,210,.95);padding:.56vh .82vw;min-width:auto;justify-content:center;font-size:clamp(11px,.86vw,15px);font-weight:560;letter-spacing:.015em;backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 .9vh 2.2vh rgba(0,0,0,.22)}
 .jumuah-pill::before{content:"🕌";font-size:1.1em}
@@ -527,8 +546,10 @@ button{font:inherit}
 }
 .azaan-arabic{
   margin-top:2.5vh;
-  font-family:"Amiri", "Noto Naskh Arabic", "Scheherazade New", Georgia, serif;
+  font-family:"Noto Naskh Arabic","Amiri","Scheherazade New",serif;
   direction:rtl;
+  font-synthesis:none;
+  font-feature-settings:"liga" 1,"calt" 1;
   color:var(--gold);
   font-size:clamp(76px,10vw,172px);
   line-height:1.1;
@@ -2647,7 +2668,7 @@ body.adhan-overlay-active .aslima-persistent-handle{
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Cinzel:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Cinzel:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 
 <!-- ASLIMA HARDENED PATCH — no box behind divider star -->
@@ -2824,11 +2845,31 @@ body.adhan-overlay-active .aslima-persistent-handle{
 .adhan-overlay .azaan-arabic{
   margin:0!important;
   padding-top:clamp(8px,1.2vh,18px)!important;
+  font-family:"Noto Naskh Arabic","Amiri","Scheherazade New",serif!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
   font-size:clamp(72px,8.7vw,144px)!important;
-  line-height:1.02!important;
+  line-height:1.18!important;
   position:relative!important;
   z-index:1!important;
   text-shadow:0 0 3.2vh rgba(248,200,111,.38),0 1.8vh 5.4vh rgba(0,0,0,.68)!important;
+}
+.adhan-overlay .azaan-arabic[data-azaan-cue="dua"]{
+  max-width:min(1040px,88vw)!important;
+  margin-inline:auto!important;
+  padding-top:clamp(2px,.5vh,8px)!important;
+  font-size:clamp(38px,4.65vw,72px)!important;
+  font-weight:500!important;
+  line-height:1.55!important;
+  text-wrap:balance;
+}
+.adhan-overlay .azaan-english[data-azaan-cue="dua"]{
+  max-width:min(900px,82vw)!important;
+  margin-inline:auto!important;
+  margin-top:clamp(10px,1.25vh,18px)!important;
+  font-size:clamp(17px,1.55vw,27px)!important;
+  line-height:1.42!important;
+  text-wrap:balance;
 }
 .adhan-overlay .azaan-english{
   margin-top:clamp(14px,1.8vh,24px)!important;
@@ -2851,6 +2892,8 @@ body.adhan-overlay-active .aslima-persistent-handle{
 @media (max-height:700px){
   .adhan-overlay .azaan-card{transform:translate3d(calc(var(--burn-x,0px) * .35),calc((var(--burn-y,0px) * .35) - 2vh),0)!important;padding-top:24px!important;padding-bottom:22px!important;}
   .adhan-overlay .azaan-arabic{font-size:clamp(62px,8vw,118px)!important;}
+  .adhan-overlay .azaan-arabic[data-azaan-cue="dua"]{font-size:clamp(31px,4.1vw,54px)!important;line-height:1.42!important;}
+  .adhan-overlay .azaan-english[data-azaan-cue="dua"]{font-size:clamp(14px,1.35vw,21px)!important;}
 }
 
 /* ASLIMA V9.1.6 — Premium Muezzin selector */
@@ -3687,6 +3730,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 .timing-health[data-state="manual"] .timing-health-dot{background:#cba7ee}
 .timing-health[data-state="unavailable"]{color:#ffd1cb}
 .timing-health[data-state="unavailable"] .timing-health-dot{background:#ff7668;box-shadow:0 0 10px rgba(255,118,104,.50)}
+.timing-masjid-name{max-width:min(34vw,420px);margin:-.05vh 0 .28vh auto;color:rgba(255,231,181,.82);font-size:clamp(9px,.76vw,12px);font-weight:650;letter-spacing:.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;text-shadow:0 1px 8px rgba(0,0,0,.4)}
 .right{width:min(39vw,670px)!important}
 .prayer-panel{padding:1.3vh 1.25vw 1.45vh!important}
 .prayer-panel-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(72px,auto) minmax(72px,auto);gap:clamp(6px,.72vw,14px);align-items:end;padding:0 .2vw .62vh calc(28px + .85vw);color:rgba(255,241,210,.55);font-size:clamp(8px,.70vw,11px);font-weight:780;letter-spacing:.13em;text-transform:uppercase;border-bottom:1px solid rgba(255,241,210,.10)}
@@ -3710,6 +3754,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 @media (max-width:820px){
   .timing-health{font-size:8px;letter-spacing:.08em;gap:4px}
   .timing-health-dot{width:6px;height:6px}
+  .timing-masjid-name{max-width:36vw;font-size:8px}
   .right{width:43vw!important}
   .prayer-panel-head{grid-template-columns:minmax(0,1fr) 57px 57px}
   .ptime-group{grid-template-columns:57px 57px}
@@ -3819,15 +3864,15 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 
 /* Calculated and manual sources provide Adhan times only. Collapse the
    congregation-only UI instead of presenting unavailable placeholders. */
-body[data-congregation-schedule="hidden"] .prayer-panel-head{
+body[data-iqamah-schedule="hidden"] .prayer-panel-head{
   grid-template-columns:minmax(0,1fr) minmax(82px,auto)!important;
 }
-body[data-congregation-schedule="hidden"] .prayer-panel-head span:nth-child(3),
-body[data-congregation-schedule="hidden"] #prayerPanel .iqamah-time,
-body[data-congregation-schedule="hidden"] #jumuahZone{
+body[data-iqamah-schedule="hidden"] .prayer-panel-head span:nth-child(3),
+body[data-iqamah-schedule="hidden"] #prayerPanel .iqamah-time,
+body[data-jumuah-schedule="hidden"] #jumuahZone{
   display:none!important;
 }
-body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
+body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
   grid-template-columns:minmax(82px,auto)!important;
 }
 @media (max-width:920px){
@@ -3866,6 +3911,7 @@ body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
     <div class="kalima" id="kalima">لا إله إلا الله محمد رسول الله</div>
     <div class="status">
       <div class="timing-health" id="timingHealthChip" data-state="loading" role="status" aria-live="polite"><span class="timing-health-dot" aria-hidden="true"></span><span id="timingHealthText">LOADING</span></div>
+      <div class="timing-masjid-name" id="timingMasjidName">Valley Ranch Islamic Center</div>
       <div class="date" id="dateLine">TODAY</div>
       <div class="hijri-date" id="hijriDateLine" aria-label="Islamic date">--</div>
     </div>
@@ -3974,17 +4020,37 @@ body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
 
 <div class="toast" id="toast">Ready</div>
 
+<div class="supp-prayer-info-backdrop" id="suppPrayerInfoBackdrop" aria-hidden="true"></div>
+<section class="supp-prayer-info-dialog" id="suppPrayerInfoDialog" role="dialog" aria-modal="true" aria-labelledby="suppPrayerInfoTitle" aria-hidden="true">
+  <div class="supp-prayer-info-head">
+    <div><div class="supp-prayer-info-kicker">How to pray</div><h2 class="supp-prayer-info-title" id="suppPrayerInfoTitle">Supplementary Prayer</h2></div>
+    <button class="supp-prayer-info-close" id="suppPrayerInfoClose" type="button" aria-label="Close prayer information">×</button>
+  </div>
+  <p class="supp-prayer-info-summary" id="suppPrayerInfoSummary"></p>
+  <div class="supp-prayer-info-facts">
+    <div class="supp-prayer-info-fact"><small>Recommended time</small><strong id="suppPrayerInfoTime"></strong></div>
+    <div class="supp-prayer-info-fact"><small>Rak‘ahs</small><strong id="suppPrayerInfoRakahs"></strong></div>
+  </div>
+  <ol class="supp-prayer-info-steps" id="suppPrayerInfoSteps"></ol>
+  <p class="supp-prayer-info-note">These are voluntary (nafl) prayers. Details can vary by school of thought; follow the guidance of your local scholar where it differs.</p>
+</section>
+
 
 
 <section class="azaan-drawer" id="azaanDrawer" aria-label="Azaan controls drawer">
   <div class="azaan-drawer-tab" id="azaanDrawerTab" role="button" tabindex="0" aria-label="Tap or drag to open Azaan controls"><span>☰ Azaan</span></div>
   <div class="azaan-drawer-panel">
-    <div class="azaan-drawer-title">Azaan Controls</div>
-    <div class="azaan-drawer-sub">Choose one task at a time. This keeps the tablet drawer clean and easier to use.</div>
+    <div class="drawer-premium-head">
+      <div>
+        <div class="azaan-drawer-title">Azaan Controls</div>
+        <div class="azaan-drawer-sub" id="drawerSyncStatus" data-state="connecting"><span class="drawer-sync-dot" aria-hidden="true"></span><span>Connecting to phone…</span></div>
+      </div>
+      <button type="button" class="drawer-head-close" id="azaanDrawerHeadClose" aria-label="Close Azaan controls">×</button>
+    </div>
     <div class="drawer-task-tabs" role="tablist" aria-label="Drawer actions">
-      <button type="button" class="drawer-task-tab active" data-drawer-section="audio">Azaan On/Off</button>
-      <button type="button" class="drawer-task-tab" data-drawer-section="voice">Voice</button>
-      <button type="button" class="drawer-task-tab" data-drawer-section="timing">Timings</button>
+      <button type="button" class="drawer-task-tab active" data-drawer-section="audio"><span aria-hidden="true">◉</span>Prayers</button>
+      <button type="button" class="drawer-task-tab" data-drawer-section="voice"><span aria-hidden="true">♪</span>Audio</button>
+      <button type="button" class="drawer-task-tab" data-drawer-section="timing"><span aria-hidden="true">◷</span>Timings</button>
     </div>
     <div class="drawer-section drawer-section-audio active" data-drawer-panel="audio">
       <div id="azaanToggleList"></div>
@@ -3993,31 +4059,49 @@ body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
     <div class="drawer-section drawer-section-voice" data-drawer-panel="voice">
       <div class="muezzin-box">
         <div class="azaan-drawer-title small-title">Azaan Voice</div>
-        <select id="drawerMuezzinSelect" class="muezzin-select native-fallback" aria-label="Choose Azaan voice"></select>
-        <div class="muezzin-card-list" id="drawerMuezzinCards" aria-label="Choose Azaan voice"></div>
+        <select id="drawerMuezzinSelect" class="muezzin-select" aria-label="Choose Azaan voice"></select>
         <div class="muezzin-now" id="drawerMuezzinNow">Current Azaan: Azaan 1</div>
         <div class="muezzin-sub">Choose a voice, then use Test Azaan to preview the selected recording.</div>
       </div>
       <div class="azaan-drawer-admin-controls" aria-label="Azaan test and volume controls">
-        <div class="drawer-control-title">Azaan Audio</div>
-        <button type="button" id="drawerTestAzaan">Test Azaan</button>
-        <button type="button" id="drawerStopAzaan">Stop Azaan</button>
+        <div class="drawer-audio-heading"><div class="drawer-control-title">Volume</div><div id="drawerVolumePct">70%</div></div>
         <div class="drawer-volume-row">
           <button type="button" id="drawerVolDown" aria-label="Lower Azaan volume">−</button>
-          <div id="drawerVolumePct">70%</div>
+          <input type="range" id="drawerVolumeRange" min="0" max="100" step="1" value="70" aria-label="Azaan volume">
           <button type="button" id="drawerVolUp" aria-label="Raise Azaan volume">+</button>
+        </div>
+        <div class="drawer-playback-actions">
+          <button type="button" class="drawer-test-action" id="drawerTestAzaan">▶ Test Azaan</button>
+          <button type="button" class="drawer-stop-action" id="drawerStopAzaan">■ Stop</button>
         </div>
       </div>
     </div>
 
     <div class="drawer-section drawer-section-timing" data-drawer-panel="timing">
     <div class="tablet-manual-box" id="tabletManualTimingBox">
-      <div class="azaan-drawer-title small-title">Manual Timing</div>
-      <div class="muezzin-sub">Manual edits are locked unless Manual mode is active. Changes sync to the phone admin.</div>
+      <div class="azaan-drawer-title small-title">Timing Mode</div>
+      <div class="muezzin-sub">Choose the schedule source. Manual fields appear only when Manual mode is active.</div>
       <div class="tablet-mode-grid" aria-label="Timing mode">
         <button type="button" class="tablet-mode-btn" id="tabletModeVric">VRIC Live <span>Official masjid timings</span></button>
-        <button type="button" class="tablet-mode-btn" id="tabletModeLocation">Calculated <span>Tablet location calculation</span></button>
+        <button type="button" class="tablet-mode-btn" id="tabletModeLocation">Nearby / Calculated <span>Masjid or location timings</span></button>
         <button type="button" class="tablet-mode-btn" id="tabletModeManual">Manual <span>Edit directly from tablet</span></button>
+      </div>
+      <div class="nearby-masjid-card" id="nearbyMasjidCard">
+        <div class="nearby-masjid-summary">
+          <div><span class="nearby-masjid-label">Selected masjid</span><strong id="selectedMasjidName">Valley Ranch Islamic Center</strong><small id="selectedMasjidMeta">Official VRIC schedule</small></div>
+          <button type="button" id="findNearbyMasjids">⌖ Find Nearby</button>
+        </div>
+        <div class="nearby-masjid-panel" id="nearbyMasjidPanel" hidden>
+          <div class="nearby-masjid-privacy">Use this tablet’s location, or search a US ZIP code. Location is requested only when you choose Find Nearby.</div>
+          <div class="nearby-masjid-search-actions">
+            <button type="button" id="useTabletMasjidLocation">Use Tablet Location</button>
+            <form id="masjidZipForm"><label for="masjidZipCode">Or ZIP code</label><div><input id="masjidZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="75062" aria-label="US ZIP code"><button type="submit">Search</button></div></form>
+          </div>
+          <div class="nearby-masjid-status" id="nearbyMasjidStatus">Allow location access to find nearby masjids.</div>
+          <div class="nearby-masjid-results" id="nearbyMasjidResults"></div>
+          <a class="nearby-masjid-attribution" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">Nearby results © OpenStreetMap contributors</a>
+          <button type="button" class="nearby-masjid-cancel" id="closeNearbyMasjids">Cancel</button>
+        </div>
       </div>
       <div class="tablet-manual-grid" id="tabletManualGrid">
         <div class="tablet-time-field"><label for="tabletTimeFajr">Fajr</label><input id="tabletTimeFajr" data-tablet-time="Fajr" type="time" step="60"></div>
@@ -4032,23 +4116,10 @@ body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
         <button type="button" id="tabletManualUseCurrent">Use Current</button>
       </div>
       <div class="tablet-manual-status" id="tabletManualStatus">Select Manual mode to edit prayer times here.</div>
-    </div>
-
-    
-    <div class="timing-source-box">
-      <div class="azaan-drawer-title small-title">Timing Source</div>
-      <div class="timing-source-current" id="openTimingSourceScreen">
-        <div class="timing-source-current-left">
-          <div class="timing-source-icon" id="timingCurrentIcon">⌁</div>
-          <div>
-            <div class="timing-source-current-title" id="timingCurrentTitle">VRIC Live</div>
-            <div class="timing-source-current-sub" id="timingCurrentSub">Official live prayer timings</div>
-          </div>
-        </div>
-        <div class="timing-source-chevron">›</div>
+      <div class="tablet-timing-refresh-row">
+        <button type="button" id="refreshTimingSource" class="timing-refresh">Refresh Timings</button>
+        <div class="timing-source-status" id="timingSourceStatus">Not synced yet</div>
       </div>
-      <button type="button" id="refreshTimingSource" class="timing-refresh">Refresh Timings</button>
-      <div class="timing-source-status" id="timingSourceStatus">Not synced yet</div>
     </div>
 
     <div class="timing-source-backdrop" id="timingSourceBackdrop_legacy"></div>
@@ -4133,6 +4204,7 @@ body[data-congregation-schedule="hidden"] #prayerPanel .ptime-group{
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="./assets/js/masjid-discovery-v962.js?v=962"></script>
 <script>
 window.ASLIMA_REMOTE = {
   path: 'aslima/devices/home/settings',
@@ -4163,6 +4235,9 @@ const CONFIG={
   jumuah:['1:45 PM','3:00 PM','4:00 PM'],
   timingSource:'vric',
   selectedMasjidId:'vric',
+  selectedMasjid:null,
+  localTimingSelectedAt:0,
+  masjidSearchProxyUrl:'https://aslima-masjid-search.aslima-azaan.workers.dev/nearby',
   masjidPresets:[
     {id:'vric',name:'Valley Ranch Islamic Center (VRIC)',city:'Irving, TX',lat:32.9185,lon:-96.9590,method:2},
     {id:'iant',name:'Islamic Association of North Texas (IANT)',city:'Richardson, TX',lat:32.9482,lon:-96.7299,method:2},
@@ -4213,14 +4288,16 @@ audio.volume=Number.isFinite(savedAzaanVolume)?Math.max(0,Math.min(1,savedAzaanV
 
 // ASLIMA V9.1.16 — deterministic Azaan voice/audio engine
 const AZAAN_VOICES={
+  doha:{id:'doha',name:'Doha, Qatar',note:'Recommended · prayer-specific recordings',url:'./assets/audio/azaan-doha-dhuhr.mp3',prayerUrls:{Fajr:'./assets/audio/azaan-doha-fajr.mp3',Dhuhr:'./assets/audio/azaan-doha-dhuhr.mp3',Asr:'./assets/audio/azaan-doha-asr.mp3',Maghrib:'./assets/audio/azaan-doha-maghrib.mp3',Isha:'./assets/audio/azaan-doha-isha.mp3'},visualMode:'simple'},
   azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3',visualMode:'full'},
   azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3',visualMode:'full'},
   azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3',visualMode:'full'},
   azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57',url:'./assets/audio/azaan-4.mp3',visualMode:'full'},
   azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32',url:'./assets/audio/azaan-5.mp3',visualMode:'full'}
 };
-const AZAAN_VOICE_ORDER=['azaan1','azaan2','azaan3','azaan4','azaan5'];
+const AZAAN_VOICE_ORDER=['doha','azaan1','azaan2','azaan3','azaan4','azaan5'];
 const AZAAN_VOICE_ALIASES={
+  'doha':'doha','doha qatar':'doha','recommended':'doha',
   'azaan1':'azaan1','azaan 1':'azaan1','azan1':'azaan1','azan 1':'azaan1','full':'azaan1','madinah':'azaan1',
   'azaan2':'azaan2','azaan 2':'azaan2','azan2':'azaan2','azan 2':'azaan2','serene':'azaan2','makkah':'azaan2',
   'azaan3':'azaan3','azaan 3':'azaan3','azan3':'azaan3','azan 3':'azaan3','sunnah':'azaan3','abdulbasit':'azaan3',
@@ -4236,21 +4313,42 @@ function normalizeAzaanVoiceId(value){
   if(AZAAN_VOICES[raw])return raw;
   if(AZAAN_VOICE_ALIASES[raw])return AZAAN_VOICE_ALIASES[raw];
   if(AZAAN_VOICES[compact])return compact;
-  return 'azaan1';
+  return 'doha';
 }
 
-let selectedAzaanVoice=normalizeAzaanVoiceId(localStorage.getItem('aslima_azaan_voice')||'azaan1');
+const pendingAzaanVoiceAtStartup=localStorage.getItem('aslima_pending_azaan_voice')||'';
+let selectedAzaanVoice=normalizeAzaanVoiceId(pendingAzaanVoiceAtStartup||localStorage.getItem('aslima_azaan_voice')||'doha');
 let loadedAzaanVoice='';
 let azaanAudioFallbackGeneration=0;
+let pendingAzaanVoiceSync=pendingAzaanVoiceAtStartup?normalizeAzaanVoiceId(pendingAzaanVoiceAtStartup):'';
 
-function getAzaanVoice(id){return AZAAN_VOICES[normalizeAzaanVoiceId(id)]||AZAAN_VOICES.azaan1;}
+function markPendingAzaanVoiceSync(id){
+  pendingAzaanVoiceSync=normalizeAzaanVoiceId(id);
+  try{localStorage.setItem('aslima_pending_azaan_voice',pendingAzaanVoiceSync);}catch(_error){}
+}
+function clearPendingAzaanVoiceSync(id){
+  if(pendingAzaanVoiceSync!==normalizeAzaanVoiceId(id))return;
+  pendingAzaanVoiceSync='';
+  try{localStorage.removeItem('aslima_pending_azaan_voice');}catch(_error){}
+}
+function acceptRemoteAzaanVoice(id){
+  const normalized=normalizeAzaanVoiceId(id);
+  return !pendingAzaanVoiceSync||normalized===pendingAzaanVoiceSync;
+}
+
+function getAzaanVoice(id){return AZAAN_VOICES[normalizeAzaanVoiceId(id)]||AZAAN_VOICES.doha;}
+function getAzaanVoiceUrl(id,prayer){
+  const voice=getAzaanVoice(id);
+  const prayerName=String(prayer||'').trim();
+  return voice.prayerUrls&&voice.prayerUrls[prayerName]?voice.prayerUrls[prayerName]:voice.url;
+}
 
 function renderMuezzinControls(){
   const voice=getAzaanVoice(selectedAzaanVoice);
   const select=document.getElementById('drawerMuezzinSelect');
   if(select){
     if(select.options.length!==AZAAN_VOICE_ORDER.length){
-      select.innerHTML=AZAAN_VOICE_ORDER.map(id=>`<option value="${id}">${AZAAN_VOICES[id].name}</option>`).join('');
+      select.innerHTML='<optgroup label="Recommended">'+`<option value="doha">${AZAAN_VOICES.doha.name}</option>`+'</optgroup><optgroup label="Other voices">'+AZAAN_VOICE_ORDER.filter(id=>id!=='doha').map(id=>`<option value="${id}">${AZAAN_VOICES[id].name}</option>`).join('')+'</optgroup>';
     }
     select.value=selectedAzaanVoice;
   }
@@ -4383,11 +4481,16 @@ async function setAzaanVoice(id,options){
   }
   if(!options.quiet)showToast('Azaan voice: '+AZAAN_VOICES[normalized].name);
   if(options.pushRemote && window.aslimaRemoteRef){
-    window.aslimaRemoteRef.update({muezzin:normalized,updatedAt:new Date().toISOString()}).catch(()=>{});
+    markPendingAzaanVoiceSync(normalized);
+    window.aslimaRemoteRef.update({muezzin:normalized,updatedAt:new Date().toISOString()}).then(()=>clearPendingAzaanVoiceSync(normalized)).catch(error=>{
+      console.warn('Azaan voice sync failed',error);
+      if(typeof setDrawerSyncStatus==='function')setDrawerSyncStatus('unavailable','Phone sync unavailable · Voice saved on tablet');
+    });
   }
   return changed;
 }
 window.getAzaanVoice=getAzaanVoice;
+window.getAzaanVoiceUrl=getAzaanVoiceUrl;
 window.setAzaanVoice=setAzaanVoice;
 window.renderMuezzinControls=renderMuezzinControls;
 window.normalizeAzaanVoiceId=normalizeAzaanVoiceId;
@@ -4463,12 +4566,16 @@ function renderAzaanControls(){
 function openAzaanDrawer(){
   const d=$('azaanDrawer');
   if(d)d.classList.add('open');
+  document.body.classList.add('azaan-drawer-open','drawer-open');
 }
 
 function closeAzaanDrawer(){
   const d=$('azaanDrawer');
   if(d)d.classList.remove('open');
+  document.body.classList.remove('azaan-drawer-open','drawer-open');
 }
+window.openAzaanDrawer=openAzaanDrawer;
+window.closeAzaanDrawer=closeAzaanDrawer;
 
 function bindAzaanDrawer(){
   const drawer=$('azaanDrawer');
@@ -4655,6 +4762,24 @@ function normalizeJumuahTimes(values){
   return out.slice(0,4);
 }
 
+function normalizeJumuahSchedule(values,legacy,sourceId){
+  const out=[];
+  (Array.isArray(values)?values:[]).forEach(item=>{
+    if(!item||typeof item!=='object')return;
+    const adhan=canonicalTimingValue(item.adhan);
+    const iqamah=canonicalTimingValue(item.iqamah);
+    if(adhan&&iqamah){const delta=timingMinutes(iqamah)-timingMinutes(adhan);if(delta<1||delta>180)throw new Error('Jumuah Iqamah is not a plausible time after Azaan');}
+    if(adhan||iqamah)out.push({adhan:adhan?to12(adhan).full:'',iqamah:iqamah?to12(iqamah).full:''});
+  });
+  if(!out.length)(Array.isArray(legacy)?legacy:[]).forEach(value=>{
+    const normalized=canonicalTimingValue(value);
+    if(!normalized)return;
+    const pretty=to12(normalized).full;
+    out.push(sourceId==='ici'?{adhan:'',iqamah:pretty}:{adhan:pretty,iqamah:''});
+  });
+  return out.slice(0,4);
+}
+
 function normalizeJumuahMeta(rawMeta,jumuah,sourceKind){
   const meta=rawMeta&&typeof rawMeta==='object'?rawMeta:{};
   const allowed=['verified','retained','configured','unavailable'];
@@ -4707,6 +4832,7 @@ function validateTimingDataset(raw,options){
     route:String(sourceRaw.route||'')
   };
   const jumuah=normalizeJumuahTimes(raw.jumuah);
+  const jumuahSchedule=normalizeJumuahSchedule(raw.jumuahSchedule,jumuah,source.id);
   const scheduleRaw=raw.scheduleMeta&&typeof raw.scheduleMeta==='object'?raw.scheduleMeta:{};
   const scheduleMeta={
     status:String(scheduleRaw.status||''),
@@ -4724,6 +4850,7 @@ function validateTimingDataset(raw,options){
     adhan,
     iqamah,
     jumuah,
+    jumuahSchedule,
     jumuahMeta:normalizeJumuahMeta(raw.jumuahMeta,jumuah,source.kind),
     scheduleMeta,
     validation:{valid:true,validatedAt:new Date().toISOString()}
@@ -4742,6 +4869,7 @@ function extractVricScheduleFallback(raw){
       ageDays,
       iqamah:{...normalized.iqamah},
       jumuah:[...normalized.jumuah],
+      jumuahSchedule:(normalized.jumuahSchedule||[]).map(item=>({...item})),
       jumuahMeta:{
         ...normalized.jumuahMeta,
         status:normalized.jumuah.length?'retained':'unavailable',
@@ -4775,12 +4903,14 @@ function mergeVricScheduleIntoCalculated(dataset){
   });
   const hasCompleteIqamah=TIMING_IQAMAH_PRAYERS.every(key=>iqamah[key]);
   const jumuah=normalizeJumuahTimes(fallback.jumuah);
+  const jumuahSchedule=normalizeJumuahSchedule(fallback.jumuahSchedule,jumuah,'vric');
   if(!hasCompleteIqamah&&!jumuah.length)return dataset;
   return {
     ...dataset,
     source:{...dataset.source,id:'aladhan+vric',label:'Calculated Adhan with VRIC congregation schedule',kind:'calculated-with-vric-schedule'},
     iqamah:hasCompleteIqamah?iqamah:{},
     jumuah,
+    jumuahSchedule,
     jumuahMeta:jumuah.length?{...fallback.jumuahMeta,status:'retained'}:{status:'unavailable',fetchedAt:'',checkedAt:new Date().toISOString(),source:''},
     scheduleMeta:{...fallback.scheduleMeta,ageDays:fallback.ageDays}
   };
@@ -4800,18 +4930,25 @@ function timingRuntimeStatus(dataset,forced){
 
 function timingStatusText(){
   const state=timingDataset&&timingDataset.runtimeStatus||'loading';
+  const selected=CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id?CONFIG.selectedMasjid:null;
   const fetched=timingDataset&&timingDataset.fetchedAt;
   let updated='';
   if(fetched&&Number.isFinite(Date.parse(fetched))){
     try{updated=new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(fetched));}catch(e){}
   }
-  if(state==='official')return updated?`VRIC verified • updated ${updated}`:'VRIC verified';
-  if(state==='cached')return updated?`VRIC cached for today • updated ${updated}`:'VRIC cached for today';
+  if(state==='official'){
+    const label=selected?selected.name:'VRIC';
+    return updated?`${label} verified • updated ${updated}`:`${label} verified`;
+  }
+  if(state==='cached'){
+    const label=selected?selected.name:'VRIC';
+    return updated?`${label} cached for today • updated ${updated}`:`${label} cached for today`;
+  }
   if(state==='hybrid'){
     const date=timingDataset&&timingDataset.scheduleMeta&&timingDataset.scheduleMeta.prayerDate;
     return date?`Calculated Adhan • VRIC Iqamah/Jumuah retained from ${date}`:'Calculated Adhan • previous VRIC congregation schedule';
   }
-  if(state==='calculated')return 'Calculated fallback • VRIC mirror unavailable';
+  if(state==='calculated')return selected&&selected.officialProvider!=='vric'?`Calculated Adhan for ${selected.name}`:'Calculated fallback • VRIC mirror unavailable';
   if(state==='manual')return 'Manual prayer times active';
   if(state==='unavailable')return 'Prayer times unavailable — refresh or check network';
   return 'Loading prayer times…';
@@ -4821,9 +4958,18 @@ function renderTimingHealth(){
   const chip=document.getElementById('timingHealthChip');
   const text=document.getElementById('timingHealthText');
   const state=timingDataset&&timingDataset.runtimeStatus||'loading';
-  const labels={official:'VRIC VERIFIED',cached:'VRIC CACHED',hybrid:'CALC + VRIC',calculated:'CALCULATED',manual:'MANUAL',unavailable:'TIMES UNAVAILABLE',loading:'LOADING'};
+  const officialLabel=CONFIG.selectedMasjid?(CONFIG.selectedMasjid.officialProvider==='ici'?'ICI VERIFIED':'OFFICIAL VERIFIED'):'VRIC VERIFIED';
+  const cachedLabel=CONFIG.selectedMasjid?(CONFIG.selectedMasjid.officialProvider==='ici'?'ICI CACHED':'OFFICIAL CACHED'):'VRIC CACHED';
+  const labels={official:officialLabel,cached:cachedLabel,hybrid:'CALC + VRIC',calculated:'CALCULATED',manual:'MANUAL',unavailable:'TIMES UNAVAILABLE',loading:'LOADING'};
   if(chip){chip.dataset.state=state;chip.title=timingStatusText();}
   if(text)text.textContent=labels[state]||labels.loading;
+  const masjidName=document.getElementById('timingMasjidName');
+  if(masjidName){
+    const selected=CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id?CONFIG.selectedMasjid:null;
+    const visible=CONFIG.timingSource==='vric'||(CONFIG.timingSource==='calculated-location'&&selected);
+    masjidName.textContent=selected?selected.name:'Valley Ranch Islamic Center';
+    masjidName.hidden=!visible;
+  }
   const status=document.getElementById('timingSourceStatus');
   if(status)status.textContent=timingStatusText();
   const title=document.getElementById('timingCurrentTitle');
@@ -4835,7 +4981,7 @@ function renderTimingHealth(){
 }
 
 function applyTimingDataset(dataset,forcedStatus){
-  const normalized=validateTimingDataset(dataset,{requireCurrentDate:true,requireIqamah:false});
+  const normalized=validateTimingDataset(dataset,{requireCurrentDate:true,requireIqamah:false,expectedDate:timingDateKey(new Date(),dataset&&dataset.timezone||CONFIG.timezone)});
   timings={...normalized.adhan};
   iqamahTimings={Fajr:'',Dhuhr:'',Asr:'',Maghrib:'',Isha:'',...normalized.iqamah};
   if(normalized.jumuah.length)CONFIG.jumuah=normalized.jumuah;
@@ -4923,6 +5069,10 @@ function loadTimingSourcePrefs(){
     if(saved&&typeof saved==='object'){
       if(saved.mode)CONFIG.timingSource=saved.mode;
       if(saved.masjidId)CONFIG.selectedMasjidId=saved.masjidId;
+      if(Number.isFinite(Number(saved.localTimingSelectedAt)))CONFIG.localTimingSelectedAt=Number(saved.localTimingSelectedAt);
+      if(saved.selectedMasjid&&typeof saved.selectedMasjid==='object'&&Number.isFinite(Number(saved.selectedMasjid.latitude))&&Number.isFinite(Number(saved.selectedMasjid.longitude))){
+        CONFIG.selectedMasjid={id:String(saved.selectedMasjid.id||''),name:String(saved.selectedMasjid.name||'Selected masjid'),latitude:Number(saved.selectedMasjid.latitude),longitude:Number(saved.selectedMasjid.longitude),website:String(saved.selectedMasjid.website||''),officialProvider:String(saved.selectedMasjid.officialProvider||''),discoverySource:String(saved.selectedMasjid.discoverySource||'')};
+      }
       if(saved.city)CONFIG.city=saved.city;
       if(saved.country)CONFIG.country=saved.country;
       if(saved.lat&&saved.lon){CONFIG.geoLat=saved.lat;CONFIG.geoLon=saved.lon;}
@@ -4936,6 +5086,8 @@ function saveTimingSourcePrefs(){
     localStorage.setItem('aslima_timing_source',JSON.stringify({
       mode:CONFIG.timingSource,
       masjidId:CONFIG.selectedMasjidId,
+      selectedMasjid:CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id?{id:CONFIG.selectedMasjid.id,name:CONFIG.selectedMasjid.name,latitude:CONFIG.selectedMasjid.latitude,longitude:CONFIG.selectedMasjid.longitude,website:CONFIG.selectedMasjid.website||'',officialProvider:CONFIG.selectedMasjid.officialProvider||'',discoverySource:CONFIG.selectedMasjid.discoverySource||''}:null,
+      localTimingSelectedAt:Number(CONFIG.localTimingSelectedAt)||0,
       city:CONFIG.city,
       country:CONFIG.country,
       lat:CONFIG.geoLat,
@@ -4946,6 +5098,7 @@ function saveTimingSourcePrefs(){
 }
 
 function masjidById(id){
+  if(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id===id)return {id:CONFIG.selectedMasjid.id,name:CONFIG.selectedMasjid.name,lat:CONFIG.selectedMasjid.latitude,lon:CONFIG.selectedMasjid.longitude,method:CONFIG.method,officialProvider:CONFIG.selectedMasjid.officialProvider||''};
   return (CONFIG.masjidPresets||[]).find(m=>m.id===id)||(CONFIG.masjidPresets||[])[0];
 }
 
@@ -4969,7 +5122,7 @@ function getDevicePosition(){
   });
 }
 
-function alAdhanDatasetFromResponse(response,label){
+function alAdhanDatasetFromResponse(response,label,options){
   if(!response||!response.data||!response.data.timings)throw new Error('No calculated prayer times returned');
   const t=response.data.timings;
   const adhan={Fajr:t.Fajr,Sunrise:t.Sunrise,Dhuhr:t.Dhuhr,Asr:t.Asr,Maghrib:t.Maghrib,Isha:t.Isha};
@@ -4982,13 +5135,14 @@ function alAdhanDatasetFromResponse(response,label){
     adhan,iqamah:{},jumuah:[],
     jumuahMeta:{status:'unavailable',fetchedAt:'',source:'Calculated source does not provide Jumuah'}
   },{requireCurrentDate:true,requireIqamah:false});
-  return mergeVricScheduleIntoCalculated(calculated);
+  return options&&options.allowVricSchedule===false?calculated:mergeVricScheduleIntoCalculated(calculated);
 }
 
 async function syncAlAdhanByCoordinates(lat,lon,label,method){
   const url=`https://api.aladhan.com/v1/timings?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&method=${encodeURIComponent(method||CONFIG.method)}`;
   const response=await fetchJsonWithTimeout(url,12000);
-  const dataset=alAdhanDatasetFromResponse(response,label);
+  const allowVricSchedule=!(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id&&CONFIG.selectedMasjid.officialProvider!=='vric');
+  const dataset=alAdhanDatasetFromResponse(response,label,{allowVricSchedule});
   const applied=applyTimingDataset(dataset,dataset.source.kind==='calculated-with-vric-schedule'?'hybrid':'calculated');
   persistCalculatedTimingDataset(applied);
   return true;
@@ -5028,7 +5182,78 @@ async function syncSelectedMasjid(){
   return true;
 }
 
+async function syncOfficialIciTimes(){
+  try{
+    const scheduleUrl=String(CONFIG.masjidSearchProxyUrl).replace(/\/nearby\/?$/,'/schedule/ici');
+    const [official,calculated]=await Promise.all([fetchJsonWithTimeout(scheduleUrl,12000),fetchJsonWithTimeout(`https://api.aladhan.com/v1/timings?latitude=32.8427164&longitude=-97.0107132&method=${encodeURIComponent(CONFIG.method)}`,12000)]);
+    if(!official||official.provider!=='ici'||!calculated||!calculated.data||!calculated.data.timings)throw new Error('ICI schedule unavailable');
+    const dataset={schemaVersion:TIMING_SCHEMA_VERSION,prayerDate:official.prayerDate,timezone:official.timezone,fetchedAt:official.fetchedAt,generatedAt:new Date().toISOString(),source:{...official.source,kind:'official-with-calculated-sunrise'},adhan:{...official.adhan,Sunrise:calculated.data.timings.Sunrise},iqamah:official.iqamah,jumuah:official.jumuah,jumuahSchedule:official.jumuahSchedule||[],jumuahMeta:official.jumuahMeta,validation:{valid:true}};
+    const applied=applyTimingDataset(dataset,'official');
+    persistCalculatedTimingDataset(applied);
+    return 'official';
+  }catch(error){
+    try{
+      const cached=validateTimingDataset(JSON.parse(localStorage.getItem(CALCULATED_CACHE_KEY)||'null'),{requireCurrentDate:true,requireIqamah:true});
+      if(cached.source.id!=='ici')throw error;
+      applyTimingDataset(cached,'cached');
+      return 'cached';
+    }catch(cacheError){throw error;}
+  }
+}
+window.syncOfficialIciTimes=syncOfficialIciTimes;
+
+function officialMasjidCacheKey(masjid){return 'aslima_official_masjid_v1_'+String(masjid&&masjid.id||'unknown').replace(/[^a-z0-9_-]/gi,'_').slice(0,100);}
+async function syncOfficialWebsiteTimes(masjid){
+  const cacheKey=officialMasjidCacheKey(masjid);
+  try{
+    const resolver=new URL(String(CONFIG.masjidSearchProxyUrl).replace(/\/nearby\/?$/,'/schedule/resolve'));
+    resolver.searchParams.set('website',String(masjid.website||''));
+    resolver.searchParams.set('name',String(masjid.name||''));
+    resolver.searchParams.set('lat',String(masjid.latitude));
+    resolver.searchParams.set('lon',String(masjid.longitude));
+    const calculatedUrl=`https://api.aladhan.com/v1/timings?latitude=${encodeURIComponent(masjid.latitude)}&longitude=${encodeURIComponent(masjid.longitude)}&method=${encodeURIComponent(CONFIG.method)}`;
+    const [official,calculated]=await Promise.all([fetchJsonWithTimeout(resolver.toString(),15000),fetchJsonWithTimeout(calculatedUrl,12000)]);
+    if(!official||!official.provider||!calculated||!calculated.data||!calculated.data.timings)throw new Error('Official website schedule unavailable');
+    const timezone=calculated.data.meta&&calculated.data.meta.timezone||CONFIG.timezone;
+    const calculatedAdhan=normalizeTimingMap(calculated.data.timings,TIMING_ALL_PRAYERS),websiteAdhan={...official.adhan},websiteIqamah={...official.iqamah};
+    if(websiteAdhan.Maghrib==='SUNSET')websiteAdhan.Maghrib=calculatedAdhan.Maghrib;
+    if(/^AFTER:\d+$/.test(websiteAdhan.Maghrib||'')){const base=timingMinutes(calculatedAdhan.Maghrib)+Number(websiteAdhan.Maghrib.slice(6));websiteAdhan.Maghrib=String(Math.floor(base/60)%24).padStart(2,'0')+':'+String(base%60).padStart(2,'0');}
+    if(websiteIqamah.Maghrib==='SUNSET')websiteIqamah.Maghrib=calculatedAdhan.Maghrib;
+    if(/^AFTER:\d+$/.test(websiteIqamah.Maghrib||'')){const base=timingMinutes(calculatedAdhan.Maghrib)+Number(websiteIqamah.Maghrib.slice(6));websiteIqamah.Maghrib=String(Math.floor(base/60)%24).padStart(2,'0')+':'+String(base%60).padStart(2,'0');}
+    TIMING_IQAMAH_PRAYERS.forEach(key=>{const delta=timingMinutes(websiteIqamah[key])-timingMinutes(calculatedAdhan[key]);if(delta<0&&delta>=-5)websiteIqamah[key]=calculatedAdhan[key];});
+    const dataset={schemaVersion:TIMING_SCHEMA_VERSION,prayerDate:timingDateKey(new Date(),timezone),timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{...official.source,id:'website-'+String(masjid.id),label:masjid.name,kind:official.provider==='website-iqamah'?'official-iqamah-with-calculated-adhan':(official.provider==='website-adhan'?'official-adhan':'official-with-calculated-sunrise')},adhan:official.provider==='website-iqamah'?calculatedAdhan:{...websiteAdhan,Sunrise:calculatedAdhan.Sunrise},iqamah:websiteIqamah,jumuah:official.jumuah||[],jumuahSchedule:official.jumuahSchedule||[],jumuahMeta:official.jumuahMeta||{status:'unavailable',source:masjid.name},validation:{valid:true}};
+    const applied=applyTimingDataset(dataset,'official');
+    if(window.renderSelectedMasjid)window.renderSelectedMasjid();
+    try{localStorage.setItem(cacheKey,JSON.stringify(applied));}catch(error){}
+    return 'official';
+  }catch(error){
+    try{
+      const cachedRaw=JSON.parse(localStorage.getItem(cacheKey)||'null');
+      const cached=validateTimingDataset(cachedRaw,{requireCurrentDate:true,requireIqamah:true,expectedDate:timingDateKey(new Date(),cachedRaw&&cachedRaw.timezone||CONFIG.timezone)});
+      if(cached.source.id!=='website-'+String(masjid.id))throw error;
+      applyTimingDataset(cached,'cached');
+      return 'cached';
+    }catch(cacheError){throw error;}
+  }
+}
+window.syncOfficialWebsiteTimes=syncOfficialWebsiteTimes;
+
+async function syncDiscoveredMasjidTimes(masjid){
+  if(!masjid||!Number.isFinite(Number(masjid.latitude))||!Number.isFinite(Number(masjid.longitude)))throw new Error('Selected masjid location is invalid');
+  if(masjid.officialProvider==='ici'){
+    try{return await syncOfficialIciTimes();}catch(officialError){}
+  }
+  try{return await syncOfficialWebsiteTimes(masjid);}catch(officialError){}
+  await syncAlAdhanByCoordinates(Number(masjid.latitude),Number(masjid.longitude),`Calculated near ${masjid.name}`,CONFIG.method);
+  return 'calculated';
+}
+
 async function syncDeviceLocation(){
+  if(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id&&CONFIG.selectedMasjid.officialProvider!=='vric'&&Number.isFinite(Number(CONFIG.selectedMasjid.latitude))&&Number.isFinite(Number(CONFIG.selectedMasjid.longitude))){
+    await syncDiscoveredMasjidTimes(CONFIG.selectedMasjid);
+    renderLocationControls();
+    return true;
+  }
   let pos=null;
   try{pos=await getDevicePosition();}catch(locationError){
     if(Number.isFinite(Number(CONFIG.geoLat))&&Number.isFinite(Number(CONFIG.geoLon))){
@@ -5127,8 +5352,9 @@ async function loadTimes(options){
       }
       if(options.userInitiated){
         const state=timingDataset&&timingDataset.runtimeStatus;
-        if(state==='official')timingNoticeOnce('VRIC timings verified');
-        else if(state==='cached')timingNoticeOnce('Using today’s saved VRIC timings');
+        const selectedLabel=mode!=='vric'&&CONFIG.selectedMasjid&&CONFIG.selectedMasjid.name;
+        if(state==='official')timingNoticeOnce(selectedLabel?selectedLabel+' timings verified':'VRIC timings verified');
+        else if(state==='cached')timingNoticeOnce(selectedLabel?'Using today’s saved '+selectedLabel+' timings':'Using today’s saved VRIC timings');
         else if(state==='hybrid')timingNoticeOnce('Using calculated Adhan with the previous verified VRIC Iqamah/Jumuah schedule');
         else if(state==='calculated')timingNoticeOnce('VRIC unavailable — calculated fallback loaded');
         else if(state==='unavailable')timingNoticeOnce('Prayer times are unavailable');
@@ -5315,6 +5541,58 @@ let jumuahPanelOpen=false;
 let jumuahFridayStateStamp='';
 let jumuahFridayDismissedStamp='';
 let bottomPanelsBound=false;
+let supplementaryInfoReturnFocus=null;
+
+const SUPPLEMENTARY_PRAYER_GUIDANCE={
+  tahajjud:{
+    title:'Tahajjud',
+    summary:'A voluntary night prayer offered after ‘Isha and before Fajr, preferably after sleeping and during the last third of the night.',
+    time:'After ‘Isha; best in the last third of the night, ending before Fajr',
+    rakahs:'At least 2; pray in sets of 2',
+    steps:['Make the intention in your heart to pray Tahajjud.','Pray two rak‘ahs as a normal voluntary prayer: recite Al-Fatihah and another surah in each rak‘ah.','Complete with salam after every two rak‘ahs; repeat additional sets if desired.','Make du‘a afterward. If Witr has not been prayed, it may be kept as the final prayer of the night.']
+  },
+  ishraq:{
+    title:'Ishraq',
+    summary:'A voluntary prayer offered shortly after sunrise, once the prohibited sunrise period has passed.',
+    time:'About 15–20 minutes after sunrise',
+    rakahs:'2 rak‘ahs; 4 may also be prayed in sets of 2',
+    steps:['Wait until the displayed Ishraq window begins.','Make the intention in your heart to pray Ishraq.','Pray two rak‘ahs like a normal voluntary prayer, reciting Al-Fatihah and another surah in each rak‘ah.','Complete with salam; another set of two may be prayed if desired.']
+  },
+  duha:{
+    title:'Duha / Chasht',
+    summary:'A voluntary mid-morning prayer offered after the sun has risen well and before the prohibited time near midday.',
+    time:'Mid-morning until shortly before Dhuhr',
+    rakahs:'At least 2; commonly 2–8 in sets of 2',
+    steps:['Pray within the displayed Duha / Chasht window.','Make the intention in your heart to pray Duha (Chasht).','Pray two rak‘ahs as a normal voluntary prayer, reciting Al-Fatihah and another surah in each rak‘ah.','Complete with salam after each set of two; repeat additional sets if desired.']
+  }
+};
+
+function closeSupplementaryPrayerInfo(){
+  const dialog=$('suppPrayerInfoDialog'),backdrop=$('suppPrayerInfoBackdrop');
+  if(dialog){dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');}
+  if(backdrop){backdrop.classList.remove('open');backdrop.setAttribute('aria-hidden','true');}
+  document.body.classList.remove('supp-prayer-info-open');
+  const target=supplementaryInfoReturnFocus;
+  supplementaryInfoReturnFocus=null;
+  if(target&&typeof target.focus==='function')target.focus();
+}
+
+function openSupplementaryPrayerInfo(id,trigger){
+  const info=SUPPLEMENTARY_PRAYER_GUIDANCE[id];
+  const dialog=$('suppPrayerInfoDialog'),backdrop=$('suppPrayerInfoBackdrop');
+  if(!info||!dialog||!backdrop)return;
+  supplementaryInfoReturnFocus=trigger||document.activeElement;
+  $('suppPrayerInfoTitle').textContent=info.title;
+  $('suppPrayerInfoSummary').textContent=info.summary;
+  $('suppPrayerInfoTime').textContent=info.time;
+  $('suppPrayerInfoRakahs').textContent=info.rakahs;
+  const steps=$('suppPrayerInfoSteps');
+  if(steps){steps.textContent='';info.steps.forEach(text=>{const item=document.createElement('li');item.textContent=text;steps.appendChild(item);});}
+  backdrop.classList.add('open');backdrop.setAttribute('aria-hidden','false');
+  dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');
+  document.body.classList.add('supp-prayer-info-open');
+  const close=$('suppPrayerInfoClose');if(close)close.focus();
+}
 
 function supplementaryPrayerEntries(){
   const windows=getSupplementaryPrayerWindows();
@@ -5371,30 +5649,43 @@ function setJumuahPanelOpen(force){
 
 function jumuahTimingSourceLabel(){
   const meta=timingDataset&&timingDataset.jumuahMeta||{};
-  if(meta.status==='verified')return 'VRIC';
+  if(meta.status==='verified')return timingDataset&&timingDataset.source&&timingDataset.source.label||'Official masjid website';
   if(meta.status==='retained')return 'Previous VRIC schedule';
   if(meta.status==='configured')return 'Configured';
   return 'Unavailable';
+}
+
+function iqamahScheduleAvailable(){
+  if(CONFIG.timingSource==='vric')return true;
+  const officialSelected=CONFIG.timingSource==='calculated-location'&&CONFIG.selectedMasjid&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus);
+  const completeIqamah=TIMING_IQAMAH_PRAYERS.every(key=>canonicalTimingValue(timingDataset&&timingDataset.iqamah&&timingDataset.iqamah[key]));
+  return !!(officialSelected&&completeIqamah);
+}
+function jumuahScheduleAvailable(){
+  const hasJumuah=!!(timingDataset&&Array.isArray(timingDataset.jumuah)&&timingDataset.jumuah.length);
+  const officialSelected=CONFIG.timingSource==='calculated-location'&&CONFIG.selectedMasjid&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus);
+  return !!(hasJumuah&&(CONFIG.timingSource==='vric'||officialSelected));
 }
 
 function renderJumuahPanel(){
   syncFridayJumuahState();
   const list=$('jumuah'), panel=$('jumuahPanel'), pill=$('jumuahPill'), label=$('jumuahPillLabel'), zone=$('jumuahZone'), subtitle=$('jumuahPanelSubtitle');
   if(!list||!panel||!pill||!label||!zone)return;
-  const congregationVisible=CONFIG.timingSource==='vric';
-  document.body.dataset.congregationSchedule=congregationVisible?'visible':'hidden';
-  zone.hidden=!congregationVisible;
-  if(!congregationVisible){
+  const iqamahVisible=iqamahScheduleAvailable(),jumuahVisible=jumuahScheduleAvailable();
+  document.body.dataset.iqamahSchedule=iqamahVisible?'visible':'hidden';
+  document.body.dataset.jumuahSchedule=jumuahVisible?'visible':'hidden';
+  zone.hidden=!jumuahVisible;
+  if(!jumuahVisible){
     jumuahPanelOpen=false;
     panel.hidden=true;
     pill.setAttribute('aria-expanded','false');
     syncDockDetailState();
     return;
   }
-  const entries=(timingDataset&&Array.isArray(timingDataset.jumuah)?timingDataset.jumuah:[]).filter(Boolean);
+  const entries=(timingDataset&&Array.isArray(timingDataset.jumuahSchedule)?timingDataset.jumuahSchedule:[]).filter(item=>item&&(item.adhan||item.iqamah));
   const ordinals=['1st','2nd','3rd','4th'];
   list.style.setProperty('--jumuah-count',String(Math.max(1,entries.length)));
-  list.innerHTML=entries.length?entries.map((time,i)=>`<div class="jumuah-row"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span><span class="jumuah-row-time">${time}</span></div>`).join(''):'<div class="jumuah-row"><span class="jumuah-row-label">Schedule</span><span class="jumuah-row-time">Unavailable</span></div>';
+  list.innerHTML=entries.length?entries.map((entry,i)=>`<div class="jumuah-row has-slots${entry.adhan&&!entry.iqamah?' single-slot':''}"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span>${entry.adhan?`<span class="jumuah-row-slot"><small>Azaan</small><strong>${entry.adhan}</strong></span>`:''}${entry.iqamah?`<span class="jumuah-row-slot"><small>Iqamah</small><strong>${entry.iqamah}</strong></span>`:''}</div>`).join(''):'<div class="jumuah-row"><span class="jumuah-row-label">Schedule</span><span class="jumuah-row-time">Unavailable</span></div>';
   const friday=isFriday();
   zone.classList.toggle('is-friday',friday);
   label.textContent='Jumu’ah';
@@ -5418,6 +5709,16 @@ function bindBottomPanels(){
   if(suppClose)suppClose.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setSupplementaryListOpen(false);});
   if(jBtn)jBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen();});
   if(jClose)jClose.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();setJumuahPanelOpen(false);});
+  const infoList=$('suppAllList');
+  if(infoList)infoList.addEventListener('click',e=>{
+    const trigger=e.target.closest&&e.target.closest('[data-supp-prayer-info]');
+    if(!trigger)return;
+    e.preventDefault();e.stopPropagation();
+    openSupplementaryPrayerInfo(trigger.dataset.suppPrayerInfo,trigger);
+  });
+  const infoClose=$('suppPrayerInfoClose'),infoBackdrop=$('suppPrayerInfoBackdrop');
+  if(infoClose)infoClose.addEventListener('click',closeSupplementaryPrayerInfo);
+  if(infoBackdrop)infoBackdrop.addEventListener('click',closeSupplementaryPrayerInfo);
   document.addEventListener('click',e=>{
     const dock=$('bottomDock');
     if((supplementaryListOpen||jumuahPanelOpen)&&dock&&!dock.contains(e.target)){
@@ -5427,6 +5728,8 @@ function bindBottomPanels(){
   },true);
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){
+      const infoDialog=$('suppPrayerInfoDialog');
+      if(infoDialog&&infoDialog.classList.contains('open')){closeSupplementaryPrayerInfo();return;}
       if(supplementaryListOpen)setSupplementaryListOpen(false);
       if(jumuahPanelOpen)setJumuahPanelOpen(false);
     }
@@ -5472,7 +5775,7 @@ function renderSupplementaryPrayers(){
     list.innerHTML=entries.map(entry=>{
       const active=isMinuteWithinWindow(now,entry.start,entry.end);
       const meta=active?`Now · ${shortDurationText(minutesUntil(entry.end,now))} left`:`Beep at ${to12FromMinutes(entry.start).full}`;
-      return `<div class="supp-context-item${active?' active':''}"><div class="supp-context-item-icon">${entry.icon}</div><div><div class="supp-context-item-name">${entry.title}</div><div class="supp-context-item-meta">${meta}</div></div><div class="supp-context-item-time">${entry.window}</div></div>`;
+      return `<div class="supp-context-item${active?' active':''}"><div class="supp-context-item-icon">${entry.icon}</div><div><div class="supp-context-item-title"><div class="supp-context-item-name">${entry.title}</div><button class="supp-prayer-info-button" type="button" data-supp-prayer-info="${entry.id}" aria-label="How to pray ${entry.title}">i</button></div><div class="supp-context-item-meta">${meta}</div></div><div class="supp-context-item-time">${entry.window}</div></div>`;
     }).join('');
   }
   syncDockDetailState();
@@ -5714,7 +6017,11 @@ function applyAslimaRemoteSettings(data){
   if(!data || typeof data!=='object')return;
   try{
     const remoteTimings=aslimaRemoteCleanTimings(data.timings||{});
-    if(data.mode==='manual' && ['Fajr','Dhuhr','Asr','Maghrib','Isha'].every(k=>remoteTimings[k])){
+    const localSelectedAt=Number(CONFIG.localTimingSelectedAt)||0;
+    const localPreview=/^(?:localhost|127\.0\.0\.1)$/.test(location.hostname);
+    const localGuardActive=localSelectedAt>0&&(localPreview||Date.now()-localSelectedAt<15000);
+    const preserveLocalMode=localGuardActive&&data.mode&&data.mode!==CONFIG.timingSource;
+    if(!preserveLocalMode&&data.mode==='manual' && ['Fajr','Dhuhr','Asr','Maghrib','Isha'].every(k=>remoteTimings[k])){
       CONFIG.timingSource='manual';
       saveTimingSourcePrefs();
       window.aslimaRemoteManualEnabled=true;
@@ -5722,12 +6029,17 @@ function applyAslimaRemoteSettings(data){
       applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:window.aslimaRemoteManualTimings,iqamah:{},jumuah:CONFIG.jumuah},'manual');
       lastVricSyncStatus='Manual prayer times active';
       if(window.renderTabletManualTimingUI)window.renderTabletManualTimingUI();
-    }else if(data.mode==='vric' || data.mode==='calculated-location'){
+    }else if(!preserveLocalMode&&(data.mode==='vric' || data.mode==='calculated-location')){
       const targetMode=data.mode;
       const wasManual=window.aslimaRemoteManualEnabled;
       window.aslimaRemoteManualEnabled=false;
       window.aslimaRemoteManualTimings=null;
       CONFIG.timingSource=targetMode;
+      // Firebase emits an optimistic local snapshot before the server accepts
+      // the write. Keep the local-selection guard until writeRemoteOptional()
+      // confirms success, otherwise a rejected write can roll back to VRIC.
+      if(!localGuardActive)CONFIG.localTimingSelectedAt=0;
+      if(targetMode==='vric'){CONFIG.selectedMasjid=null;CONFIG.selectedMasjidId='vric';}
       if(window.renderTabletManualTimingUI)window.renderTabletManualTimingUI();
       saveTimingSourcePrefs();
       lastVricSyncStatus=targetMode==='vric'?'Phone remote: switching back to VRIC live…':'Phone remote: switching to calculated location timings…';
@@ -5761,13 +6073,22 @@ function applyAslimaRemoteSettings(data){
     }
     if(typeof data.muezzin==='string' && data.muezzin.trim()){
       const remoteVoice=normalizeAzaanVoiceId(data.muezzin);
-      (window.setAzaanVoice||setAzaanVoice)(remoteVoice,{quiet:true,preload:false,source:'firebase'});
-      forceMuezzinUiSync(remoteVoice);
+      if(acceptRemoteAzaanVoice(remoteVoice)){
+        (window.setAzaanVoice||setAzaanVoice)(remoteVoice,{quiet:true,preload:false,source:'firebase'});
+        forceMuezzinUiSync(remoteVoice);
+      }
     }
     // Commands are handled by the dedicated Firebase child listener.
     aslimaRemoteInitialSnapshot=false;
     render();
   }catch(e){console.warn('Aslima remote apply failed',e);}
+}
+function setDrawerSyncStatus(state,text){
+  const status=document.getElementById('drawerSyncStatus');
+  if(!status)return;
+  status.setAttribute('data-state',state||'connecting');
+  const label=status.querySelector('span:last-child');
+  if(label)label.textContent=text||'Connecting to phone…';
 }
 function initAslimaFirebaseRemote(){
   try{
@@ -5783,6 +6104,7 @@ function initAslimaFirebaseRemote(){
       const value=snap.val();
       if(typeof value==='string'&&value.trim()){
         const id=normalizeAzaanVoiceId(value);
+        if(!acceptRemoteAzaanVoice(id))return;
         (window.setAzaanVoice||setAzaanVoice)(id,{quiet:true,preload:false,source:'firebase-child'});
         forceMuezzinUiSync(id);
       }
@@ -5811,22 +6133,26 @@ function initAslimaFirebaseRemote(){
     });
     ref.on('value',snap=>{
       aslimaRemoteReady=true;
+      setDrawerSyncStatus('connected','Phone connected · Changes save automatically');
       applyAslimaRemoteSettings(snap.val());
     },err=>{
+      setDrawerSyncStatus('unavailable','Phone unavailable · Changes save locally');
       lastVricSyncStatus='Phone remote unavailable: '+(err && err.message ? err.message : 'Firebase error');
       if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','listener-error',{message:err&&err.message||err});
       render();
     });
     setTimeout(()=>showToast('Phone remote connected'),900);
-  }catch(e){if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','initialization-error',{message:e&&e.message||e});console.warn('Aslima Firebase remote unavailable',e);}
+  }catch(e){setDrawerSyncStatus('unavailable','Phone unavailable · Changes save locally');if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('firebase','initialization-error',{message:e&&e.message||e});console.warn('Aslima Firebase remote unavailable',e);}
 }
 
 function updateVolumeLabel(){
   const pct=Math.round(audio.volume*100)+'%';
   const adminPct=$('volumePct');
   const drawerPct=$('drawerVolumePct');
+  const drawerRange=$('drawerVolumeRange');
   if(adminPct)adminPct.textContent=pct;
   if(drawerPct)drawerPct.textContent=pct;
+  if(drawerRange && document.activeElement!==drawerRange)drawerRange.value=String(Math.round(audio.volume*100));
 }
 
 let pendingTabletVolume=null;
@@ -5946,6 +6272,7 @@ function bindAzaanAudioControls(){
   const drawerStop=$('drawerStopAzaan');
   const drawerVolDown=$('drawerVolDown');
   const drawerVolUp=$('drawerVolUp');
+  const drawerVolumeRange=$('drawerVolumeRange');
 
   if(test)test.onclick=()=>{window.playAzaan(null,{force:true,source:'local-test'});showAdmin();};
   if(stop)stop.onclick=()=>{stopCurrentAzaan();showAdmin();};
@@ -5969,6 +6296,14 @@ function bindAzaanAudioControls(){
     if(e){e.preventDefault();e.stopPropagation();}
     setVolume(audio.volume+.1);
   };
+  if(drawerVolumeRange && !drawerVolumeRange.__aslimaVolumeBound){
+    drawerVolumeRange.__aslimaVolumeBound=true;
+    drawerVolumeRange.addEventListener('input',e=>{
+      e.stopPropagation();
+      setVolume(Number(drawerVolumeRange.value)/100);
+    });
+    drawerVolumeRange.addEventListener('change',e=>e.stopPropagation());
+  }
 
   const refresh=$('refreshTimes');
   const dashboard=$('dashboard15');
@@ -6747,6 +7082,10 @@ setTimeout(applyBurnInShift,12000);
     const ref=firebase.database().ref(window.ASLIMA_REMOTE.path);
     await ref.update(Object.assign({updatedAt:new Date().toISOString()},payload));
   }
+  async function writeRemoteOptional(payload){
+    try{await writeRemote(payload);CONFIG.localTimingSelectedAt=0;saveTimingSourcePrefs();return true;}
+    catch(error){console.warn('Phone timing sync unavailable; local tablet change remains active',error);return false;}
+  }
   function setStatus(text){const el=document.getElementById('tabletManualStatus'); if(el)el.textContent=text||'';}
   function collectTimes(){
     const inputs=getInputMap();
@@ -6756,6 +7095,9 @@ setTimeout(applyBurnInShift,12000);
   }
   function render(){
     const mode=currentMode();
+    const box=document.getElementById('tabletManualTimingBox');
+    if(box)box.setAttribute('data-mode',mode);
+    if(window.renderSelectedMasjid)window.renderSelectedMasjid();
     const buttons={vric:document.getElementById('tabletModeVric'),'calculated-location':document.getElementById('tabletModeLocation'),manual:document.getElementById('tabletModeManual')};
     Object.keys(buttons).forEach(k=>{if(buttons[k])buttons[k].classList.toggle('active',mode===k);});
     const inputs=getInputMap();
@@ -6772,6 +7114,7 @@ setTimeout(applyBurnInShift,12000);
   window.renderTabletManualTimingUI=render;
   async function activateMode(mode){
     try{
+      CONFIG.localTimingSelectedAt=Date.now();
       if(mode==='manual'){
         const manual={...timings};
         CONFIG.timingSource='manual';
@@ -6781,20 +7124,24 @@ setTimeout(applyBurnInShift,12000);
         window.aslimaRemoteManualTimings=hasCompleteManualSeed?{...manual}:null;
         if(hasCompleteManualSeed)applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:manual,iqamah:{},jumuah:CONFIG.jumuah},'manual');
         render();
-        await writeRemote(hasCompleteManualSeed?{mode:'manual',timings:manual}:{mode:'manual'});
+        const remoteSynced=await writeRemoteOptional(hasCompleteManualSeed?{mode:'manual',timings:manual}:{mode:'manual'});
         if(typeof showToast==='function')showToast('Manual timing mode active');
         if(!hasCompleteManualSeed)setStatus('Manual mode active. Enter prayer times and press Save Times.');
+        if(!remoteSynced)setStatus('Manual mode is active on this tablet. Phone sync is unavailable in this preview.');
         if(typeof window.render==='function')window.render(); else if(typeof render==='function')render();
       }else{
         CONFIG.timingSource=mode;
+        if(mode==='vric'){CONFIG.selectedMasjid=null;CONFIG.selectedMasjidId='vric';}
         saveTimingSourcePrefs();
         window.aslimaRemoteManualEnabled=false;
         window.aslimaRemoteManualTimings=null;
         render();
-        await writeRemote({mode:mode});
-        if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':'Using calculated tablet-location timings');
+        const remoteSynced=await writeRemoteOptional({mode:mode});
+        const chosen=CONFIG.selectedMasjid&&CONFIG.selectedMasjid.name;
+        if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':(chosen?'Using timings for '+chosen:'Using calculated tablet-location timings'));
         try{await loadTimes();}catch(e){}
         if(typeof window.render==='function')window.render(); else if(typeof render==='function')render();
+        if(!remoteSynced)setStatus('Mode is active on this tablet. Phone sync is unavailable in this preview.');
       }
     }catch(e){console.warn('Tablet timing mode update failed',e);setStatus('Could not sync mode. Check connection and Firebase rules.');}
   }
@@ -6809,9 +7156,9 @@ setTimeout(applyBurnInShift,12000);
       applyTimingDataset({prayerDate:timingDateKey(new Date(),CONFIG.timezone),timezone:CONFIG.timezone,fetchedAt:new Date().toISOString(),generatedAt:new Date().toISOString(),source:{id:'manual',label:'Manual prayer times',kind:'manual'},adhan:merged,iqamah:{},jumuah:CONFIG.jumuah},'manual');
       CONFIG.timingSource='manual';
       saveTimingSourcePrefs();
-      await writeRemote({mode:'manual',timings:{...timings}});
+      const remoteSynced=await writeRemoteOptional({mode:'manual',timings:{...timings}});
       if(typeof showToast==='function')showToast('Manual times saved');
-      setStatus('Saved. Tablet and phone admin are now synced.');
+      setStatus(remoteSynced?'Saved. Tablet and phone admin are now synced.':'Saved on this tablet. Phone sync is unavailable in this preview.');
       if(typeof window.render==='function')window.render(); else if(typeof render==='function')render();
       render();
     }catch(e){console.warn('Tablet manual save failed',e);setStatus('Save failed. Check Wi-Fi/Firebase rules.');}
@@ -6829,6 +7176,125 @@ setTimeout(applyBurnInShift,12000);
   window.addEventListener('load',bind);
   setTimeout(bind,300);
   setTimeout(bind,1200);
+})();
+
+/* Phase 15 — opt-in nearby masjid discovery. Discovery never implies that a
+   masjid publishes official prayer data; unsupported results use calculated
+   Adhan times at the selected masjid coordinates. */
+(function(){
+  let results=[];
+  function selected(){
+    if(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id)return CONFIG.selectedMasjid;
+    return {id:'vric',name:'Valley Ranch Islamic Center',officialProvider:'vric'};
+  }
+  function renderSelected(){
+    const item=selected();
+    const name=document.getElementById('selectedMasjidName');
+    const meta=document.getElementById('selectedMasjidMeta');
+    if(name)name.textContent=item.name||'Selected masjid';
+    const activeOfficial=item.id!=='vric'&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus)&&timingDataset.source&&timingDataset.source.label===item.name;
+    const officialAdhan=activeOfficial&&timingDataset.source.kind==='official-adhan';
+    if(meta)meta.textContent=item.officialProvider==='vric'?'Official VRIC schedule':(officialAdhan?'Official website Azaan · Iqamah unavailable':(activeOfficial?'Official website Iqamah · calculated Adhan':(item.officialProvider==='ici'?'Official ICI schedule · calculated Sunrise':(item.website?'Official website checked first · calculated fallback':'Calculated Adhan at masjid location'))));
+  }
+  function setStatus(text){const el=document.getElementById('nearbyMasjidStatus');if(el)el.textContent=text||'';}
+  function renderResults(items){
+    const host=document.getElementById('nearbyMasjidResults');
+    if(!host)return;
+    host.replaceChildren();
+    items.forEach((item,index)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='nearby-masjid-result'+(item.officialProvider?' official':'');
+      button.dataset.masjidIndex=String(index);
+      const copy=document.createElement('span');
+      const title=document.createElement('strong');
+      title.textContent=item.name;
+      const detail=document.createElement('span');
+      detail.textContent=(item.address?item.address+' · ':'')+item.distanceMiles.toFixed(1)+' mi away';
+      copy.append(title,detail);
+      const source=document.createElement('i');
+      source.textContent=item.officialProvider?'Official':(item.website?'Website check':'Calculated');
+      button.append(copy,source);
+      host.append(button);
+    });
+  }
+  async function choose(item){
+    if(!item)return;
+    setStatus('Applying '+item.name+'…');
+    if(timingLoadPromise)try{await timingLoadPromise;}catch(error){}
+    const isVric=item.officialProvider==='vric';
+    CONFIG.localTimingSelectedAt=Date.now();
+    CONFIG.selectedMasjid=isVric?null:{id:item.id,name:item.name,latitude:item.latitude,longitude:item.longitude,website:item.website||'',officialProvider:item.officialProvider||'',discoverySource:item.discoverySource||'openstreetmap'};
+    CONFIG.selectedMasjidId=isVric?'vric':CONFIG.selectedMasjid.id;
+    CONFIG.timingSource=isVric?'vric':'calculated-location';
+    if(!isVric){CONFIG.geoLat=item.latitude;CONFIG.geoLon=item.longitude;}
+    saveTimingSourcePrefs();
+    renderSelected();
+    if(window.renderTabletManualTimingUI)window.renderTabletManualTimingUI();
+    try{
+      if(isVric)await loadTimes({reason:'nearby-vric-selection',userInitiated:true});
+      const outcome=isVric?'official':await syncDiscoveredMasjidTimes(CONFIG.selectedMasjid);
+      renderSelected();
+      const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=true;
+      if(typeof showToast==='function')showToast(isVric?'Using official VRIC schedule':(outcome==='official'?'Using official '+item.name+' schedule':(outcome==='cached'?'Using today’s saved '+item.name+' schedule':'Official schedule unavailable — using calculated times near '+item.name)));
+      if(typeof render==='function')render();
+    }catch(error){setStatus('Could not load timings for this masjid. Check the connection and try again.');}
+  }
+  async function findNearby(){
+    const panel=document.getElementById('nearbyMasjidPanel');
+    if(panel)panel.hidden=false;
+    setStatus('Requesting tablet location…');
+    const host=document.getElementById('nearbyMasjidResults');if(host)host.replaceChildren();
+    try{
+      const position=await getDevicePosition();
+      setStatus('Searching nearby masjids…');
+      if(!window.ASLIMAMasjidDiscovery)throw new Error('Discovery module unavailable');
+      results=await window.ASLIMAMasjidDiscovery.discover({latitude:position.lat,longitude:position.lon,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl});
+      if(!results.length){setStatus('No nearby masjids were found. You can still use Calculated or Manual mode.');return;}
+      setStatus('Select your masjid. Official schedules are labeled separately.');
+      renderResults(results);
+    }catch(error){
+      const message=String(error&&error.message||'');
+      setStatus(/denied|permission/i.test(message)?'Location permission was not granted. Use Calculated or Manual mode, or try again.':'Nearby search is temporarily unavailable. Use Calculated or Manual mode and try again later.');
+    }
+  }
+  async function findByZip(event){
+    if(event)event.preventDefault();
+    const input=document.getElementById('masjidZipCode');
+    const postalCode=String(input&&input.value||'').trim();
+    setStatus('Searching ZIP code '+postalCode+'…');
+    const host=document.getElementById('nearbyMasjidResults');if(host)host.replaceChildren();
+    try{
+      if(!window.ASLIMAMasjidDiscovery)throw new Error('Discovery module unavailable');
+      const found=await window.ASLIMAMasjidDiscovery.discoverPostal({postalCode,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl});
+      const zipFallback={id:'postal-'+found.area.postalCode,name:'ZIP area '+found.area.label,latitude:Number(found.area.latitude),longitude:Number(found.area.longitude),address:'Calculated from ZIP-code location',distanceMiles:0,officialProvider:'',discoverySource:'zip-code'};
+      results=[...(found.results||[]),zipFallback];
+      if(found.results&&found.results.length)setStatus('Masjids near '+found.area.label+'. Select one, or use calculated times for the ZIP area.');
+      else{
+        setStatus('No listed masjid was found near '+found.area.label+'. Applying calculated ZIP-area timings…');
+        renderResults(results);
+        await choose(zipFallback);
+        return;
+      }
+      renderResults(results);
+    }catch(error){setStatus(String(error&&error.message||'ZIP-code search is temporarily unavailable.'));}
+  }
+  function bind(){
+    const find=document.getElementById('findNearbyMasjids');
+    const close=document.getElementById('closeNearbyMasjids');
+    const useLocation=document.getElementById('useTabletMasjidLocation');
+    const zipForm=document.getElementById('masjidZipForm');
+    const host=document.getElementById('nearbyMasjidResults');
+    if(find&&!find.__aslimaBound){find.__aslimaBound=true;find.addEventListener('click',()=>{const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=false;setStatus('Choose tablet location or enter a ZIP code.');});}
+    if(useLocation&&!useLocation.__aslimaBound){useLocation.__aslimaBound=true;useLocation.addEventListener('click',findNearby);}
+    if(zipForm&&!zipForm.__aslimaBound){zipForm.__aslimaBound=true;zipForm.addEventListener('submit',findByZip);}
+    if(close&&!close.__aslimaBound){close.__aslimaBound=true;close.addEventListener('click',()=>{const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=true;});}
+    if(host&&!host.__aslimaBound){host.__aslimaBound=true;host.addEventListener('click',event=>{const button=event.target&&event.target.closest?event.target.closest('[data-masjid-index]'):null;if(button&&host.contains(button))choose(results[Number(button.dataset.masjidIndex)]);});}
+    renderSelected();
+  }
+  window.renderSelectedMasjid=renderSelected;
+  window.addEventListener('load',bind,{once:true});
+  setTimeout(bind,400);
 })();
 
 /* ASLIMA V9.1.1 — start Firebase phone remote listener after all app code is loaded */
@@ -6941,7 +7407,8 @@ body.drawer-open #azaanDrawer.azaan-drawer{
 .drawer-section{display:none!important;animation:aslimaDrawerSectionIn .18s ease both;}
 .drawer-section.active{display:block!important;}
 @keyframes aslimaDrawerSectionIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-#drawerMuezzinSelect.native-fallback{display:none!important;}
+#drawerMuezzinSelect{display:block!important;margin-top:9px;}
+.muezzin-card-list{display:none!important;}
 .muezzin-card-list{display:grid;gap:9px;margin-top:8px;}
 .muezzin-card{
   width:100%;
@@ -6974,10 +7441,97 @@ body.drawer-open #azaanDrawer.azaan-drawer{
   .tablet-time-field input{height:36px!important;}
 }
 </style>
+<style id="aslima-v962-premium-drawer">
+/* Phase 14 preview — a quieter, task-focused tablet control surface. */
+#azaanDrawer .azaan-drawer-panel{
+  padding:18px 18px 16px!important;
+  border:1px solid rgba(248,200,111,.28)!important;
+  background:linear-gradient(155deg,rgba(7,20,20,.985),rgba(2,9,10,.97))!important;
+  box-shadow:-22px 0 64px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+.drawer-premium-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:1px 1px 0;}
+.drawer-premium-head .azaan-drawer-title{font-size:19px;letter-spacing:.035em;}
+.drawer-premium-head .azaan-drawer-sub{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:10.5px;color:rgba(255,247,223,.62);}
+.drawer-sync-dot{width:7px;height:7px;border-radius:50%;background:#e2b85c;box-shadow:0 0 10px rgba(226,184,92,.52);flex:none;}
+#drawerSyncStatus[data-state="connected"] .drawer-sync-dot{background:#42d99b;box-shadow:0 0 10px rgba(66,217,155,.68);}
+#drawerSyncStatus[data-state="unavailable"] .drawer-sync-dot{background:#e87f74;box-shadow:0 0 10px rgba(232,127,116,.55);}
+.drawer-head-close{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(248,200,111,.23);border-radius:12px;background:rgba(255,255,255,.045);color:rgba(255,247,223,.8);font-size:23px;line-height:1;}
+.drawer-head-close:active{background:rgba(248,200,111,.14);color:#f8c86f;}
+.drawer-task-tabs{margin:15px 0 16px;padding:4px;gap:5px;border-color:rgba(248,200,111,.16);border-radius:15px;background:rgba(0,0,0,.25);}
+.drawer-task-tab{min-height:46px!important;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;font-size:10px;letter-spacing:.075em;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease;}
+.drawer-task-tab span{font-size:14px;font-weight:500;}
+.drawer-task-tab.active{background:linear-gradient(135deg,rgba(248,200,111,.98),rgba(189,135,45,.92));box-shadow:0 8px 22px rgba(0,0,0,.24),0 0 18px rgba(248,200,111,.12);transform:translateY(-1px);}
+.drawer-section-voice .muezzin-box,.drawer-section-timing .tablet-manual-box,.drawer-section-timing .timing-source-box{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;}
+.muezzin-card-list{grid-template-columns:1fr 1fr;gap:8px;}
+.muezzin-card{min-height:66px;border-color:rgba(248,200,111,.18);border-radius:14px;padding:10px 11px;}
+.muezzin-card b{font-size:13px;}.muezzin-card span{font-size:9.5px;}
+.muezzin-now{margin-top:10px!important;border:0!important;border-left:2px solid rgba(248,200,111,.65)!important;border-radius:0 10px 10px 0!important;background:rgba(248,200,111,.06)!important;padding:8px 10px!important;}
+.azaan-drawer-admin-controls{margin-top:13px!important;padding:13px!important;border-color:rgba(248,200,111,.17)!important;background:rgba(255,255,255,.025)!important;}
+.drawer-audio-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.drawer-audio-heading #drawerVolumePct{font-size:15px;color:#fff3c8;font-weight:800;font-variant-numeric:tabular-nums;}
+.drawer-volume-row{grid-template-columns:36px minmax(0,1fr) 36px!important;gap:10px!important;}
+.drawer-volume-row button{min-height:36px!important;height:36px;border-radius:11px!important;font-size:18px;}
+#drawerVolumeRange{width:100%;height:30px;margin:0;accent-color:#f8c86f;touch-action:none;cursor:pointer;}
+#drawerVolumeRange::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,rgba(248,200,111,.85),rgba(248,200,111,.22));}
+#drawerVolumeRange::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;border:3px solid #1a170f;background:#f8c86f;box-shadow:0 2px 10px rgba(0,0,0,.45),0 0 0 3px rgba(248,200,111,.13);}
+.drawer-playback-actions{display:grid;grid-template-columns:1.35fr .8fr;gap:9px;margin-top:11px;}
+.drawer-playback-actions button{min-height:43px!important;border-radius:13px!important;font-weight:850;letter-spacing:.025em;}
+.drawer-test-action{background:linear-gradient(135deg,rgba(248,200,111,.92),rgba(187,132,40,.9))!important;color:#160f05!important;border-color:rgba(255,231,157,.88)!important;}
+.drawer-stop-action{background:rgba(186,63,63,.11)!important;border-color:rgba(232,113,103,.32)!important;color:#ffc7bf!important;}
+.tablet-mode-grid{grid-template-columns:repeat(3,1fr)!important;gap:7px!important;}
+.tablet-mode-btn{min-height:66px;display:block!important;text-align:center!important;padding:9px 6px!important;font-size:11px!important;}
+.tablet-mode-btn span{margin-top:5px!important;font-size:8.8px!important;line-height:1.2;}
+.nearby-masjid-card{margin-top:10px;border:1px solid rgba(248,200,111,.18);border-radius:14px;background:rgba(255,255,255,.025);overflow:hidden;}
+.nearby-masjid-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 12px;}
+.nearby-masjid-summary strong,.nearby-masjid-summary small,.nearby-masjid-label{display:block;}
+.nearby-masjid-label{margin-bottom:3px;color:rgba(255,247,223,.48);font-size:8px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;}
+.nearby-masjid-summary strong{color:#fff3cf;font-size:12px;line-height:1.2;}
+.nearby-masjid-summary small{margin-top:3px;color:rgba(255,247,223,.58);font-size:9px;line-height:1.25;}
+#findNearbyMasjids,.nearby-masjid-cancel{min-height:36px;border:1px solid rgba(248,200,111,.28);border-radius:11px;background:rgba(248,200,111,.08);color:#f8d889;font-weight:800;font-size:9px;letter-spacing:.04em;padding:7px 10px;white-space:nowrap;}
+.nearby-masjid-search-actions{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:end;margin-top:9px}.nearby-masjid-search-actions>button,.nearby-masjid-search-actions form button{min-height:36px;border:1px solid rgba(248,200,111,.28);border-radius:10px;background:rgba(248,200,111,.1);color:#f8d889;font-size:9px;font-weight:800;padding:7px 10px}.nearby-masjid-search-actions label{display:block;margin-bottom:4px;color:rgba(255,247,223,.55);font-size:8px;font-weight:750;text-transform:uppercase;letter-spacing:.08em}.nearby-masjid-search-actions form>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}.nearby-masjid-search-actions input{min-width:0;height:36px;border:1px solid rgba(248,200,111,.22);border-radius:10px;background:rgba(0,0,0,.24);color:#fff3cf;font-size:11px;padding:7px 9px}
+.nearby-masjid-panel{padding:11px 12px 12px;border-top:1px solid rgba(248,200,111,.13);background:rgba(0,0,0,.2);}
+.nearby-masjid-panel[hidden]{display:none!important;}
+.nearby-masjid-privacy,.nearby-masjid-status{color:rgba(255,247,223,.56);font-size:9px;line-height:1.4;}
+.nearby-masjid-status{margin:8px 0;color:rgba(255,247,223,.76);}
+.nearby-masjid-results{display:grid;gap:7px;max-height:230px;margin-top:8px;overflow-y:auto;overscroll-behavior:contain;}
+.nearby-masjid-result{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 10px;border:1px solid rgba(248,200,111,.18);border-radius:11px;background:rgba(255,255,255,.035);color:#fff;text-align:left;}
+.nearby-masjid-result strong,.nearby-masjid-result span{display:block;}.nearby-masjid-result strong{font-size:11px;}.nearby-masjid-result span{margin-top:3px;color:rgba(255,255,255,.57);font-size:8.8px;}
+.nearby-masjid-result i{color:#f8d889;font-size:10px;font-style:normal;font-weight:850;white-space:nowrap;}
+.nearby-masjid-result.official{border-color:rgba(66,217,155,.32);}.nearby-masjid-result.official i{color:#6ee3b2;}
+.nearby-masjid-attribution{display:block;margin-top:8px;color:rgba(255,247,223,.43);font-size:8px;text-align:center;text-decoration:none;}
+.nearby-masjid-cancel{width:100%;margin-top:8px;background:transparent;color:rgba(255,247,223,.66);}
+#tabletManualTimingBox:not([data-mode="calculated-location"]) .nearby-masjid-card{display:none!important;}
+.jumuah-row.has-slots{display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,.8fr) minmax(0,.8fr)!important;align-items:center!important;min-height:4.8vh!important;gap:.55vw!important;padding:.48vh .65vw!important;}
+.jumuah-row.has-slots.single-slot{grid-template-columns:minmax(0,1fr) auto!important;}
+.jumuah-row-slot{display:grid;gap:.16vh;min-width:0;text-align:right;font-variant-numeric:tabular-nums;}
+.jumuah-row-slot small{color:rgba(255,241,210,.48);font-size:clamp(7px,.52vw,9px);font-weight:750;letter-spacing:.08em;text-transform:uppercase;}
+.jumuah-row-slot strong{color:#fff7e8;font-size:clamp(13px,1.02vw,17px);font-weight:590;white-space:nowrap;}
+@media (max-height:650px){.jumuah-row.has-slots{min-height:42px!important;padding:4px 10px!important}.jumuah-row-slot{gap:1px}.jumuah-row-slot small{font-size:8px}.jumuah-row-slot strong{font-size:16px}}
+#tabletManualTimingBox:not([data-mode="manual"]) .tablet-manual-grid,
+#tabletManualTimingBox:not([data-mode="manual"]) .tablet-manual-actions{display:none!important;}
+#tabletManualTimingBox[data-mode="manual"] .tablet-manual-grid{animation:aslimaDrawerSectionIn .18s ease both;}
+.tablet-timing-refresh-row{margin-top:13px;padding-top:12px;border-top:1px solid rgba(248,200,111,.14);}
+.tablet-timing-refresh-row .timing-refresh{margin-top:0!important;}
+.tablet-timing-refresh-row .timing-source-status{margin-top:8px!important;}
+#tabletManualTimingBox[data-mode="manual"] .tablet-timing-refresh-row{display:none!important;}
+#azaanDrawer[data-active-section="voice"] .azaan-drawer-actions,
+#azaanDrawer[data-active-section="timing"] .azaan-drawer-actions{display:none!important;}
+#azaanDrawer[data-active-section="audio"] .azaan-drawer-actions{grid-template-columns:1fr 1fr!important;}
+#azaanDrawer[data-active-section="audio"] #azaanDrawerClose{display:none!important;}
+@media (max-height:650px){
+  #azaanDrawer .azaan-drawer-panel{padding:13px 14px 12px!important;}
+  .drawer-premium-head .azaan-drawer-sub,.muezzin-sub{display:none;}
+  .drawer-task-tabs{margin:10px 0 11px;}.drawer-task-tab{min-height:38px!important;}
+  .muezzin-card{min-height:54px;padding:8px 10px;}.muezzin-now{display:none;}
+  .nearby-masjid-results{max-height:150px;}
+}
+</style>
 <script id="aslima-v918-separated-drawer-actions-js">
 (function(){
   function setSection(name){
     name=name||'audio';
+    var drawer=document.getElementById('azaanDrawer');
+    if(drawer)drawer.setAttribute('data-active-section',name);
     document.querySelectorAll('[data-drawer-section]').forEach(function(btn){
       btn.classList.toggle('active',btn.getAttribute('data-drawer-section')===name);
     });
@@ -6999,6 +7553,11 @@ body.drawer-open #azaanDrawer.azaan-drawer{
     var saved='audio';
     try{saved=localStorage.getItem('aslima_drawer_section')||'audio';}catch(e){}
     setSection(saved);
+    var headClose=document.getElementById('azaanDrawerHeadClose');
+    if(headClose&&!headClose.__aslimaBound){
+      headClose.__aslimaBound=true;
+      headClose.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(typeof window.closeAzaanDrawer==='function')window.closeAzaanDrawer();else{document.body.classList.remove('azaan-drawer-open','drawer-open');var drawer=document.getElementById('azaanDrawer');if(drawer)drawer.classList.remove('open');}});
+    }
   }
   /* Voice cards are rendered and event-delegated by the single canonical
      renderMuezzinControls/bindAzaanVoiceControls pair. Rebinding on every drawer
@@ -7104,13 +7663,19 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     azaan5:Object.freeze([0.00,6.33,27.57,37.17,57.51,71.22,96.42,109.35,147.61,163.66,192.92,197.58,211.7746])
   });
 
-  const state={phase:'idle',generation:0,token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'azaan1'),prayer:'',source:'',occurrenceKey:'',schedulerAttemptGeneration:0,raf:0,lastStopAt:0,lastCue:-1,pendingCleanup:null,pendingTimer:0,mediaCleanup:null};
+  const POST_AZAAN_DUA=Object.freeze({
+    url:'./assets/audio/dua-after-azaan.wav',
+    ar:'اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ',
+    en:'O Allah, Lord of this perfect call and the established prayer, grant Muhammad the intercession and favor, and raise him to the honored station You have promised him.'
+  });
+
+  const state={phase:'idle',stage:'',generation:0,token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'doha'),prayer:'',source:'',occurrenceKey:'',schedulerAttemptGeneration:0,raf:0,lastStopAt:0,lastCue:-1,pendingCleanup:null,pendingTimer:0,mediaCleanup:null};
   window.aslimaPlaybackState=state;
   window.ASLIMA_AZAAN_CUES=CUE_SECONDS;
   window.ASLIMA_AZAAN_VISUAL_SEQUENCE=VISUAL_SEQUENCE.slice();
 
-  function normalize(v){return window.normalizeAzaanVoiceId?window.normalizeAzaanVoiceId(v):(VOICES[v]?v:'azaan1');}
-  function voice(id){return VOICES[normalize(id)]||VOICES.azaan1;}
+  function normalize(v){return window.normalizeAzaanVoiceId?window.normalizeAzaanVoiceId(v):(VOICES[v]?v:'doha');}
+  function voice(id){return VOICES[normalize(id)]||VOICES.doha;}
   function setPhase(v){state.phase=v;document.documentElement.dataset.azaanPlayback=v;try{window.dispatchEvent(new CustomEvent('aslima:playback-state',{detail:{phase:v,generation:state.generation}}));}catch(_error){}}
   function overlay(show){
     const el=document.getElementById('adhanOverlay');if(el)el.classList.toggle('show',!!show);
@@ -7128,7 +7693,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function clearMediaListeners(){const cleanup=state.mediaCleanup;state.mediaCleanup=null;if(typeof cleanup==='function')try{cleanup();}catch(_error){}}
   function beginSession(source,occurrenceKey,prayer,phase){
     clearPending();clearMediaListeners();
-    state.generation+=1;state.token=state.generation;state.source=String(source||'local-test');state.occurrenceKey=String(occurrenceKey||'');state.schedulerAttemptGeneration=0;state.prayer=String(prayer||'');setPhase(phase||'loading');
+    state.generation+=1;state.token=state.generation;state.source=String(source||'local-test');state.occurrenceKey=String(occurrenceKey||'');state.schedulerAttemptGeneration=0;state.prayer=String(prayer||'');state.stage='azaan';setPhase(phase||'loading');
     return state.generation;
   }
   const controller={
@@ -7171,6 +7736,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function startVisual(prayer,id){
     clearVisual();
     const lines=visualLines();
+    if(voice(id).visualMode==='simple'){renderLine(lines[0],0);return;}
     let schedule;
     try{schedule=boundaries(id,lines.length,a.duration);}catch(err){console.error(err);renderLine(lines[0],0);return;}
     const tick=()=>{
@@ -7181,19 +7747,38 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     };
     tick();
   }
-  function load(id,token){return new Promise((resolve,reject)=>{
-    let done=false,timer=0;const v=voice(id);
+  function loadAsset(url,token,label,result){return new Promise((resolve,reject)=>{
+    let done=false,timer=0;
     const clean=()=>{clearTimeout(timer);if(state.pendingTimer===timer)state.pendingTimer=0;a.removeEventListener('canplay',ok);a.removeEventListener('loadedmetadata',ok);a.removeEventListener('error',bad);state.pendingCleanup=null;};
-    const finish=(err)=>{if(done)return;done=true;clean();if(token!==state.token)return reject(new Error('cancelled'));err?reject(err):resolve(v);};
-    const ok=()=>finish();const bad=()=>finish(new Error('Local audio failed: '+v.url));
-    try{a.pause();a.removeAttribute('src');a.load();a.preload='auto';a.src=v.url;a.addEventListener('canplay',ok);a.addEventListener('loadedmetadata',ok);a.addEventListener('error',bad);state.pendingCleanup=()=>finish(new Error('cancelled'));a.load();if(a.readyState>=1){ok();return;}timer=setTimeout(()=>a.readyState>=1?ok():bad(),10000);state.pendingTimer=timer;}catch(e){finish(e);}
+    const finish=(err)=>{if(done)return;done=true;clean();if(token!==state.token)return reject(new Error('cancelled'));err?reject(err):resolve(result===undefined?url:result);};
+    const ok=()=>finish();const bad=()=>finish(new Error('Local audio failed: '+String(label||url)));
+    try{a.pause();a.removeAttribute('src');a.load();a.preload='auto';a.src=url;a.addEventListener('canplay',ok);a.addEventListener('loadedmetadata',ok);a.addEventListener('error',bad);state.pendingCleanup=()=>finish(new Error('cancelled'));a.load();if(a.readyState>=1){ok();return;}timer=setTimeout(()=>a.readyState>=1?ok():bad(),10000);state.pendingTimer=timer;}catch(e){finish(e);}
   });}
-  function bindMediaLifecycle(token){
+  function load(id,token,prayer){const v=voice(id),url=window.getAzaanVoiceUrl?window.getAzaanVoiceUrl(id,prayer):v.url;return loadAsset(url,token,v.id,v);}
+  function finishPlayback(token){
+    if(token!==state.token)return;
+    clearMediaListeners();clearVisual();overlay(false);state.stage='';setPhase('idle');state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;
+  }
+  async function playPostAzaanDua(token){
+    if(token!==state.token)return false;
+    clearVisual();state.stage='dua';setPhase('dua-loading');
+    const op=document.getElementById('overlayPrayer');if(op)op.textContent='DU‘A AFTER AZAAN';
+    renderLine(POST_AZAAN_DUA,'dua');overlay(true);
+    try{
+      await loadAsset(POST_AZAAN_DUA.url,token,'Du‘a after Azaan');if(token!==state.token)return false;
+      bindMediaLifecycle(token,'dua');a.muted=false;a.currentTime=0;await a.play();if(token!==state.token)return false;
+      setPhase('dua-playing');showToast('Du‘a after Azaan');return true;
+    }catch(error){
+      if(token===state.token){console.error(error);showToast('Du‘a audio could not play');finishPlayback(token);}
+      return false;
+    }
+  }
+  function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
     const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
-    const ended=()=>{if(!owns()||state.phase!=='playing'||!a.ended)return;clean();clearVisual();overlay(false);setPhase('idle');state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;};
-    const failed=()=>{if(!owns()||(state.phase!=='loading'&&state.phase!=='playing'))return;clean();try{a.pause();a.currentTime=0;}catch(_error){}clearVisual();overlay(false);setPhase('idle');state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;showToast('Local Azaan audio could not be opened');};
+    const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){void playPostAzaanDua(token);return;}finishPlayback(token);};
+    const failed=()=>{if(!owns()||state.stage!==stage)return;clean();try{a.pause();a.currentTime=0;}catch(_error){}showToast(stage==='dua'?'Du‘a audio could not be opened':'Local Azaan audio could not be opened');finishPlayback(token);};
     a.addEventListener('ended',ended);a.addEventListener('error',failed);state.mediaCleanup=clean;
   }
   window.playAzaan=async function(prayerName,opts){
@@ -7203,7 +7788,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     const occurrenceKey=source==='automatic-scheduler'?String(opts.occurrenceKey||''):'';
     const token=beginSession(source,occurrenceKey,prayer,'loading'),id=normalize(state.voice);state.voice=id;state.schedulerAttemptGeneration=source==='automatic-scheduler'?Number(opts.attemptGeneration)||0:0;overlay(false);clearVisual();
     try{
-      await load(id,token);if(token!==state.token)return false;bindMediaLifecycle(token);a.muted=false;a.currentTime=0;await a.play();
+      await load(id,token,prayer);if(token!==state.token)return false;bindMediaLifecycle(token,'azaan');a.muted=false;a.currentTime=0;await a.play();
       if(token!==state.token)return false;
       setPhase('playing');const op=document.getElementById('overlayPrayer');if(op)op.textContent=String(prayer).toUpperCase();overlay(true);startVisual(prayer,id);showToast('Azaan playing for '+prayer);return true;
     }catch(err){if(token===state.token){try{a.pause();a.currentTime=0;}catch(e){}setPhase('idle');overlay(false);showToast('Azaan could not play — local audio error');console.error(err);}return false;}
@@ -7213,12 +7798,12 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     const now=Date.now(),source=state.source,occurrenceKey=state.occurrenceKey,attemptGeneration=state.schedulerAttemptGeneration;state.lastStopAt=now;controller.cancelAll();++azaanAudioFallbackGeneration;setPhase('stopping');clearVisual();
     if(source==='automatic-scheduler'&&occurrenceKey&&attemptGeneration&&window.ASLIMAAzaanScheduler&&typeof window.ASLIMAAzaanScheduler.cancelOccurrence==='function')window.ASLIMAAzaanScheduler.cancelOccurrence(occurrenceKey,attemptGeneration,'user-stop');
     try{a.pause();a.currentTime=0;a.removeAttribute('src');a.load();}catch(e){}
-    state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;overlay(false);setPhase('idle');showToast('Azaan stopped');return true;
+    state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;state.stage='';overlay(false);setPhase('idle');showToast('Azaan stopped');return true;
   };
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=961').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=965').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
