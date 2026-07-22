@@ -356,7 +356,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v964 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
+test('v966 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
-<title>ASLIMA V9.1.49</title>
+<title>ASLIMA V9.1.50</title>
 <script src="./assets/js/runtime-diagnostics-v960.js?v=961"></script>
 <style>
 :root{
@@ -3716,6 +3716,36 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 </style>
 
 
+<style id="aslima-v966-bottom-dock-viewport-fit">
+/* Keep expanded Jumu'ah and supplementary-prayer details inside short kiosk viewports. */
+.app{
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+}
+.left,.right,.bottom{
+  min-height:0!important;
+}
+.bottom{
+  padding-bottom:max(0px,env(safe-area-inset-bottom,0px))!important;
+}
+.bottom-dock,
+.bottom-dock.detail-open{
+  transform:none!important;
+}
+.bottom-dock.detail-open .dock-detail-area{
+  max-height:min(26vh,220px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+@media (max-height:650px){
+  .bottom-dock.detail-open .dock-detail-area{
+    max-height:min(24vh,150px);
+  }
+}
+</style>
+
+
 <style id="aslima-v9148-timing-integrity-ui">
 .timing-health{display:inline-flex;align-items:center;gap:.42vw;justify-content:flex-end;color:rgba(255,244,220,.76);font-size:clamp(9px,.72vw,12px);font-weight:760;letter-spacing:.12em;white-space:nowrap;margin-bottom:.45vh;text-shadow:0 1px 8px rgba(0,0,0,.35)}
 .timing-health-dot{width:7px;height:7px;border-radius:50%;background:#b7a98d;box-shadow:0 0 8px rgba(183,169,141,.28)}
@@ -4092,12 +4122,13 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
           <button type="button" id="findNearbyMasjids">⌖ Find Nearby</button>
         </div>
         <div class="nearby-masjid-panel" id="nearbyMasjidPanel" hidden>
-          <div class="nearby-masjid-privacy">Use this tablet’s location, or search a US ZIP code. Location is requested only when you choose Find Nearby.</div>
+          <div class="nearby-masjid-privacy">Save a ZIP/home area here, or send a home area from the phone Admin page.</div>
+          <div class="nearby-home-area" id="nearbyHomeArea">Home area not set · enter a ZIP code below</div>
           <div class="nearby-masjid-search-actions">
-            <button type="button" id="useTabletMasjidLocation">Use Tablet Location</button>
-            <form id="masjidZipForm"><label for="masjidZipCode">Or ZIP code</label><div><input id="masjidZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="75062" aria-label="US ZIP code"><button type="submit">Search</button></div></form>
+            <button type="button" id="useTabletMasjidLocation">Use Saved Area</button>
+            <form id="masjidZipForm"><label for="masjidZipCode">Set home ZIP code</label><div><input id="masjidZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="75062" aria-label="US ZIP code"><button type="submit">Save & Search</button></div></form>
           </div>
-          <div class="nearby-masjid-status" id="nearbyMasjidStatus">Allow location access to find nearby masjids.</div>
+          <div class="nearby-masjid-status" id="nearbyMasjidStatus">Enter a ZIP code once; the tablet will reuse it without GPS permission.</div>
           <div class="nearby-masjid-results" id="nearbyMasjidResults"></div>
           <a class="nearby-masjid-attribution" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">Nearby results © OpenStreetMap contributors</a>
           <button type="button" class="nearby-masjid-cancel" id="closeNearbyMasjids">Cancel</button>
@@ -4173,7 +4204,7 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
         <div class="timing-source-about">
           <div class="timing-source-about-title">About the Sources</div>
           <div class="timing-source-about-text">
-            VRIC provides official local prayer and Jumu’ah timings. Location mode calculates Azaan times using this tablet’s GPS/browser location and astronomical prayer-time data.
+            VRIC provides official local prayer and Jumu’ah timings. Location mode uses a saved ZIP/home area for calculated prayer times.
           </div>
         </div>
       </div>
@@ -4236,6 +4267,7 @@ const CONFIG={
   timingSource:'vric',
   selectedMasjidId:'vric',
   selectedMasjid:null,
+  homeLocation:null,
   localTimingSelectedAt:0,
   masjidSearchProxyUrl:'https://aslima-masjid-search.aslima-azaan.workers.dev/nearby',
   masjidPresets:[
@@ -5073,6 +5105,8 @@ function loadTimingSourcePrefs(){
       if(saved.selectedMasjid&&typeof saved.selectedMasjid==='object'&&Number.isFinite(Number(saved.selectedMasjid.latitude))&&Number.isFinite(Number(saved.selectedMasjid.longitude))){
         CONFIG.selectedMasjid={id:String(saved.selectedMasjid.id||''),name:String(saved.selectedMasjid.name||'Selected masjid'),latitude:Number(saved.selectedMasjid.latitude),longitude:Number(saved.selectedMasjid.longitude),website:String(saved.selectedMasjid.website||''),officialProvider:String(saved.selectedMasjid.officialProvider||''),discoverySource:String(saved.selectedMasjid.discoverySource||'')};
       }
+      const savedHome=normalizeHomeLocation(saved.homeLocation);
+      if(savedHome){CONFIG.homeLocation=savedHome;CONFIG.geoLat=savedHome.latitude;CONFIG.geoLon=savedHome.longitude;}
       if(saved.city)CONFIG.city=saved.city;
       if(saved.country)CONFIG.country=saved.country;
       if(saved.lat&&saved.lon){CONFIG.geoLat=saved.lat;CONFIG.geoLon=saved.lon;}
@@ -5087,6 +5121,7 @@ function saveTimingSourcePrefs(){
       mode:CONFIG.timingSource,
       masjidId:CONFIG.selectedMasjidId,
       selectedMasjid:CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id?{id:CONFIG.selectedMasjid.id,name:CONFIG.selectedMasjid.name,latitude:CONFIG.selectedMasjid.latitude,longitude:CONFIG.selectedMasjid.longitude,website:CONFIG.selectedMasjid.website||'',officialProvider:CONFIG.selectedMasjid.officialProvider||'',discoverySource:CONFIG.selectedMasjid.discoverySource||''}:null,
+      homeLocation:CONFIG.homeLocation,
       localTimingSelectedAt:Number(CONFIG.localTimingSelectedAt)||0,
       city:CONFIG.city,
       country:CONFIG.country,
@@ -5120,6 +5155,25 @@ function getDevicePosition(){
       {enableHighAccuracy:true,timeout:12000,maximumAge:10*60*1000}
     );
   });
+}
+
+function normalizeHomeLocation(value){
+  if(!value||typeof value!=='object'||Array.isArray(value))return null;
+  const latitude=Number(value.latitude),longitude=Number(value.longitude);
+  if(!Number.isFinite(latitude)||latitude<-90||latitude>90||!Number.isFinite(longitude)||longitude<-180||longitude>180)return null;
+  const postalCode=/^\d{5}$/.test(String(value.postalCode||''))?String(value.postalCode):'';
+  const source=['zip','phone'].includes(String(value.source||''))?String(value.source):'saved';
+  return {latitude:Math.round(latitude*1000)/1000,longitude:Math.round(longitude*1000)/1000,label:String(value.label||postalCode||'Saved home area').slice(0,90),postalCode,source,updatedAt:Math.max(0,Number(value.updatedAt)||0)};
+}
+
+function applyHomeLocation(value){
+  const home=normalizeHomeLocation(value);
+  if(!home)return false;
+  CONFIG.homeLocation=home;
+  CONFIG.geoLat=home.latitude;
+  CONFIG.geoLon=home.longitude;
+  saveTimingSourcePrefs();
+  return true;
 }
 
 function alAdhanDatasetFromResponse(response,label,options){
@@ -5255,19 +5309,20 @@ async function syncDeviceLocation(){
     return true;
   }
   let pos=null;
-  try{pos=await getDevicePosition();}catch(locationError){
+  const savedHome=normalizeHomeLocation(CONFIG.homeLocation);
+  if(savedHome){
+    pos={lat:savedHome.latitude,lon:savedHome.longitude};
+  }else try{pos=await getDevicePosition();}catch(locationError){
     if(Number.isFinite(Number(CONFIG.geoLat))&&Number.isFinite(Number(CONFIG.geoLon))){
       pos={lat:Number(CONFIG.geoLat),lon:Number(CONFIG.geoLon)};
     }else{
-      await syncAlAdhanByCity();
-      renderLocationControls();
-      return true;
+      throw new Error('Set a tablet home ZIP code or send a location from the phone Admin page');
     }
   }
   CONFIG.geoLat=pos.lat;
   CONFIG.geoLon=pos.lon;
   saveTimingSourcePrefs();
-  await syncAlAdhanByCoordinates(pos.lat,pos.lon,'Calculated from this tablet location',CONFIG.method);
+  await syncAlAdhanByCoordinates(pos.lat,pos.lon,savedHome?`Calculated for ${savedHome.label}`:'Calculated from this tablet location',CONFIG.method);
   renderLocationControls();
   return true;
 }
@@ -5954,7 +6009,7 @@ function aslimaHealthPayload(online){
   const lastIssue=diagnostics.lastIssue&&typeof diagnostics.lastIssue==='object'?diagnostics.lastIssue:{};
   return {
     online:online!==false&&navigator.onLine!==false,
-    appVersion:'961',
+    appVersion:'966',
     integrationVersion:document.documentElement.dataset.aslimaIntegration||'961',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
@@ -6017,6 +6072,13 @@ function applyAslimaRemoteSettings(data){
   if(!data || typeof data!=='object')return;
   try{
     const remoteTimings=aslimaRemoteCleanTimings(data.timings||{});
+    const remoteHome=normalizeHomeLocation(data.homeLocation);
+    const currentHome=normalizeHomeLocation(CONFIG.homeLocation);
+    if(remoteHome&&(!currentHome||remoteHome.updatedAt>currentHome.updatedAt)){
+      applyHomeLocation(remoteHome);
+      CONFIG.selectedMasjid=null;
+      CONFIG.selectedMasjidId='home-area';
+    }
     const localSelectedAt=Number(CONFIG.localTimingSelectedAt)||0;
     const localPreview=/^(?:localhost|127\.0\.0\.1)$/.test(location.hostname);
     const localGuardActive=localSelectedAt>0&&(localPreview||Date.now()-localSelectedAt<15000);
@@ -6053,7 +6115,7 @@ function applyAslimaRemoteSettings(data){
         lastVricSyncStatus=targetMode==='vric'?'Phone remote: VRIC live mode active':'Phone remote: calculated location mode active';
         render();
       }).catch(err=>{
-        lastVricSyncStatus=targetMode==='vric'?'Phone remote: VRIC refresh failed — using last saved VRIC times':'Phone remote: location refresh failed — check tablet location permission';
+        lastVricSyncStatus=targetMode==='vric'?'Phone remote: VRIC refresh failed — using last saved VRIC times':'Phone remote: location refresh failed — set the tablet home area';
         if(targetMode==='vric')loadCachedVricTimes();
         render();
       });
@@ -6518,7 +6580,7 @@ setTimeout(applyBurnInShift,12000);
       return {
         icon:'⌖',
         title:'Calculated from Location',
-        sub:'Using current location of this tablet'
+        sub:'Using the saved tablet home area'
       };
     }
     return {
@@ -6772,8 +6834,8 @@ setTimeout(applyBurnInShift,12000);
       saveTimingSourcePrefs();
       if(window.renderPremiumTimingSourceUI)window.renderPremiumTimingSourceUI();
       setOverlay(true);
-      msg(mode==='vric'?'Switching to VRIC live timings…':'Requesting tablet location…',true);
-      if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':'Using calculated tablet-location timings');
+      msg(mode==='vric'?'Switching to VRIC live timings…':'Loading saved home-area timings…',true);
+      if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':'Using saved home-area timings');
       await loadTimes();
       if(window.renderPremiumTimingSourceUI)window.renderPremiumTimingSourceUI();
       setOverlay(true);
@@ -6781,7 +6843,7 @@ setTimeout(applyBurnInShift,12000);
       setTimeout(()=>msg('',false),2800);
     }catch(e){
       setOverlay(true);
-      msg('Could not update timing source. Check connection/location permission.',true);
+      msg('Could not update timing source. Set a home ZIP code or use the phone Admin page.',true);
       if(typeof showToast==='function')showToast('Timing source update failed');
     }
   }
@@ -6860,12 +6922,12 @@ setTimeout(applyBurnInShift,12000);
   async function choose(source){
     try{
       CONFIG.timingSource=source; saveTimingSourcePrefs(); render(); setGlobalModal(true);
-      setStatus(source==='vric'?'Switching to VRIC live timings…':'Requesting tablet location…',true);
-      if(typeof showToast==='function')showToast(source==='vric'?'Using VRIC live timings':'Using calculated tablet-location timings');
+      setStatus(source==='vric'?'Switching to VRIC live timings…':'Loading saved home-area timings…',true);
+      if(typeof showToast==='function')showToast(source==='vric'?'Using VRIC live timings':'Using saved home-area timings');
       await loadTimes(); render(); setGlobalModal(true);
       setStatus('Timing source updated. Close when ready.',true);
       setTimeout(()=>setStatus('',false),2600);
-    }catch(e){setGlobalModal(true);setStatus('Could not update timing source. Check connection/location permission.',true);}
+    }catch(e){setGlobalModal(true);setStatus('Could not update timing source. Set a home ZIP code or use the phone Admin page.',true);}
   }
   function bind(){
     const opener=document.getElementById('openTimingSourceScreen');
@@ -7138,7 +7200,7 @@ setTimeout(applyBurnInShift,12000);
         render();
         const remoteSynced=await writeRemoteOptional({mode:mode});
         const chosen=CONFIG.selectedMasjid&&CONFIG.selectedMasjid.name;
-        if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':(chosen?'Using timings for '+chosen:'Using calculated tablet-location timings'));
+        if(typeof showToast==='function')showToast(mode==='vric'?'Using VRIC live timings':(chosen?'Using timings for '+chosen:'Using saved home-area timings'));
         try{await loadTimes();}catch(e){}
         if(typeof window.render==='function')window.render(); else if(typeof render==='function')render();
         if(!remoteSynced)setStatus('Mode is active on this tablet. Phone sync is unavailable in this preview.');
@@ -7185,16 +7247,21 @@ setTimeout(applyBurnInShift,12000);
   let results=[];
   function selected(){
     if(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id)return CONFIG.selectedMasjid;
+    const home=normalizeHomeLocation(CONFIG.homeLocation);
+    if(CONFIG.timingSource==='calculated-location'&&home)return {id:'home-area',name:home.label,latitude:home.latitude,longitude:home.longitude,officialProvider:'',discoverySource:'home-area'};
     return {id:'vric',name:'Valley Ranch Islamic Center',officialProvider:'vric'};
   }
   function renderSelected(){
     const item=selected();
     const name=document.getElementById('selectedMasjidName');
     const meta=document.getElementById('selectedMasjidMeta');
+    const homeLabel=document.getElementById('nearbyHomeArea');
+    const home=normalizeHomeLocation(CONFIG.homeLocation);
     if(name)name.textContent=item.name||'Selected masjid';
     const activeOfficial=item.id!=='vric'&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus)&&timingDataset.source&&timingDataset.source.label===item.name;
     const officialAdhan=activeOfficial&&timingDataset.source.kind==='official-adhan';
-    if(meta)meta.textContent=item.officialProvider==='vric'?'Official VRIC schedule':(officialAdhan?'Official website Azaan · Iqamah unavailable':(activeOfficial?'Official website Iqamah · calculated Adhan':(item.officialProvider==='ici'?'Official ICI schedule · calculated Sunrise':(item.website?'Official website checked first · calculated fallback':'Calculated Adhan at masjid location'))));
+    if(meta)meta.textContent=item.officialProvider==='vric'?'Official VRIC schedule':(item.discoverySource==='home-area'?'Calculated timings for saved home area':(officialAdhan?'Official website Azaan · Iqamah unavailable':(activeOfficial?'Official website Iqamah · calculated Adhan':(item.officialProvider==='ici'?'Official ICI schedule · calculated Sunrise':(item.website?'Official website checked first · calculated fallback':'Calculated Adhan at masjid location')))));
+    if(homeLabel)homeLabel.textContent=home?'Home area: '+home.label+' · saved on this tablet':'Home area not set · enter a ZIP code below';
   }
   function setStatus(text){const el=document.getElementById('nearbyMasjidStatus');if(el)el.textContent=text||'';}
   function renderResults(items){
@@ -7243,10 +7310,12 @@ setTimeout(applyBurnInShift,12000);
   async function findNearby(){
     const panel=document.getElementById('nearbyMasjidPanel');
     if(panel)panel.hidden=false;
-    setStatus('Requesting tablet location…');
+    setStatus('Loading your saved home area…');
     const host=document.getElementById('nearbyMasjidResults');if(host)host.replaceChildren();
     try{
-      const position=await getDevicePosition();
+      const home=normalizeHomeLocation(CONFIG.homeLocation);
+      if(!home)throw new Error('HOME_AREA_MISSING');
+      const position={lat:home.latitude,lon:home.longitude};
       setStatus('Searching nearby masjids…');
       if(!window.ASLIMAMasjidDiscovery)throw new Error('Discovery module unavailable');
       results=await window.ASLIMAMasjidDiscovery.discover({latitude:position.lat,longitude:position.lon,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl});
@@ -7255,7 +7324,7 @@ setTimeout(applyBurnInShift,12000);
       renderResults(results);
     }catch(error){
       const message=String(error&&error.message||'');
-      setStatus(/denied|permission/i.test(message)?'Location permission was not granted. Use Calculated or Manual mode, or try again.':'Nearby search is temporarily unavailable. Use Calculated or Manual mode and try again later.');
+      setStatus(message==='HOME_AREA_MISSING'?'Enter a ZIP code here, or set the tablet area from the phone Admin page.':'Nearby search is temporarily unavailable. Use Calculated or Manual mode and try again later.');
     }
   }
   async function findByZip(event){
@@ -7267,6 +7336,8 @@ setTimeout(applyBurnInShift,12000);
     try{
       if(!window.ASLIMAMasjidDiscovery)throw new Error('Discovery module unavailable');
       const found=await window.ASLIMAMasjidDiscovery.discoverPostal({postalCode,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl});
+      applyHomeLocation({latitude:found.area.latitude,longitude:found.area.longitude,label:found.area.label,postalCode:found.area.postalCode||postalCode,source:'zip',updatedAt:Date.now()});
+      renderSelected();
       const zipFallback={id:'postal-'+found.area.postalCode,name:'ZIP area '+found.area.label,latitude:Number(found.area.latitude),longitude:Number(found.area.longitude),address:'Calculated from ZIP-code location',distanceMiles:0,officialProvider:'',discoverySource:'zip-code'};
       results=[...(found.results||[]),zipFallback];
       if(found.results&&found.results.length)setStatus('Masjids near '+found.area.label+'. Select one, or use calculated times for the ZIP area.');
@@ -7285,7 +7356,7 @@ setTimeout(applyBurnInShift,12000);
     const useLocation=document.getElementById('useTabletMasjidLocation');
     const zipForm=document.getElementById('masjidZipForm');
     const host=document.getElementById('nearbyMasjidResults');
-    if(find&&!find.__aslimaBound){find.__aslimaBound=true;find.addEventListener('click',()=>{const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=false;setStatus('Choose tablet location or enter a ZIP code.');});}
+    if(find&&!find.__aslimaBound){find.__aslimaBound=true;find.addEventListener('click',()=>{const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=false;setStatus(normalizeHomeLocation(CONFIG.homeLocation)?'Use the saved home area, or replace it with a new ZIP code.':'Enter a ZIP code, or set the tablet area from the phone Admin page.');});}
     if(useLocation&&!useLocation.__aslimaBound){useLocation.__aslimaBound=true;useLocation.addEventListener('click',findNearby);}
     if(zipForm&&!zipForm.__aslimaBound){zipForm.__aslimaBound=true;zipForm.addEventListener('submit',findByZip);}
     if(close&&!close.__aslimaBound){close.__aslimaBound=true;close.addEventListener('click',()=>{const panel=document.getElementById('nearbyMasjidPanel');if(panel)panel.hidden=true;});}
@@ -7350,7 +7421,7 @@ try{
     <div class="global-source-status" id="globalTimingStatus"></div>
     <div class="global-source-about">
       <div class="global-source-about-title">About the Sources</div>
-      <div class="global-source-about-text">VRIC mode uses official VRIC timings when available. Location mode uses this tablet’s GPS/browser location and calculates Azaan times using astronomical prayer-time data.</div>
+      <div class="global-source-about-text">VRIC mode uses official VRIC timings when available. Location mode uses the saved tablet home area for calculated prayer times.</div>
     </div>
   </div>
 </div>
@@ -7492,6 +7563,7 @@ body.drawer-open #azaanDrawer.azaan-drawer{
 .nearby-masjid-panel{padding:11px 12px 12px;border-top:1px solid rgba(248,200,111,.13);background:rgba(0,0,0,.2);}
 .nearby-masjid-panel[hidden]{display:none!important;}
 .nearby-masjid-privacy,.nearby-masjid-status{color:rgba(255,247,223,.56);font-size:9px;line-height:1.4;}
+.nearby-home-area{margin-top:8px;padding:8px 9px;border:1px solid rgba(73,230,164,.18);border-radius:10px;background:rgba(73,230,164,.055);color:rgba(210,255,235,.84);font-size:9px;font-weight:750;line-height:1.35;}
 .nearby-masjid-status{margin:8px 0;color:rgba(255,247,223,.76);}
 .nearby-masjid-results{display:grid;gap:7px;max-height:230px;margin-top:8px;overflow-y:auto;overscroll-behavior:contain;}
 .nearby-masjid-result{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 10px;border:1px solid rgba(248,200,111,.18);border-radius:11px;background:rgba(255,255,255,.035);color:#fff;text-align:left;}
@@ -7803,7 +7875,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=965').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=966').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
