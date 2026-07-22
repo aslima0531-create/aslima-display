@@ -79,3 +79,11 @@ test('supplementary prayers provide accessible how-to-pray guidance',()=>{
   assert.match(index,/function closeSupplementaryPrayerInfo\(\)/);
   assert.match(index,/if\(e\.key==='Escape'\)[\s\S]*?closeSupplementaryPrayerInfo\(\)/);
 });
+
+test('expanded bottom dock remains inside short kiosk viewports',()=>{
+  assert.match(index,/id="aslima-v966-bottom-dock-viewport-fit"/);
+  assert.match(index,/grid-template-rows:auto minmax\(0,1fr\) auto!important/);
+  assert.match(index,/\.bottom-dock,\s*\.bottom-dock\.detail-open\{\s*transform:none!important/);
+  assert.match(index,/\.bottom-dock\.detail-open \.dock-detail-area\{[\s\S]*?max-height:min\(26vh,220px\)[\s\S]*?overflow-y:auto/);
+  assert.match(index,/@media \(max-height:650px\)\{[\s\S]*?max-height:min\(24vh,150px\)/);
+});

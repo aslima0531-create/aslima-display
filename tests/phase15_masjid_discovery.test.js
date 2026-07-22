@@ -149,7 +149,7 @@ test('drawer integration is opt-in, attributed, and separates official from calc
   assert.match(html,/id="findNearbyMasjids"/);
   assert.match(html,/#tabletManualTimingBox:not\(\[data-mode="calculated-location"\]\) \.nearby-masjid-card\{display:none!important;\}/);
   assert.match(html,/id="masjidZipForm"/);
-  assert.match(html,/Location is requested only when you choose Find Nearby/);
+  assert.match(html,/Save a ZIP\/home area here/);
   assert.match(html,/© OpenStreetMap contributors/);
   assert.match(html,/source\.textContent=item\.officialProvider\?'Official':\(item\.website\?'Website check':'Calculated'\)/);
   assert.match(html,/allowVricSchedule===false\?calculated:mergeVricScheduleIntoCalculated/);
@@ -195,6 +195,30 @@ test('selected masjid persists without storing the tablet discovery location',()
   assert.match(persisted[0],/longitude:CONFIG\.selectedMasjid\.longitude/);
   assert.match(persisted[0],/website:CONFIG\.selectedMasjid\.website/);
   assert.doesNotMatch(persisted[0],/deviceLatitude|deviceLongitude|searchLatitude|searchLongitude/);
+});
+
+test('saved home area replaces Fully-only geolocation for kiosk discovery',()=>{
+  const functionMatch=html.match(/(function normalizeHomeLocation\(value\)\{[\s\S]*?\n\})\n\nfunction applyHomeLocation/);
+  assert.ok(functionMatch,'home-location validator must be present');
+  const context={};vm.runInNewContext(functionMatch[1],context);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.normalizeHomeLocation({latitude:32.91854,longitude:-96.95904,label:'Irving, TX 75063',postalCode:'75063',source:'zip',updatedAt:12}))),{latitude:32.919,longitude:-96.959,label:'Irving, TX 75063',postalCode:'75063',source:'zip',updatedAt:12});
+  assert.equal(context.normalizeHomeLocation({latitude:120,longitude:0}),null);
+  assert.match(html,/homeLocation:CONFIG\.homeLocation/);
+  assert.match(html,/const savedHome=normalizeHomeLocation\(CONFIG\.homeLocation\)/);
+  assert.match(html,/if\(savedHome\)\{\s*pos=\{lat:savedHome\.latitude,lon:savedHome\.longitude\}/);
+  assert.match(html,/if\(!home\)throw new Error\('HOME_AREA_MISSING'\)/);
+  assert.match(html,/applyHomeLocation\(\{latitude:found\.area\.latitude,longitude:found\.area\.longitude/);
+  assert.doesNotMatch(html,/Use Tablet Location/);
+});
+
+test('phone admin can save ZIP or rounded phone location for the tablet',()=>{
+  const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+  assert.match(admin,/id="homeZipForm"/);
+  assert.match(admin,/id="usePhoneLocation"/);
+  assert.match(admin,/Math\.round\(latitude\*1000\)\/1000/);
+  assert.match(admin,/window\.ref\.update\(\{homeLocation:home,mode:'calculated-location'/);
+  assert.match(admin,/navigator\.geolocation\.getCurrentPosition/);
+  assert.match(admin,/HOME_LOCATION_PROXY/);
 });
 
 test('official website merge uses the production timing-map normalizer',()=>{
