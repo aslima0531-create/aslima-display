@@ -23,6 +23,11 @@ class VricUpdaterTests(unittest.TestCase):
         self.assertEqual(parsed["adhan"]["Dhuhr"], "13:34")
         self.assertEqual(parsed["iqamah"]["Isha"], "22:00")
         self.assertEqual(parsed["jumuah"], ["1:45 PM", "3:00 PM", "4:00 PM"])
+        self.assertEqual(parsed["jumuahSchedule"], [
+            {"adhan": "1:45 PM", "iqamah": "2:00 PM"},
+            {"adhan": "3:00 PM", "iqamah": "3:15 PM"},
+            {"adhan": "4:00 PM", "iqamah": "4:15 PM"},
+        ])
 
     def test_alternate_prayer_name_spellings(self):
         payload = FIXTURE.read_text().replace("Dhuhr", "Zuhr").replace("Maghrib", "Magrib").replace("Isha", "Ishaa")
@@ -61,13 +66,15 @@ class VricUpdaterTests(unittest.TestCase):
     def test_jumuah_retained_when_temporarily_unavailable(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "times.json"
-            output.write_text(json.dumps({"jumuah": ["1:45 PM", "3:00 PM", "4:00 PM"], "jumuahMeta": {"fetchedAt": "old", "source": "VRIC"}}))
+            retained_schedule = [{"adhan": "1:45 PM", "iqamah": "2:00 PM"}, {"adhan": "3:00 PM", "iqamah": "3:15 PM"}]
+            output.write_text(json.dumps({"jumuah": ["1:45 PM", "3:00 PM", "4:00 PM"], "jumuahSchedule": retained_schedule, "jumuahMeta": {"fetchedAt": "old", "source": "VRIC"}}))
             parsed = self.parsed()
             parsed["jumuah"] = []
             with mock.patch.object(updater, "OUTPUT", output):
                 updater.write_output(parsed, {"official_url": updater.OFFICIAL_URLS[0], "route_label": "test"})
             written = json.loads(output.read_text())
             self.assertEqual(written["jumuah"], ["1:45 PM", "3:00 PM", "4:00 PM"])
+            self.assertEqual(written["jumuahSchedule"], retained_schedule)
             self.assertEqual(written["jumuahMeta"]["status"], "retained")
 
     def test_stale_data_escalation(self):

@@ -10,12 +10,50 @@ const ROOT=path.resolve(__dirname,'..');
 const schedulerSource=fs.readFileSync(path.join(ROOT,'assets/js/azaan-scheduler-v953.js'),'utf8');
 const diagnosticsSource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-diagnostics-v960.js'),'utf8');
 const recoverySource=fs.readFileSync(path.join(ROOT,'assets/js/runtime-recovery-v959.js'),'utf8');
+const serviceWorkerSource=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(ROOT,'preview.html'),'utf8');
 const admin=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
 const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-controller">([\s\S]*?)<\/script>/)[1];
 const volumeSyncSource=html.match(/(function updateVolumeLabel\(\)\{[\s\S]*?)async function unlockAudio/)[1];
 const backupValidationSource=admin.match(/(function isBackupClock\(value\)\{[\s\S]*?)function formatClock/)[1];
+
+test('Doha voice maps every scheduled prayer to a local offline recording',()=>{
+  for(const prayer of ['fajr','dhuhr','asr','maghrib','isha']){
+    const file=`azaan-doha-${prayer}.mp3`;
+    assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
+    assert.match(html,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
+    assert.match(serviceWorkerSource,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
+  }
+  assert.match(html,/function load\(id,token,prayer\)[\s\S]*?getAzaanVoiceUrl\(id,prayer\)/);
+});
+
+test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
+  const pendingSource=html.match(/(let pendingAzaanVoiceSync=[\s\S]*?)\n\nfunction getAzaanVoice/)[1];
+  const saved=storage(new Map([['aslima_pending_azaan_voice','doha']]));
+  const context={localStorage:saved,pendingAzaanVoiceAtStartup:'doha',normalizeAzaanVoiceId:value=>String(value||'doha').replace(/\s+/g,'').toLowerCase()};
+  vm.runInNewContext(`${pendingSource};globalThis.result={stale:acceptRemoteAzaanVoice('azaan2'),matching:acceptRemoteAzaanVoice('doha'),stillPending:localStorage.getItem('aslima_pending_azaan_voice')};clearPendingAzaanVoiceSync('doha');`,context);
+  assert.equal(context.result.stale,false);
+  assert.equal(context.result.matching,true);
+  assert.equal(context.result.stillPending,'doha');
+  assert.equal(saved.getItem('aslima_pending_azaan_voice'),null);
+  assert.match(html,/if\(!acceptRemoteAzaanVoice\(id\)\)return/);
+});
+
+test('Firebase permits only the six known voice IDs from the tablet',()=>{
+  const rules=JSON.parse(fs.readFileSync(path.join(ROOT,'database.rules.json'),'utf8'));
+  const voiceRule=rules.rules.aslima.devices.home.settings.muezzin['.write'];
+  for(const id of ['doha','azaan1','azaan2','azaan3','azaan4','azaan5'])assert.match(voiceRule,new RegExp(`newData\\.val\\(\\) == '${id}'`));
+  assert.match(voiceRule,/newData\.isString\(\)/);
+  assert.doesNotMatch(voiceRule,/auth == null|\.write": true/);
+});
+
+test('phone admin recognizes Doha for selection, live sync, and backups',()=>{
+  assert.match(admin,/AZAAN_VOICES=\{doha:\{id:'doha',name:'Doha, Qatar'/);
+  assert.match(admin,/AZAAN_VOICE_ORDER=\['doha','azaan1','azaan2','azaan3','azaan4','azaan5'\]/);
+  assert.match(admin,/muezzin:'doha'/);
+  assert.match(admin,/if\(typeof settings\.muezzin!=='string'\|\|!AZAAN_VOICES\[settings\.muezzin\]\)/);
+});
 
 function storage(seed){
   const values=new Map(seed?Array.from(seed.entries()):[]);
@@ -199,6 +237,54 @@ test('obsolete production media error and ended callbacks cannot clear a newer s
   assert.equal(h.window.aslimaPlaybackState.prayer,'Asr');assert.equal(h.window.aslimaPlaybackState.phase,'playing');assert.equal(h.elements.get('adhanOverlay').classList.values.has('show'),true);
 });
 
+test('completed Azaan continues into the bundled post-Azaan dua with visual translation',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;
+  await h.window.playAzaan('Dhuhr',{source:'local-test',force:true});
+  h.audio.ended=true;h.audio.emit('ended');
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'dua');
+  assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');
+  assert.match(h.audio.src,/dua-after-azaan\.wav$/);
+  assert.match(h.elements.get('azaanArabic').textContent,/رَبَّ هَذِهِ الدَّعْوَةِ/);
+  assert.match(h.elements.get('azaanEnglish').textContent,/Lord of this perfect call/);
+  assert.equal(h.body.classList.values.has('azaan-playing'),true);
+});
+
+test('Stop cancels post-Azaan dua audio and closes the shared overlay',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;
+  await h.window.playAzaan('Dhuhr',{source:'local-test',force:true});
+  h.audio.ended=true;h.audio.emit('ended');await new Promise(resolve=>setImmediate(resolve));
+  h.window.stopAzaan();
+  assert.equal(h.window.aslimaPlaybackState.phase,'idle');
+  assert.equal(h.window.aslimaPlaybackState.stage,'');
+  assert.equal(h.audio.paused,true);
+  assert.equal(h.audio.src,'');
+  assert.equal(h.body.classList.values.has('azaan-playing'),false);
+});
+
+test('completed post-Azaan dua returns the playback controller to idle',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;
+  await h.window.playAzaan('Dhuhr',{source:'local-test',force:true});
+  h.audio.ended=true;h.audio.emit('ended');await new Promise(resolve=>setImmediate(resolve));
+  h.audio.ended=true;h.audio.emit('ended');
+  assert.equal(h.window.aslimaPlaybackState.phase,'idle');
+  assert.equal(h.window.aslimaPlaybackState.stage,'');
+  assert.equal(h.body.classList.values.has('azaan-playing'),false);
+});
+
+test('post-Azaan dua is bundled for offline service-worker playback',()=>{
+  assert.match(html,/url:'\.\/assets\/audio\/dua-after-azaan\.wav'/);
+  assert.match(serviceWorkerSource,/\.\/assets\/audio\/dua-after-azaan\.wav/);
+  assert.match(serviceWorkerSource,/\(mp3\|ogg\|wav\)/);
+});
+
+test('Azaan and dua Arabic use the premium Naskh typography with a fitted dua layout',()=>{
+  assert.match(html,/family=Noto\+Naskh\+Arabic:wght@400;500;600;700/);
+  assert.match(html,/\.adhan-overlay \.azaan-arabic\{[\s\S]*?font-family:"Noto Naskh Arabic"/);
+  assert.match(html,/\.adhan-overlay \.azaan-arabic\[data-azaan-cue="dua"\]\{[\s\S]*?font-size:clamp\(38px,4\.65vw,72px\)/);
+  assert.match(html,/\.adhan-overlay \.azaan-english\[data-azaan-cue="dua"\]/);
+});
+
 test('cancelOccurrence requires the exact active key and scheduler generation',async()=>{
   const h=schedulerHarness();let release;h.window.playAzaan=()=>new Promise(resolve=>{release=resolve;});const pending=h.scheduler.reconcile(at(13,0),'automatic');
   const active=h.scheduler.state.activeAttempt,key=active.occurrenceKey,generation=active.attemptGeneration;
@@ -270,7 +356,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v961 service-worker upgrade removes older caches and precaches diagnostics, recovery, and every Azaan recording',async()=>{
+test('v964 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -279,12 +365,13 @@ test('v961 service-worker upgrade removes older caches and precaches diagnostics
   vm.runInNewContext(source,{self,caches,fetch:async()=>{throw new Error('offline');},URL,Headers,Response,setTimeout:fn=>{fallbackRefresh=fn;return 1;},clearTimeout,console},{filename:'sw.js'});
   let installWork;handlers.install({waitUntil:value=>{installWork=value;}});await installWork;
   let activateWork;handlers.activate({waitUntil:value=>{activateWork=value;}});await activateWork;
-  assert.deepEqual(deleted,['aslima-v959-self-healing','aslima-v960-operational-alerts']);
+  assert.deepEqual(deleted,['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync']);
   assert.equal(messages.length,1);assert.equal(messages[0].type,'aslima-runtime-update');assert.equal(typeof fallbackRefresh,'function');
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v960.js'));
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
+  assert.ok(precache.includes('./assets/js/masjid-discovery-v962.js'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
 });
 
@@ -444,12 +531,18 @@ test('repeated lifecycle reconciliation does not register additional scheduler l
   h.scheduler.stop();
 });
 
-test('calculated and manual modes hide congregation-only presentation',()=>{
-  assert.match(html,/const congregationVisible=CONFIG\.timingSource==='vric'/);
-  assert.match(html,/zone\.hidden=!congregationVisible/);
-  assert.match(html,/body\[data-congregation-schedule="hidden"\] #prayerPanel \.iqamah-time/);
-  assert.match(html,/body\[data-congregation-schedule="hidden"\] #jumuahZone/);
-  assert.match(html,/body\[data-congregation-schedule="hidden"\] #prayerPanel \.ptime-group/);
+test('calculated and manual modes hide missing congregation data while verified websites may expose it',()=>{
+  assert.match(html,/function iqamahScheduleAvailable\(\)/);
+  assert.match(html,/\['official','cached'\]\.includes\(timingDataset\.runtimeStatus\)/);
+  assert.match(html,/function jumuahScheduleAvailable\(\)/);
+  assert.match(html,/zone\.hidden=!jumuahVisible/);
+  assert.match(html,/body\[data-iqamah-schedule="hidden"\] #prayerPanel \.iqamah-time/);
+  assert.match(html,/body\[data-jumuah-schedule="hidden"\] #jumuahZone/);
+  assert.match(html,/body\[data-iqamah-schedule="hidden"\] #prayerPanel \.ptime-group/);
+});
+
+test('VRIC mode keeps its verified Jumuah schedule visible',()=>{
+  assert.match(html,/hasJumuah&&\(CONFIG\.timingSource==='vric'\|\|officialSelected\)/);
 });
 
 test('calculated failure falls back and unavailable state still permits Manual mode',()=>{
@@ -457,7 +550,13 @@ test('calculated failure falls back and unavailable state still permits Manual m
   assert.match(html,/await syncAlAdhanByCity\(\);/);
   assert.match(html,/const hasCompleteManualSeed=\['Fajr','Dhuhr','Asr','Maghrib','Isha'\]\.every/);
   assert.match(html,/window\.aslimaRemoteManualTimings=hasCompleteManualSeed\?\{\.\.\.manual\}:null/);
-  assert.match(html,/writeRemote\(hasCompleteManualSeed\?\{mode:'manual',timings:manual\}:\{mode:'manual'\}\)/);
+  assert.match(html,/writeRemoteOptional\(hasCompleteManualSeed\?\{mode:'manual',timings:manual\}:\{mode:'manual'\}\)/);
+  assert.match(html,/Phone timing sync unavailable; local tablet change remains active/);
+  assert.match(html,/const localGuardActive=localSelectedAt>0&&\(localPreview\|\|Date\.now\(\)-localSelectedAt<15000\)/);
+  assert.match(html,/const preserveLocalMode=localGuardActive&&data\.mode&&data\.mode!==CONFIG\.timingSource/);
+  assert.match(html,/if\(!localGuardActive\)CONFIG\.localTimingSelectedAt=0/);
+  assert.match(html,/await writeRemote\(payload\);CONFIG\.localTimingSelectedAt=0/);
+  assert.match(html,/else if\(!preserveLocalMode&&\(data\.mode==='vric' \|\| data\.mode==='calculated-location'\)\)/);
 });
 
 test('admin remote uses Google authentication and contains no reusable PIN bypass',()=>{
@@ -495,7 +594,7 @@ test('database rules protect settings writes while preserving required tablet ac
   assert.match(home.settings.volume['.write'],/newData\.isNumber\(\)/);
   assert.match(home.settings.volume['.write'],/newData\.val\(\) >= 0/);
   assert.match(home.settings.volume['.write'],/newData\.val\(\) <= 1/);
-  assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','volume']);
+  assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','muezzin','volume']);
   assert.match(home.status.display['.read'],/auth\.token\.email/);
   assert.equal(home.status.display['.write'],true);
 });

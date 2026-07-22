@@ -31,6 +31,11 @@
     "3:00 PM",
     "4:00 PM"
   ],
+  "jumuahSchedule": [
+    {"adhan": "1:45 PM", "iqamah": "2:00 PM"},
+    {"adhan": "3:00 PM", "iqamah": "3:15 PM"},
+    {"adhan": "4:00 PM", "iqamah": "4:15 PM"}
+  ],
   "jumuahMeta": {
     "status": "verified",
     "fetchedAt": "2026-07-22T18:50:49Z",
