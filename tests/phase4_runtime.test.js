@@ -356,7 +356,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v966 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
+test('v967 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -486,6 +486,14 @@ test('phone health view reads only status and expires stale online heartbeats',(
   assert.doesNotMatch(admin,/ref\(STATUS_PATH\)\.(?:set|update|remove)\(/);
 });
 
+test('phone admin keeps diagnostics secondary and removes manual Jumuah editing',()=>{
+  assert.match(admin,/<details class="systemDetails" id="systemDetails">/);
+  assert.match(admin,/id="systemSummaryState"/);
+  assert.equal((admin.match(/class="tabBtn/g)||[]).length,3);
+  assert.match(admin,/id="manualTimesCard" hidden/);
+  assert.doesNotMatch(admin,/id="jumuahPage"|id="jum[123]"|Jumu’ah times updated/);
+});
+
 function backupValidator(){
   const context={PRAYERS:['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'],AZAAN:['Fajr','Dhuhr','Asr','Maghrib','Isha'],AZAAN_VOICES:{azaan1:{},azaan2:{},azaan3:{},azaan4:{},azaan5:{}},Number,Array,String,Error};
   vm.runInNewContext(`${backupValidationSource};globalThis.validateSettingsBackup=validateSettingsBackup;`,context,{filename:'backup-validator-production.js'});
@@ -497,7 +505,8 @@ function validBackup(){return {schemaVersion:1,app:'aslima-display',settings:{mo
 test('configuration backup validator accepts only the explicit safe settings schema',()=>{
   const validate=backupValidator(),input=validBackup();input.settings.command={type:'stopAzaan'};input.settings.diagnostics=['private'];input.extra='ignored';
   const result=validate(input);
-  assert.deepEqual(Object.keys(result).sort(),['azaanEnabled','jumuah','mode','muezzin','timings','volume']);
+  assert.deepEqual(Object.keys(result).sort(),['azaanEnabled','mode','muezzin','timings','volume']);
+  assert.equal('jumuah' in result,false);
   assert.equal('command' in result,false);assert.equal('diagnostics' in result,false);
 });
 
@@ -508,7 +517,6 @@ test('configuration restore rejects malformed, partial, unsafe, and nonchronolog
     value=>{delete value.settings.timings.Fajr;},
     value=>{value.settings.timings.Asr='25:10';},
     value=>{value.settings.timings.Dhuhr='04:00';},
-    value=>{value.settings.jumuah=['not-a-time'];},
     value=>{value.settings.azaanEnabled.Fajr='yes';},
     value=>{value.settings.volume=2;},
     value=>{value.settings.muezzin='remote-url';}

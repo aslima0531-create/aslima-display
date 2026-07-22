@@ -80,8 +80,13 @@ test('supplementary prayers provide accessible how-to-pray guidance',()=>{
   assert.match(index,/if\(e\.key==='Escape'\)[\s\S]*?closeSupplementaryPrayerInfo\(\)/);
 });
 
+test('Jumuah schedule and supplementary information affordance use restrained sizing',()=>{
+  assert.match(index,/\.supp-prayer-info-button\{[\s\S]*?width:clamp\(16px,1\.05vw,20px\)!important/);
+  assert.match(index,/\.jumuah-row-slot strong\{[\s\S]*?font-size:clamp\(11px,\.82vw,14px\)!important/);
+});
+
 test('expanded bottom dock remains inside short kiosk viewports',()=>{
-  assert.match(index,/id="aslima-v966-bottom-dock-viewport-fit"/);
+  assert.match(index,/id="aslima-v967-interface-polish"/);
   assert.match(index,/grid-template-rows:auto minmax\(0,1fr\) auto!important/);
   assert.match(index,/\.bottom-dock,\s*\.bottom-dock\.detail-open\{\s*transform:none!important/);
   assert.match(index,/\.bottom-dock\.detail-open \.dock-detail-area\{[\s\S]*?max-height:min\(26vh,220px\)[\s\S]*?overflow-y:auto/);

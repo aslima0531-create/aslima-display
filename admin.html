@@ -19,6 +19,7 @@
 .deviceHealth{border:1px solid var(--line);border-radius:22px;background:rgba(0,0,0,.20);padding:14px;margin-top:13px}.deviceHealthHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.deviceHealthTitle{font-size:13px;font-weight:950}.deviceHealthState{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:var(--muted)}.deviceHealthState::before{content:"";width:8px;height:8px;border-radius:50%;background:#777}.deviceHealth[data-state="online"] .deviceHealthState{color:var(--green)}.deviceHealth[data-state="online"] .deviceHealthState::before{background:var(--green);box-shadow:0 0 12px rgba(73,230,164,.7)}.deviceHealth[data-state="attention"] .deviceHealthState{color:#ffd27b}.deviceHealth[data-state="attention"] .deviceHealthState::before{background:#f0b54b;box-shadow:0 0 12px rgba(240,181,75,.6)}.deviceHealth[data-state="offline"] .deviceHealthState{color:var(--red)}.deviceHealth[data-state="offline"] .deviceHealthState::before{background:var(--red)}.deviceHealthGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.healthItem{border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:9px;background:rgba(255,255,255,.035)}.healthLabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:900}.healthValue{font-size:13px;font-weight:900;margin-top:4px;overflow-wrap:anywhere}
 .backupActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backupStatus{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}.backupStatus.error{color:var(--red)}.backupStatus.ok{color:var(--green)}.accountAction{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:800;padding:6px 0;text-decoration:underline;text-underline-offset:3px}.authError{min-height:18px;color:var(--red);font-size:12px;line-height:1.35;margin-top:10px}
 .homeAreaSummary{margin:10px 0 12px;padding:12px;border:1px solid rgba(73,230,164,.20);border-radius:17px;background:rgba(73,230,164,.055)}.homeAreaLabel{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:rgba(150,245,205,.72)}.homeAreaValue{margin-top:5px;font-size:15px;font-weight:950;color:#e9fff5}.homeAreaActions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.homeAreaActions input{min-width:0}.homeAreaActions button{padding:11px 13px;border-radius:15px}.homeAreaPhone{width:100%;margin-top:10px}.homeAreaStatus{min-height:18px;margin-top:9px;color:var(--muted);font-size:12px;line-height:1.35}.homeAreaStatus.ok{color:var(--green)}.homeAreaStatus.error{color:var(--red)}
+body{padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}.tabs{grid-template-columns:repeat(3,1fr)}.manualTimesCard[hidden]{display:none}.quickCommands{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quickCommands .reloadCommand{grid-column:1/-1}.volumeCard .row{grid-template-columns:1fr}.volumeCard input{margin-top:4px}.systemDetails{margin:14px 0;border:1px solid rgba(255,255,255,.10);border-radius:22px;background:rgba(255,255,255,.035);overflow:hidden}.systemDetails summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;padding:14px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:900}.systemDetails summary::-webkit-details-marker{display:none}.systemDetails summary::after{content:'›';color:var(--gold);font-size:19px;line-height:1;transition:transform .2s}.systemDetails[open] summary::after{transform:rotate(90deg)}.systemDetails .deviceHealth{margin:0;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0;background:rgba(0,0,0,.13)}.systemSummaryState{margin-left:auto;color:var(--green);font-size:11px}.systemDetails[data-state="attention"] .systemSummaryState{color:#ffd27b}.systemDetails[data-state="offline"] .systemSummaryState{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -35,37 +36,32 @@
       <div class="nextMain"><div class="nextName" id="nextPrayerName">—</div><div class="nextTime" id="nextPrayerTime">--:--</div></div>
       <div class="nextMeta"><span class="nextCountdown" id="nextPrayerCountdown">Calculating…</span><span id="heroVoice">Azaan 1 selected</span></div>
     </div>
-    <div class="deviceHealth" id="deviceHealth" data-state="waiting" aria-live="polite"><div class="deviceHealthHead"><div class="deviceHealthTitle">Tablet health</div><div class="deviceHealthState" id="deviceHealthState">Waiting for tablet</div></div><div class="deviceHealthGrid"><div class="healthItem"><div class="healthLabel">Last contact</div><div class="healthValue" id="healthLastSeen">—</div></div><div class="healthItem"><div class="healthLabel">Version</div><div class="healthValue" id="healthVersion">—</div></div><div class="healthItem"><div class="healthLabel">Timing</div><div class="healthValue" id="healthTiming">—</div></div><div class="healthItem"><div class="healthLabel">Playback</div><div class="healthValue" id="healthPlayback">—</div></div><div class="healthItem"><div class="healthLabel">Recovery</div><div class="healthValue" id="healthRecovery">—</div></div><div class="healthItem"><div class="healthLabel">Uptime</div><div class="healthValue" id="healthUptime">—</div></div><div class="healthItem"><div class="healthLabel">Issues · 24h</div><div class="healthValue" id="healthIssues">—</div></div><div class="healthItem"><div class="healthLabel">Last issue</div><div class="healthValue" id="healthLastIssue">—</div></div></div></div>
   </section>
 
   <nav class="tabs" aria-label="Admin sections">
     <button class="tabBtn active" data-tab="timesPage">Times</button>
     <button class="tabBtn" data-tab="azaanPage">Azaan</button><button class="tabBtn" data-tab="voicePage">Voice</button>
-    <button class="tabBtn" data-tab="jumuahPage">Jumu’ah</button>
   </nav>
 
   <section class="page active" id="timesPage">
-    <section class="card"><h2>Prayer Times</h2><div class="sectionHint" id="timeHint">Manual overrides are only editable in Manual mode. VRIC and Location modes control timings automatically.</div><div class="lockNote" id="timeLockNote">Timing edits are locked because automatic timing mode is active. Switch to Manual if you intentionally want to override the tablet.</div><div class="grid" id="timeGrid"></div></section>
     <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
     <section class="card"><h2>Tablet Home Area</h2><div class="sectionHint">Save a ZIP code, or use this phone’s location and send the rounded home area to the tablet.</div><div class="homeAreaSummary"><div class="homeAreaLabel">Saved tablet area</div><div class="homeAreaValue" id="homeAreaValue">Not set</div></div><form id="homeZipForm"><div class="homeAreaActions"><input type="text" id="homeZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="US ZIP code" aria-label="Tablet home ZIP code"><button class="ghost" type="submit">Save ZIP</button></div></form><button class="primary homeAreaPhone" id="usePhoneLocation" type="button">Use This Phone’s Location</button><div class="homeAreaStatus" id="homeAreaStatus" aria-live="polite">The tablet will reuse this area for calculated timings and nearby masjids.</div></section>
+    <section class="card manualTimesCard" id="manualTimesCard" hidden><h2>Manual Prayer Times</h2><div class="sectionHint" id="timeHint">Use these only when Manual mode is selected.</div><div class="grid" id="timeGrid"></div></section>
     <section class="card"><h2>Configuration Backup</h2><div class="sectionHint">Download a safe copy of timing mode, prayer settings, Azaan toggles, volume, and voice. Restore validates everything before changing the tablet.</div><div class="backupActions"><button class="ghost" id="exportBackup" type="button">Export Backup</button><button class="ghost" id="restoreBackup" type="button">Restore Backup</button></div><input id="backupFile" type="file" accept="application/json,.json" hidden><div class="backupStatus" id="backupStatus" aria-live="polite"></div></section>
+    <details class="systemDetails" id="systemDetails"><summary><span>Device details</span><span class="systemSummaryState" id="systemSummaryState">Waiting</span></summary><div class="deviceHealth" id="deviceHealth" data-state="waiting" aria-live="polite"><div class="deviceHealthHead"><div class="deviceHealthTitle">Tablet health</div><div class="deviceHealthState" id="deviceHealthState">Waiting for tablet</div></div><div class="deviceHealthGrid"><div class="healthItem"><div class="healthLabel">Last contact</div><div class="healthValue" id="healthLastSeen">—</div></div><div class="healthItem"><div class="healthLabel">Version</div><div class="healthValue" id="healthVersion">—</div></div><div class="healthItem"><div class="healthLabel">Timing</div><div class="healthValue" id="healthTiming">—</div></div><div class="healthItem"><div class="healthLabel">Playback</div><div class="healthValue" id="healthPlayback">—</div></div><div class="healthItem"><div class="healthLabel">Recovery</div><div class="healthValue" id="healthRecovery">—</div></div><div class="healthItem"><div class="healthLabel">Uptime</div><div class="healthValue" id="healthUptime">—</div></div><div class="healthItem"><div class="healthLabel">Issues · 24h</div><div class="healthValue" id="healthIssues">—</div></div><div class="healthItem"><div class="healthLabel">Last issue</div><div class="healthValue" id="healthLastIssue">—</div></div></div></div></details>
   </section>
 
   <section class="page" id="azaanPage">
     <section class="card"><h2>Azaan Toggles</h2><div class="sectionHint">Control which prayers play Azaan on the tablet.</div><div class="grid" id="azaanGrid"></div></section>
+    <section class="card"><h2>Quick Commands</h2><div class="sectionHint">Control playback or safely refresh the display.</div><div class="quickCommands"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button><button class="ghost reloadCommand" id="reloadDisplay" type="button">Reload Tablet Display</button></div><div class="small">Reload waits until Azaan playback is idle.</div></section>
   </section>
 
 
   <section class="page" id="voicePage">
     <section class="card"><h2>Azaan Voice</h2><div class="sectionHint">Choose the Azaan recording used by the tablet. Selection syncs immediately.</div><div class="voiceGrid" id="voiceGrid"></div></section>
-    <section class="card"><h2>Volume & Quick Commands</h2><div class="row"><div><div class="name">Tablet Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70"></div><div style="height:11px"></div><div class="miniRow"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button></div><div style="height:10px"></div><button class="ghost" id="reloadDisplay" type="button" style="width:100%">Reload Tablet Display</button><div class="small">Commands are sent directly to the tablet through Firebase. Reload waits until Azaan playback is idle.</div></section>
-  </section>
-
-  <section class="page" id="jumuahPage">
-    <section class="card"><h2>Jumu’ah Times</h2><div class="sectionHint">These display on the tablet as Friday prayer options.</div><div class="grid"><div class="row"><div><div class="name">Jumu’ah 1</div></div><input type="text" id="jum1" placeholder="1:45 PM"></div><div class="row"><div><div class="name">Jumu’ah 2</div></div><input type="text" id="jum2" placeholder="3:00 PM"></div><div class="row"><div><div class="name">Jumu’ah 3</div></div><input type="text" id="jum3" placeholder="4:00 PM"></div></div></section>
+    <section class="card volumeCard"><h2>Tablet Volume</h2><div class="sectionHint">Changes sync while you drag.</div><div class="row"><div><div class="name">Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70" aria-label="Tablet Azaan volume"></div></section>
   </section>
 </div>
-<div class="bottomBar"><div class="bottomInner"><button class="ghost" id="goTimes">Edit Times</button></div></div>
 <div class="toast" id="toast">Saved</div>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -100,16 +96,13 @@ function validateSettingsBackup(input){
  if(!['vric','calculated-location','manual'].includes(settings.mode))throw new Error('Timing mode is invalid');
  const timings={};for(const prayer of PRAYERS){if(!isBackupClock(settings.timings&&settings.timings[prayer]))throw new Error(prayer+' time is invalid');timings[prayer]=settings.timings[prayer]}
  for(let index=1;index<PRAYERS.length;index++)if(backupMinutes(timings[PRAYERS[index]])<=backupMinutes(timings[PRAYERS[index-1]]))throw new Error('Prayer times must be chronological');
- if(!Array.isArray(settings.jumuah)||settings.jumuah.length>4)throw new Error('Jumu’ah times are invalid');
- const jumuah=settings.jumuah.map(value=>String(value||'').trim().toUpperCase());
- if(jumuah.some(value=>!/^(?:0?[1-9]|1[0-2]):[0-5]\d\s?(?:AM|PM)$/.test(value)))throw new Error('Jumu’ah time format is invalid');
  const azaanEnabled={};for(const prayer of AZAAN){if(typeof (settings.azaanEnabled&&settings.azaanEnabled[prayer])!=='boolean')throw new Error(prayer+' Azaan setting is invalid');azaanEnabled[prayer]=settings.azaanEnabled[prayer]}
  if(typeof settings.volume!=='number'||!Number.isFinite(settings.volume)||settings.volume<0||settings.volume>1)throw new Error('Volume is invalid');
  if(typeof settings.muezzin!=='string'||!AZAAN_VOICES[settings.muezzin])throw new Error('Azaan voice is invalid');
- return {mode:settings.mode,timings,jumuah,azaanEnabled,volume:settings.volume,muezzin:settings.muezzin};
+ return {mode:settings.mode,timings,azaanEnabled,volume:settings.volume,muezzin:settings.muezzin};
 }
 function currentBackup(){
- const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,jumuah:state.jumuah,azaanEnabled:state.azaanEnabled,volume:Number(state.volume),muezzin:state.muezzin}});
+ const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,azaanEnabled:state.azaanEnabled,volume:Number(state.volume),muezzin:state.muezzin}});
  return {schemaVersion:1,app:'aslima-display',exportedAt:new Date().toISOString(),settings};
 }
 function setBackupStatus(message,kind){const element=$('backupStatus');element.textContent=message||'';element.className='backupStatus '+(kind||'')}
@@ -121,7 +114,7 @@ async function restoreSettingsBackup(file){
  const parsed=JSON.parse(await file.text());const restored=validateSettingsBackup(parsed);
  if(!window.ref)throw new Error('Phone is not connected to Firebase');
  if(!window.confirm('Restore this backup and replace the current tablet settings?'))return false;
- await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...DEFAULT,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled},jumuah:[...restored.jumuah]};render();return true;
+ await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...state,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled}};render();return true;
 }
 function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
 function formatDuration(milliseconds){const minutes=Math.max(0,Math.floor(Number(milliseconds||0)/60000));const days=Math.floor(minutes/1440),hours=Math.floor((minutes%1440)/60),rest=minutes%60;if(days)return days+'d '+hours+'h';if(hours)return hours+'h '+rest+'m';return minutes+'m'}
@@ -133,7 +126,9 @@ function renderTabletHealth(){
  const issueCount=Math.max(0,Number(health&&health.runtimeIssueCount)||0);
  const attention=online&&(issueCount>0||health.timingStatus==='unavailable'||health.recoveryStatus==='degraded'||health.schedulerStatus==='error');
  const panel=$('deviceHealth');panel.dataset.state=online?(attention?'attention':'online'):'offline';
+ const healthLabel=online?(attention?'Needs attention':'Healthy'):(lastSeen?'Offline':'Waiting');
  $('deviceHealthState').textContent=online?(attention?'Tablet needs attention':'Tablet healthy'):(lastSeen?'Tablet offline':'Waiting for tablet');
+ $('systemSummaryState').textContent=healthLabel;$('systemDetails').dataset.state=online?(attention?'attention':'online'):'offline';
  $('healthLastSeen').textContent=lastSeen?(age<65000?'Just now':Math.max(1,Math.round(age/60000))+' min ago'):'No heartbeat yet';
  $('healthVersion').textContent=health&&health.appVersion?'v'+health.appVersion:'—';
  $('healthTiming').textContent=health?(String(health.timingMode||'unknown')+' · '+String(health.timingStatus||'unknown')):'—';
@@ -158,8 +153,7 @@ function render(){
  $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeLocation').classList.toggle('active',state.mode==='calculated-location'); $('modeManual').classList.toggle('active',state.mode==='manual');
  const manualMode=state.mode==='manual';
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
- const lock=$('timeLockNote'); if(lock)lock.classList.toggle('show',!manualMode);
- $('jum1').value=state.jumuah[0]||''; $('jum2').value=state.jumuah[1]||''; $('jum3').value=state.jumuah[2]||'';
+ $('manualTimesCard').hidden=!manualMode;
  AZAAN.forEach(p=>{const el=$('az_'+p); if(el)el.checked=state.azaanEnabled[p]!==false});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
  $('modePill').textContent=(state.mode==='manual'?'● Manual':(state.mode==='calculated-location'?'● Location':'● VRIC Live'));
@@ -190,7 +184,6 @@ function collect(){
  if(state.mode==='manual'){
    PRAYERS.forEach(p=>{state.timings[p]=$('time_'+p).value||state.timings[p]||DEFAULT.timings[p]});
  }
- state.jumuah=[$('jum1').value,$('jum2').value,$('jum3').value].map(x=>x.trim()).filter(Boolean);
  AZAAN.forEach(p=>{state.azaanEnabled[p]=$('az_'+p).checked});
  state.volume=parseInt($('volume').value,10)/100; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
  return state;
@@ -198,7 +191,7 @@ function collect(){
 build(); render(); renderTabletHealth(); setInterval(updateNextPrayer,30000); setInterval(renderTabletHealth,30000);
 
 function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
-document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('goTimes').onclick=()=>switchTab('timesPage');
+document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('exportBackup').onclick=exportSettingsBackup;$('restoreBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};$('backupFile').onchange=async event=>{try{const restored=await restoreSettingsBackup(event.target.files&&event.target.files[0]);if(restored)setBackupStatus('Backup restored to the tablet.','ok')}catch(error){setBackupStatus(error.message||'Restore failed.','error')}};
 $('homeZipForm').onsubmit=saveHomeZip;$('usePhoneLocation').onclick=usePhoneLocation;
 function saveRemote(label){
@@ -224,7 +217,6 @@ function initializeAuthorizedRemote(){
  const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
  $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%';pushVolume()};
  PRAYERS.forEach(p=>{const el=$('time_'+p);if(el)el.onchange=()=>{if(state.mode!=='manual')return;state.timings[p]=el.value||state.timings[p];pushPatch({timings:state.timings},p+' time updated')}});
- ['jum1','jum2','jum3'].forEach((id,i)=>{const el=$(id);if(el)el.onchange=()=>{const j=[$('jum1').value,$('jum2').value,$('jum3').value].map(x=>x.trim()).filter(Boolean);state.jumuah=j;pushPatch({jumuah:j},'Jumu’ah times updated')}});
 }
 try{
  firebase.initializeApp(firebaseConfig);
