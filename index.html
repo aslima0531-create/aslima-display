@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#020909">
-<title>ASLIMA V9.1.50</title>
+<title>ASLIMA V9.1.51</title>
 <script src="./assets/js/runtime-diagnostics-v960.js?v=961"></script>
 <style>
 :root{
@@ -3716,7 +3716,7 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
 </style>
 
 
-<style id="aslima-v966-bottom-dock-viewport-fit">
+<style id="aslima-v967-interface-polish">
 /* Keep expanded Jumu'ah and supplementary-prayer details inside short kiosk viewports. */
 .app{
   grid-template-rows:auto minmax(0,1fr) auto!important;
@@ -3742,6 +3742,19 @@ body:not(.azaan-playing):not(.adhan-playing):not(.adhan-overlay-active).azaan-dr
   .bottom-dock.detail-open .dock-detail-area{
     max-height:min(24vh,150px);
   }
+}
+/* Keep secondary controls visually subordinate to prayer names and schedules. */
+.supp-prayer-info-button{
+  width:clamp(16px,1.05vw,20px)!important;
+  height:clamp(16px,1.05vw,20px)!important;
+  font-size:clamp(9px,.58vw,11px)!important;
+  border-color:rgba(241,189,101,.25)!important;
+}
+.jumuah-row-slot strong{
+  font-size:clamp(11px,.82vw,14px)!important;
+}
+@media (max-height:650px){
+  .jumuah-row-slot strong{font-size:13px!important}
 }
 </style>
 
@@ -6009,7 +6022,7 @@ function aslimaHealthPayload(online){
   const lastIssue=diagnostics.lastIssue&&typeof diagnostics.lastIssue==='object'?diagnostics.lastIssue:{};
   return {
     online:online!==false&&navigator.onLine!==false,
-    appVersion:'966',
+    appVersion:'967',
     integrationVersion:document.documentElement.dataset.aslimaIntegration||'961',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
@@ -7875,7 +7888,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=966').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=967').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
