@@ -1,9 +1,9 @@
 {
   "schemaVersion": 2,
-  "prayerDate": "2026-07-27",
+  "prayerDate": "2026-07-28",
   "timezone": "America/Chicago",
-  "fetchedAt": "2026-07-27T20:11:09Z",
-  "generatedAt": "2026-07-27T20:11:09Z",
+  "fetchedAt": "2026-07-28T16:54:46Z",
+  "generatedAt": "2026-07-28T16:54:46Z",
   "source": {
     "id": "vric",
     "label": "Valley Ranch Islamic Center",
@@ -12,12 +12,12 @@
     "route": "Rendered official page"
   },
   "adhan": {
-    "Fajr": "05:21",
-    "Sunrise": "06:38",
+    "Fajr": "05:22",
+    "Sunrise": "06:39",
     "Dhuhr": "13:34",
     "Asr": "17:17",
     "Maghrib": "20:30",
-    "Isha": "21:48"
+    "Isha": "21:47"
   },
   "iqamah": {
     "Fajr": "05:45",
@@ -47,18 +47,18 @@
   ],
   "jumuahMeta": {
     "status": "verified",
-    "fetchedAt": "2026-07-27T20:11:09Z",
-    "checkedAt": "2026-07-27T20:11:09Z",
+    "fetchedAt": "2026-07-28T16:54:46Z",
+    "checkedAt": "2026-07-28T16:54:46Z",
     "source": "VRIC rendered official page"
   },
   "scheduleMeta": {
     "status": "verified",
-    "prayerDate": "2026-07-27",
-    "fetchedAt": "2026-07-27T20:11:09Z",
+    "prayerDate": "2026-07-28",
+    "fetchedAt": "2026-07-28T16:54:46Z",
     "source": "VRIC"
   },
   "validation": {
     "valid": true,
-    "validatedAt": "2026-07-27T20:11:09Z"
+    "validatedAt": "2026-07-28T16:54:46Z"
   }
 }
