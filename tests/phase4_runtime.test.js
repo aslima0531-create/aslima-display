@@ -18,14 +18,12 @@ const controllerSource=html.match(/<script id="aslima-v925-exact-audio-cue-contr
 const volumeSyncSource=html.match(/(function updateVolumeLabel\(\)\{[\s\S]*?)async function unlockAudio/)[1];
 const backupValidationSource=admin.match(/(function isBackupClock\(value\)\{[\s\S]*?)function formatClock/)[1];
 
-test('Doha voice maps every scheduled prayer to a local offline recording',()=>{
-  for(const prayer of ['fajr','dhuhr','asr','maghrib','isha']){
-    const file=`azaan-doha-${prayer}.mp3`;
-    assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
-    assert.match(html,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
-    assert.match(serviceWorkerSource,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
-  }
-  assert.match(html,/function load\(id,token,prayer\)[\s\S]*?getAzaanVoiceUrl\(id,prayer\)/);
+test('recommended Mishary voice uses one full standalone offline Azaan',()=>{
+  const file='azaan-mishary-alafasy.mp3';
+  assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
+  assert.match(html,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
+  assert.match(serviceWorkerSource,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
+  assert.match(html,/doha:\{id:'doha',name:'Mishary Alafasy'[\s\S]*?url:'\.\/assets\/audio\/azaan-mishary-alafasy\.mp3'/);
 });
 
 test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
@@ -48,8 +46,8 @@ test('Firebase permits only the six known voice IDs from the tablet',()=>{
   assert.doesNotMatch(voiceRule,/auth == null|\.write": true/);
 });
 
-test('phone admin recognizes Doha for selection, live sync, and backups',()=>{
-  assert.match(admin,/AZAAN_VOICES=\{doha:\{id:'doha',name:'Doha, Qatar'/);
+test('phone admin recognizes Mishary for selection, live sync, and backups',()=>{
+  assert.match(admin,/AZAAN_VOICES=\{doha:\{id:'doha',name:'Mishary Alafasy'/);
   assert.match(admin,/AZAAN_VOICE_ORDER=\['doha','azaan1','azaan2','azaan3','azaan4','azaan5'\]/);
   assert.match(admin,/muezzin:'doha'/);
   assert.match(admin,/if\(typeof settings\.muezzin!=='string'\|\|!AZAAN_VOICES\[settings\.muezzin\]\)/);
@@ -244,7 +242,7 @@ test('completed Azaan continues into the bundled post-Azaan dua with visual tran
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.window.aslimaPlaybackState.stage,'dua');
   assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');
-  assert.match(h.audio.src,/dua-after-azaan\.wav$/);
+  assert.match(h.audio.src,/dua-after-azaan\.mp3$/);
   assert.match(h.elements.get('azaanArabic').textContent,/رَبَّ هَذِهِ الدَّعْوَةِ/);
   assert.match(h.elements.get('azaanEnglish').textContent,/Lord of this perfect call/);
   assert.equal(h.body.classList.values.has('azaan-playing'),true);
@@ -273,8 +271,8 @@ test('completed post-Azaan dua returns the playback controller to idle',async()=
 });
 
 test('post-Azaan dua is bundled for offline service-worker playback',()=>{
-  assert.match(html,/url:'\.\/assets\/audio\/dua-after-azaan\.wav'/);
-  assert.match(serviceWorkerSource,/\.\/assets\/audio\/dua-after-azaan\.wav/);
+  assert.match(html,/url:'\.\/assets\/audio\/dua-after-azaan\.mp3'/);
+  assert.match(serviceWorkerSource,/\.\/assets\/audio\/dua-after-azaan\.mp3/);
   assert.match(serviceWorkerSource,/\(mp3\|ogg\|wav\)/);
 });
 
@@ -356,7 +354,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v967 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
+test('v968 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -368,6 +366,8 @@ test('v967 service-worker upgrade removes older caches and precaches runtime, di
   assert.deepEqual(deleted,['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync']);
   assert.equal(messages.length,1);assert.equal(messages[0].type,'aslima-runtime-update');assert.equal(typeof fallbackRefresh,'function');
   for(let n=1;n<=5;n++)assert.ok(precache.includes(`./assets/audio/azaan-${n}.mp3`));
+  assert.ok(precache.includes('./assets/audio/azaan-mishary-alafasy.mp3'));
+  assert.ok(precache.includes('./assets/audio/dua-after-azaan.mp3'));
   assert.ok(precache.includes('./assets/js/azaan-scheduler-v953.js'));
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v960.js'));
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));

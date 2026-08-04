@@ -19,12 +19,13 @@ test('premium drawer uses the task-focused information architecture',()=>{
   assert.doesNotMatch(index,/Choose one task at a time\. This keeps the tablet drawer clean/);
 });
 
-test('Azaan voices use one compact selector with Doha recommended',()=>{
+test('Azaan voices use one compact selector with Mishary recommended',()=>{
   assert.match(index,/id="drawerMuezzinSelect" class="muezzin-select"/);
   assert.doesNotMatch(index,/id="drawerMuezzinCards"/);
   assert.match(index,/AZAAN_VOICE_ORDER=\['doha','azaan1','azaan2','azaan3','azaan4','azaan5'\]/);
   assert.match(index,/<optgroup label="Recommended">/);
   assert.match(index,/<optgroup label="Other voices">/);
+  assert.match(index,/name:'Mishary Alafasy',note:'Recommended · full standalone Azaan'/);
 });
 
 test('drawer connection status reflects Firebase success and failure',()=>{

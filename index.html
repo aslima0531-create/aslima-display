@@ -4333,7 +4333,7 @@ audio.volume=Number.isFinite(savedAzaanVolume)?Math.max(0,Math.min(1,savedAzaanV
 
 // ASLIMA V9.1.16 — deterministic Azaan voice/audio engine
 const AZAAN_VOICES={
-  doha:{id:'doha',name:'Doha, Qatar',note:'Recommended · prayer-specific recordings',url:'./assets/audio/azaan-doha-dhuhr.mp3',prayerUrls:{Fajr:'./assets/audio/azaan-doha-fajr.mp3',Dhuhr:'./assets/audio/azaan-doha-dhuhr.mp3',Asr:'./assets/audio/azaan-doha-asr.mp3',Maghrib:'./assets/audio/azaan-doha-maghrib.mp3',Isha:'./assets/audio/azaan-doha-isha.mp3'},visualMode:'simple'},
+  doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3',visualMode:'simple'},
   azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3',visualMode:'full'},
   azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3',visualMode:'full'},
   azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3',visualMode:'full'},
@@ -4342,7 +4342,7 @@ const AZAAN_VOICES={
 };
 const AZAAN_VOICE_ORDER=['doha','azaan1','azaan2','azaan3','azaan4','azaan5'];
 const AZAAN_VOICE_ALIASES={
-  'doha':'doha','doha qatar':'doha','recommended':'doha',
+  'doha':'doha','doha qatar':'doha','mishary':'doha','mishary alafasy':'doha','recommended':'doha',
   'azaan1':'azaan1','azaan 1':'azaan1','azan1':'azaan1','azan 1':'azaan1','full':'azaan1','madinah':'azaan1',
   'azaan2':'azaan2','azaan 2':'azaan2','azan2':'azaan2','azan 2':'azaan2','serene':'azaan2','makkah':'azaan2',
   'azaan3':'azaan3','azaan 3':'azaan3','azan3':'azaan3','azan 3':'azaan3','sunnah':'azaan3','abdulbasit':'azaan3',
@@ -7749,7 +7749,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   });
 
   const POST_AZAAN_DUA=Object.freeze({
-    url:'./assets/audio/dua-after-azaan.wav',
+    url:'./assets/audio/dua-after-azaan.mp3',
     ar:'اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ',
     en:'O Allah, Lord of this perfect call and the established prayer, grant Muhammad the intercession and favor, and raise him to the honored station You have promised him.'
   });
@@ -7888,7 +7888,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=967').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=968').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
