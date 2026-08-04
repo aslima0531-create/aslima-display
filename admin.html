@@ -20,6 +20,19 @@
 .backupActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.backupStatus{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}.backupStatus.error{color:var(--red)}.backupStatus.ok{color:var(--green)}.accountAction{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:800;padding:6px 0;text-decoration:underline;text-underline-offset:3px}.authError{min-height:18px;color:var(--red);font-size:12px;line-height:1.35;margin-top:10px}
 .homeAreaSummary{margin:10px 0 12px;padding:12px;border:1px solid rgba(73,230,164,.20);border-radius:17px;background:rgba(73,230,164,.055)}.homeAreaLabel{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:rgba(150,245,205,.72)}.homeAreaValue{margin-top:5px;font-size:15px;font-weight:950;color:#e9fff5}.homeAreaActions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.homeAreaActions input{min-width:0}.homeAreaActions button{padding:11px 13px;border-radius:15px}.homeAreaPhone{width:100%;margin-top:10px}.homeAreaStatus{min-height:18px;margin-top:9px;color:var(--muted);font-size:12px;line-height:1.35}.homeAreaStatus.ok{color:var(--green)}.homeAreaStatus.error{color:var(--red)}
 body{padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}.tabs{grid-template-columns:repeat(3,1fr)}.manualTimesCard[hidden]{display:none}.quickCommands{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quickCommands .reloadCommand{grid-column:1/-1}.volumeCard .row{grid-template-columns:1fr}.volumeCard input{margin-top:4px}.systemDetails{margin:14px 0;border:1px solid rgba(255,255,255,.10);border-radius:22px;background:rgba(255,255,255,.035);overflow:hidden}.systemDetails summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;padding:14px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:900}.systemDetails summary::-webkit-details-marker{display:none}.systemDetails summary::after{content:'›';color:var(--gold);font-size:19px;line-height:1;transition:transform .2s}.systemDetails[open] summary::after{transform:rotate(90deg)}.systemDetails .deviceHealth{margin:0;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0;background:rgba(0,0,0,.13)}.systemSummaryState{margin-left:auto;color:var(--green);font-size:11px}.systemDetails[data-state="attention"] .systemSummaryState{color:#ffd27b}.systemDetails[data-state="offline"] .systemSummaryState{color:var(--muted)}
+
+/* Phone admin v2: daily schedule first, calmer hierarchy, larger touch targets. */
+body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transparent 30%),radial-gradient(circle at 108% 0,rgba(73,230,164,.085),transparent 28%),linear-gradient(165deg,#071016 0,#020405 52%,#050708 100%);padding-top:calc(env(safe-area-inset-top) + 14px)}
+.shell{max-width:540px}.top{align-items:center;margin-bottom:12px}.title{font-size:30px;margin:4px 0 4px}.sub{max-width:330px;font-size:12.5px}.status{padding:7px 10px;font-size:11px;background:rgba(5,10,12,.72)}
+.hero{margin:10px 0 14px;padding:15px;border-radius:24px;background:linear-gradient(160deg,rgba(255,255,255,.105),rgba(255,255,255,.035));box-shadow:0 20px 54px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.08)}
+.heroTop{align-items:center}.pill{padding:6px 9px;font-size:10px}.heroTitle{margin:11px 0 1px;font-size:21px}.heroSub{font-size:12px}.nextPrayer{margin-top:12px;padding:13px;border-radius:18px;background:linear-gradient(135deg,rgba(245,200,107,.095),rgba(0,0,0,.18));border-color:rgba(245,200,107,.17)}
+.nextName{font-size:25px}.nextTime{font-size:19px}.nextMeta{font-size:11px}
+.dailySchedule{margin-top:12px}.dailyScheduleHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 8px}.dailyScheduleTitle{font-size:11px;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:rgba(248,243,233,.72)}.dailyScheduleMeta{font-size:10px;color:var(--muted)}
+.dailyScheduleGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.schedulePrayer{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;min-height:48px;padding:9px 10px;border:1px solid rgba(255,255,255,.085);border-radius:14px;background:rgba(0,0,0,.17)}.schedulePrayer.next{border-color:rgba(245,200,107,.48);background:linear-gradient(135deg,rgba(245,200,107,.16),rgba(245,200,107,.045));box-shadow:0 8px 24px rgba(245,200,107,.08)}.schedulePrayerName{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900}.schedulePrayerName::before{content:"";width:6px;height:6px;border-radius:50%;background:rgba(248,243,233,.32)}.schedulePrayer.next .schedulePrayerName::before{background:var(--gold);box-shadow:0 0 10px rgba(245,200,107,.65)}.schedulePrayerTime{font-size:13px;font-weight:950;font-variant-numeric:tabular-nums;color:#fff5df}.schedulePrayerMeta{grid-column:1/-1;margin-top:-4px;padding-left:12px;font-size:9px;color:var(--muted)}.schedulePrayer[data-enabled="false"] .schedulePrayerMeta{color:rgba(248,243,233,.38)}
+.tabs{top:calc(env(safe-area-inset-top) + 6px);gap:6px;margin:9px 0 12px;padding:5px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:rgba(4,8,10,.82);box-shadow:0 12px 34px rgba(0,0,0,.28);backdrop-filter:blur(20px)}.tabBtn{min-height:42px;border:0;border-radius:13px;background:transparent;padding:9px 6px;font-size:11px}.tabBtn.active{box-shadow:0 8px 22px rgba(245,200,107,.14)}
+.card{margin:11px 0;padding:15px;border-radius:22px;box-shadow:0 17px 44px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.065)}.card h2{font-size:16px;margin-bottom:11px}.sectionHint{font-size:12px;margin-bottom:12px}.mode{gap:7px}.mode button,.primary,.ghost,.danger,.miniAction{min-height:46px;border-radius:15px;font-size:13px;padding:12px 10px}.row{grid-template-columns:1fr 112px;gap:10px;border-radius:16px;padding:11px}.name{font-size:14px}.hint{font-size:11px}.grid{gap:8px}.switch{width:52px;height:30px}.thumb{width:24px;height:24px}.switch input:checked+.track .thumb{transform:translateX(22px)}
+.voiceGrid{gap:8px}.voiceCard{min-height:64px;padding:12px;border-radius:16px}.voiceCard .voiceName{font-size:14px}.voiceBadge{padding:6px 9px;font-size:9px}.backupActions,.quickCommands{gap:8px}.systemDetails{margin:11px 0;border-radius:18px}.systemDetails summary{min-height:48px;padding:12px 14px}.deviceHealthGrid{gap:7px}.healthItem{padding:8px}.healthValue{font-size:12px}
+@media(max-width:360px){.dailyScheduleGrid{grid-template-columns:1fr}.top{align-items:flex-start}.status{max-width:104px;white-space:normal;text-align:center}.row{grid-template-columns:1fr 106px}}
 </style>
 </head>
 <body>
@@ -36,6 +49,10 @@ body{padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}.tabs{grid-template
       <div class="nextMain"><div class="nextName" id="nextPrayerName">—</div><div class="nextTime" id="nextPrayerTime">--:--</div></div>
       <div class="nextMeta"><span class="nextCountdown" id="nextPrayerCountdown">Calculating…</span><span id="heroVoice">Azaan 1 selected</span></div>
     </div>
+    <section class="dailySchedule" aria-labelledby="dailyScheduleTitle">
+      <div class="dailyScheduleHead"><div class="dailyScheduleTitle" id="dailyScheduleTitle">Today’s prayer times</div><div class="dailyScheduleMeta" id="dailyScheduleMeta">Tablet schedule</div></div>
+      <div class="dailyScheduleGrid" id="dailyScheduleGrid" aria-live="polite"></div>
+    </section>
   </section>
 
   <nav class="tabs" aria-label="Admin sections">
@@ -117,6 +134,7 @@ async function restoreSettingsBackup(file){
  await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...state,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled}};render();return true;
 }
 function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
+function displayTime(value){if(!/^\d{2}:\d{2}$/.test(String(value||'')))return '—';const parts=String(value).split(':').map(Number),date=new Date();date.setHours(parts[0],parts[1],0,0);return formatClock(date)}
 function formatDuration(milliseconds){const minutes=Math.max(0,Math.floor(Number(milliseconds||0)/60000));const days=Math.floor(minutes/1440),hours=Math.floor((minutes%1440)/60),rest=minutes%60;if(days)return days+'d '+hours+'h';if(hours)return hours+'h '+rest+'m';return minutes+'m'}
 function renderTabletHealth(){
  const health=tabletHealth&&typeof tabletHealth==='object'?tabletHealth:null;
@@ -148,22 +166,28 @@ function updateNextPrayer(){
  const mins=Math.max(0,Math.ceil((next.at-now)/60000));const hours=Math.floor(mins/60);const rem=mins%60;
  $('nextPrayerName').textContent=next.name;$('nextPrayerTime').textContent=formatClock(next.at);$('nextPrayerCountdown').textContent=hours?`in ${hours}h ${rem}m`:`in ${rem}m`;
  const voice=AZAAN_VOICES[state.muezzin||'azaan1'];$('heroVoice').textContent=(voice?voice.name:'Azaan 1')+' selected';
+ renderDailySchedule(next.name);
+}
+function renderDailySchedule(nextPrayer){
+ const grid=$('dailyScheduleGrid');if(!grid)return;
+ grid.innerHTML=PRAYERS.map(prayer=>{const enabled=prayer==='Sunrise'?false:state.azaanEnabled[prayer]!==false;const meta=prayer==='Sunrise'?'No Azaan':(enabled?'Azaan on':'Azaan off');return `<div class="schedulePrayer${prayer===nextPrayer?' next':''}" data-prayer="${prayer}" data-enabled="${enabled}"><div class="schedulePrayerName">${prayer}</div><div class="schedulePrayerTime">${displayTime(state.timings&&state.timings[prayer])}</div><div class="schedulePrayerMeta">${meta}</div></div>`}).join('');
+ $('dailyScheduleMeta').textContent=state.mode==='manual'?'Manual schedule':(state.mode==='calculated-location'?'Location schedule':'VRIC schedule');
 }
 function render(){
  $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeLocation').classList.toggle('active',state.mode==='calculated-location'); $('modeManual').classList.toggle('active',state.mode==='manual');
  const manualMode=state.mode==='manual';
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
  $('manualTimesCard').hidden=!manualMode;
- AZAAN.forEach(p=>{const el=$('az_'+p); if(el)el.checked=state.azaanEnabled[p]!==false});
+ AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.checked=state.azaanEnabled[p]!==false;const time=$('azTime_'+p);if(time)time.textContent=displayTime(state.timings&&state.timings[p])});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
  $('modePill').textContent=(state.mode==='manual'?'● Manual':(state.mode==='calculated-location'?'● Location':'● VRIC Live'));
  updateNextPrayer();
- document.querySelectorAll('.voiceCard').forEach(card=>card.classList.toggle('active',card.id==='voice_'+(state.muezzin||'azaan1')));
+ document.querySelectorAll('.voiceCard').forEach(card=>{const active=card.id==='voice_'+(state.muezzin||'azaan1');card.classList.toggle('active',active);const badge=card.querySelector('.voiceBadge');if(badge)badge.textContent=active?'Active':'Select'});
  renderHomeArea();
 }
 function build(){
  $('timeGrid').innerHTML=PRAYERS.map(p=>`<div class="row"><div><div class="name">${p}</div><div class="hint">${p==='Sunrise'?'Shown only, no Azaan':'24-hour time'}</div></div><input id="time_${p}" type="time" step="60"></div>`).join('');
- $('azaanGrid').innerHTML=AZAAN.map(p=>`<div class="row toggle"><div><div class="name">${p} Azaan</div><div class="hint">${p==='Fajr'?'Morning Azaan':'Auto-play at prayer time'}</div></div><label class="switch"><input id="az_${p}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
+ $('azaanGrid').innerHTML=AZAAN.map(p=>`<div class="row toggle"><div><div class="name">${p} Azaan</div><div class="hint"><span id="azTime_${p}">${displayTime(state.timings&&state.timings[p])}</span> · ${p==='Fajr'?'Morning Azaan':'Auto-play'}</div></div><label class="switch"><input id="az_${p}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
  $('voiceGrid').innerHTML=AZAAN_VOICE_ORDER.map(id=>{const v=AZAAN_VOICES[id];return `<div class="voiceCard" id="voice_${id}"><button type="button" data-voice="${id}"><div class="voiceName">${v.name}</div><div class="voiceMeta">${v.note}</div></button><div class="voiceBadge">Select</div></div>`}).join('');
  document.querySelectorAll('[data-voice]').forEach(btn=>btn.onclick=async()=>{
    const id=btn.dataset.voice;

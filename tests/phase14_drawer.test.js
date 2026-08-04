@@ -6,6 +6,7 @@ const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const index=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const preview=fs.readFileSync(path.join(root,'preview.html'),'utf8');
+const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
 
 test('index and preview remain byte-identical',()=>{
   assert.equal(index,preview);
@@ -92,4 +93,16 @@ test('expanded bottom dock remains inside short kiosk viewports',()=>{
   assert.match(index,/\.bottom-dock,\s*\.bottom-dock\.detail-open\{\s*transform:none!important/);
   assert.match(index,/\.bottom-dock\.detail-open \.dock-detail-area\{[\s\S]*?max-height:min\(26vh,220px\)[\s\S]*?overflow-y:auto/);
   assert.match(index,/@media \(max-height:650px\)\{[\s\S]*?max-height:min\(24vh,150px\)/);
+});
+
+test('phone admin always presents the complete daily prayer schedule',()=>{
+  assert.match(admin,/id="dailyScheduleGrid" aria-live="polite"/);
+  assert.match(admin,/function renderDailySchedule\(nextPrayer\)/);
+  assert.match(admin,/PRAYERS\.map\(prayer=>/);
+  assert.match(admin,/prayer==='Sunrise'\?'No Azaan'/);
+  assert.match(admin,/class="schedulePrayer\$\{prayer===nextPrayer\?' next':''\}"/);
+  assert.match(admin,/function displayTime\(value\)/);
+  assert.match(admin,/id="azTime_\$\{p\}"/);
+  assert.match(admin,/badge\.textContent=active\?'Active':'Select'/);
+  assert.doesNotMatch(admin,/#lock\{display:none!important\}/);
 });
