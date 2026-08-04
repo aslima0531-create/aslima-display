@@ -244,7 +244,7 @@ test('website resolver follows a bounded same-site prayer timetable link',async(
 });
 
 test('same-site single schedule is classified as official Adhan only',async()=>{
-  const partial=`<table><tr><td>7/21 – 7/31</td><td>5:00 am</td><td>1:15 pm</td><td>6:30 pm</td><td>At Sunset</td><td>10:00 pm</td></tr></table>`;
+  const partial=`<table><tr><td>1/1 – 12/31</td><td>5:00 am</td><td>1:15 pm</td><td>6:30 pm</td><td>At Sunset</td><td>10:00 pm</td></tr></table>`;
   const schedule=await resolveWebsiteSchedule('https://examplemasjid.com/','Example Masjid',async url=>String(url).includes('/prayer-times')?new Response(partial,{headers:{'Content-Type':'text/html'}}):new Response('<title>Example Masjid</title><a href="/prayer-times/">Prayer Times</a>',{headers:{'Content-Type':'text/html'}}));
   assert.equal(schedule.provider,'website-adhan');
   assert.equal(schedule.adhan.Maghrib,'SUNSET');
@@ -252,7 +252,7 @@ test('same-site single schedule is classified as official Adhan only',async()=>{
 });
 
 test('resolver uses the standard WordPress API when browser-facing HTML is blocked',async()=>{
-  const partial=`<table><tr><td>7/21 – 7/31</td><td>5:00 am</td><td>1:15 pm</td><td>6:30 pm</td><td>At Sunset</td><td>10:00 pm</td></tr></table>`;
+  const partial=`<table><tr><td>1/1 – 12/31</td><td>5:00 am</td><td>1:15 pm</td><td>6:30 pm</td><td>At Sunset</td><td>10:00 pm</td></tr></table>`;
   const schedule=await resolveWebsiteSchedule('https://examplemasjid.com/','Example Masjid',async url=>{
     if(String(url).includes('/wp-json/wp/v2/pages'))return new Response(JSON.stringify([{title:{rendered:'Prayer Times'},content:{rendered:partial}}]),{headers:{'Content-Type':'application/json'}});
     if(String(url).includes('/wp-json/'))return new Response(JSON.stringify({name:'Example Masjid'}),{headers:{'Content-Type':'application/json'}});
