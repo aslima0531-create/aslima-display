@@ -2854,7 +2854,7 @@ body.adhan-overlay-active .aslima-persistent-handle{
   z-index:1!important;
   text-shadow:0 0 3.2vh rgba(248,200,111,.38),0 1.8vh 5.4vh rgba(0,0,0,.68)!important;
 }
-.adhan-overlay .azaan-arabic[data-azaan-cue="dua"]{
+.adhan-overlay .azaan-arabic[data-azaan-cue^="dua"]{
   max-width:min(1040px,88vw)!important;
   margin-inline:auto!important;
   padding-top:clamp(2px,.5vh,8px)!important;
@@ -2863,7 +2863,7 @@ body.adhan-overlay-active .aslima-persistent-handle{
   line-height:1.55!important;
   text-wrap:balance;
 }
-.adhan-overlay .azaan-english[data-azaan-cue="dua"]{
+.adhan-overlay .azaan-english[data-azaan-cue^="dua"]{
   max-width:min(900px,82vw)!important;
   margin-inline:auto!important;
   margin-top:clamp(10px,1.25vh,18px)!important;
@@ -2892,8 +2892,8 @@ body.adhan-overlay-active .aslima-persistent-handle{
 @media (max-height:700px){
   .adhan-overlay .azaan-card{transform:translate3d(calc(var(--burn-x,0px) * .35),calc((var(--burn-y,0px) * .35) - 2vh),0)!important;padding-top:24px!important;padding-bottom:22px!important;}
   .adhan-overlay .azaan-arabic{font-size:clamp(62px,8vw,118px)!important;}
-  .adhan-overlay .azaan-arabic[data-azaan-cue="dua"]{font-size:clamp(31px,4.1vw,54px)!important;line-height:1.42!important;}
-  .adhan-overlay .azaan-english[data-azaan-cue="dua"]{font-size:clamp(14px,1.35vw,21px)!important;}
+  .adhan-overlay .azaan-arabic[data-azaan-cue^="dua"]{font-size:clamp(31px,4.1vw,54px)!important;line-height:1.42!important;}
+  .adhan-overlay .azaan-english[data-azaan-cue^="dua"]{font-size:clamp(14px,1.35vw,21px)!important;}
 }
 
 /* ASLIMA V9.1.6 — Premium Muezzin selector */
@@ -4333,7 +4333,7 @@ audio.volume=Number.isFinite(savedAzaanVolume)?Math.max(0,Math.min(1,savedAzaanV
 
 // ASLIMA V9.1.16 — deterministic Azaan voice/audio engine
 const AZAAN_VOICES={
-  doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3',visualMode:'simple'},
+  doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3',visualMode:'full',playbackEnd:231.10},
   azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3',visualMode:'full'},
   azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3',visualMode:'full'},
   azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3',visualMode:'full'},
@@ -7741,6 +7741,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
      12 cue starts plus the measured file end. Start times deliberately remain
      absolute; scaling them by duration was the source of the previous drift. */
   const CUE_SECONDS=Object.freeze({
+    doha:Object.freeze([0.00,21.29,40.78,64.12,81.71,103.10,123.69,142.34,162.63,182.22,198.31,216.35,231.10]),
     azaan1:Object.freeze([0.00,8.05,22.34,30.36,42.75,51.64,65.93,72.94,90.58,97.50,112.64,121.97,133.3284]),
     azaan2:Object.freeze([0.00,16.68,34.94,48.41,65.03,79.39,96.22,107.37,132.65,143.59,163.49,174.31,186.2640]),
     azaan3:Object.freeze([0.00,15.17,32.54,44.22,61.05,73.38,94.10,105.98,136.03,149.24,177.92,193.73,200.6466]),
@@ -7751,13 +7752,16 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   const POST_AZAAN_DUA=Object.freeze({
     url:'./assets/audio/dua-after-azaan.mp3',
     ar:'اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ',
-    en:'O Allah, Lord of this perfect call and the established prayer, grant Muhammad the intercession and favor, and raise him to the honored station You have promised him.'
+    en:'O Allah, Lord of this perfect call and the established prayer, grant Muhammad the intercession and favor, and raise him to the honored station You have promised him.',
+    ur:'اے اللہ! اس کامل پکار کے رب اور قائم ہونے والی نماز کے رب، محمد ﷺ کو وسیلہ اور فضیلت عطا فرما، اور انہیں مقامِ محمود تک پہنچا دے جس کا تو نے ان سے وعدہ فرمایا ہے۔'
   });
+  const DUA_CUES=Object.freeze([0.00,15.59,32.94,50.711]);
 
   const state={phase:'idle',stage:'',generation:0,token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'doha'),prayer:'',source:'',occurrenceKey:'',schedulerAttemptGeneration:0,raf:0,lastStopAt:0,lastCue:-1,pendingCleanup:null,pendingTimer:0,mediaCleanup:null};
   window.aslimaPlaybackState=state;
   window.ASLIMA_AZAAN_CUES=CUE_SECONDS;
   window.ASLIMA_AZAAN_VISUAL_SEQUENCE=VISUAL_SEQUENCE.slice();
+  window.ASLIMA_DUA_CUES=DUA_CUES;
 
   function normalize(v){return window.normalizeAzaanVoiceId?window.normalizeAzaanVoiceId(v):(VOICES[v]?v:'doha');}
   function voice(id){return VOICES[normalize(id)]||VOICES.doha;}
@@ -7826,8 +7830,20 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     try{schedule=boundaries(id,lines.length,a.duration);}catch(err){console.error(err);renderLine(lines[0],0);return;}
     const tick=()=>{
       if(state.phase!=='playing')return;
+      const end=Number(voice(id).playbackEnd)||0;
+      if(end&&a.currentTime>=end){advanceFromAzaan(state.token);return;}
       const i=cueIndexAt(schedule,a.currentTime);
       if(i!==state.lastCue&&lines[i]){state.lastCue=i;renderLine(lines[i],i);}
+      state.raf=requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  function startDuaVisual(token){
+    clearVisual();
+    const tick=()=>{
+      if(token!==state.token||state.phase!=='dua-playing')return;
+      const i=cueIndexAt(DUA_CUES,a.currentTime),ar=document.getElementById('azaanArabic'),en=document.getElementById('azaanEnglish');
+      if(i!==state.lastCue){state.lastCue=i;if(i===0)renderLine(POST_AZAAN_DUA,'dua-ar');else if(i===1){if(ar){ar.textContent='English Translation';ar.dataset.azaanCue='dua-en';}if(en){en.textContent=POST_AZAAN_DUA.en;en.dataset.azaanCue='dua-en';}}else{if(ar){ar.textContent=POST_AZAAN_DUA.ur;ar.dataset.azaanCue='dua-ur';}if(en){en.textContent='Urdu translation';en.dataset.azaanCue='dua-ur';}}}
       state.raf=requestAnimationFrame(tick);
     };
     tick();
@@ -7852,7 +7868,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     try{
       await loadAsset(POST_AZAAN_DUA.url,token,'Du‘a after Azaan');if(token!==state.token)return false;
       bindMediaLifecycle(token,'dua');a.muted=false;a.currentTime=0;await a.play();if(token!==state.token)return false;
-      setPhase('dua-playing');showToast('Du‘a after Azaan');return true;
+      setPhase('dua-playing');startDuaVisual(token);showToast('Du‘a after Azaan');return true;
     }catch(error){
       if(token===state.token){console.error(error);showToast('Du‘a audio could not play');finishPlayback(token);}
       return false;
@@ -7862,9 +7878,13 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     clearMediaListeners();
     const owns=()=>token===state.token;
     const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
-    const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){void playPostAzaanDua(token);return;}finishPlayback(token);};
+    const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){advanceFromAzaan(token);return;}finishPlayback(token);};
     const failed=()=>{if(!owns()||state.stage!==stage)return;clean();try{a.pause();a.currentTime=0;}catch(_error){}showToast(stage==='dua'?'Du‘a audio could not be opened':'Local Azaan audio could not be opened');finishPlayback(token);};
     a.addEventListener('ended',ended);a.addEventListener('error',failed);state.mediaCleanup=clean;
+  }
+  function advanceFromAzaan(token){
+    if(token!==state.token||state.stage!=='azaan')return false;
+    state.stage='azaan-ending';clearMediaListeners();clearVisual();try{a.pause();}catch(_error){}void playPostAzaanDua(token);return true;
   }
   window.playAzaan=async function(prayerName,opts){
     opts=opts||{};const prayer=window.resolveAzaanPrayer?window.resolveAzaanPrayer(prayerName):(prayerName||'Prayer');

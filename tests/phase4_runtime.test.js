@@ -23,7 +23,9 @@ test('recommended Mishary voice uses one full standalone offline Azaan',()=>{
   assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
   assert.match(html,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
   assert.match(serviceWorkerSource,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
-  assert.match(html,/doha:\{id:'doha',name:'Mishary Alafasy'[\s\S]*?url:'\.\/assets\/audio\/azaan-mishary-alafasy\.mp3'/);
+  assert.match(html,/doha:\{id:'doha',name:'Mishary Alafasy'[\s\S]*?url:'\.\/assets\/audio\/azaan-mishary-alafasy\.mp3',visualMode:'full'/);
+  assert.match(html,/playbackEnd:231\.10/);
+  assert.match(controllerSource,/doha:Object\.freeze\(\[0\.00,21\.29,40\.78,64\.12,81\.71,103\.10,123\.69,142\.34,162\.63,182\.22,198\.31,216\.35,231\.10\]\)/);
 });
 
 test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
@@ -276,11 +278,19 @@ test('post-Azaan dua is bundled for offline service-worker playback',()=>{
   assert.match(serviceWorkerSource,/\(mp3\|ogg\|wav\)/);
 });
 
+test('Mishary embedded dua is skipped and translated dua readout follows the audio',()=>{
+  assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.94,50\.711\]\)/);
+  assert.match(controllerSource,/if\(end&&a\.currentTime>=end\)\{advanceFromAzaan\(state\.token\);return;\}/);
+  assert.match(controllerSource,/state\.stage='azaan-ending'/);
+  assert.match(controllerSource,/i===1[\s\S]*?English Translation[\s\S]*?i===0[\s\S]*?POST_AZAAN_DUA\.ur|i===1[\s\S]*?POST_AZAAN_DUA\.en[\s\S]*?else\{if\(ar\)\{ar\.textContent=POST_AZAAN_DUA\.ur/);
+  assert.match(controllerSource,/Urdu translation/);
+});
+
 test('Azaan and dua Arabic use the premium Naskh typography with a fitted dua layout',()=>{
   assert.match(html,/family=Noto\+Naskh\+Arabic:wght@400;500;600;700/);
   assert.match(html,/\.adhan-overlay \.azaan-arabic\{[\s\S]*?font-family:"Noto Naskh Arabic"/);
-  assert.match(html,/\.adhan-overlay \.azaan-arabic\[data-azaan-cue="dua"\]\{[\s\S]*?font-size:clamp\(38px,4\.65vw,72px\)/);
-  assert.match(html,/\.adhan-overlay \.azaan-english\[data-azaan-cue="dua"\]/);
+  assert.match(html,/\.adhan-overlay \.azaan-arabic\[data-azaan-cue\^="dua"\]\{[\s\S]*?font-size:clamp\(38px,4\.65vw,72px\)/);
+  assert.match(html,/\.adhan-overlay \.azaan-english\[data-azaan-cue\^="dua"\]/);
 });
 
 test('cancelOccurrence requires the exact active key and scheduler generation',async()=>{
