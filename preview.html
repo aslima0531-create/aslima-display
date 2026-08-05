@@ -4114,6 +4114,7 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
           <button type="button" id="drawerVolUp" aria-label="Raise Azaan volume">+</button>
         </div>
         <div class="drawer-prayer-volumes" id="drawerPrayerVolumes" aria-label="Volume for each Azaan"><label>Fajr <span id="tabletPrayerVolumePct_Fajr">70%</span><input type="range" data-prayer-volume="Fajr" min="0" max="100" value="70" aria-label="Fajr Azaan volume"></label><label>Dhuhr <span id="tabletPrayerVolumePct_Dhuhr">70%</span><input type="range" data-prayer-volume="Dhuhr" min="0" max="100" value="70" aria-label="Dhuhr Azaan volume"></label><label>Asr <span id="tabletPrayerVolumePct_Asr">70%</span><input type="range" data-prayer-volume="Asr" min="0" max="100" value="70" aria-label="Asr Azaan volume"></label><label>Maghrib <span id="tabletPrayerVolumePct_Maghrib">70%</span><input type="range" data-prayer-volume="Maghrib" min="0" max="100" value="70" aria-label="Maghrib Azaan volume"></label><label>Isha <span id="tabletPrayerVolumePct_Isha">70%</span><input type="range" data-prayer-volume="Isha" min="0" max="100" value="70" aria-label="Isha Azaan volume"></label></div>
+        <div class="drawer-seek-controls"><label>Azaan <output id="drawerAzaanSeekLabel">0:00</output><input type="range" id="drawerAzaanSeek" min="0" max="237" step="1" value="0" aria-label="Azaan playback position"></label><label>Translated dua <output id="drawerDuaSeekLabel">0:00</output><input type="range" id="drawerDuaSeek" min="0" max="50" step="1" value="0" aria-label="Dua playback position"></label><div class="muezzin-sub">Testing only. Scheduled playback always starts from the beginning.</div></div>
         <div class="drawer-playback-actions">
           <button type="button" class="drawer-test-action" id="drawerTestAzaan">▶ Test Azaan</button>
           <button type="button" class="drawer-stop-action" id="drawerStopAzaan">■ Stop</button>
@@ -6216,8 +6217,8 @@ function initAslimaFirebaseRemote(){
       if(!fresh||id===aslimaRemoteLastCommand||id===persisted)return;
       aslimaRemoteLastCommand=id;
       try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
-      if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command'});
-      if(c.type==='testDua'&&typeof window.playPostAzaanDua==='function')window.playPostAzaanDua();
+      if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command',startAtSeconds:Number(c.startAtSeconds)||0});
+      if(c.type==='testDua'&&typeof window.playPostAzaanDua==='function')window.playPostAzaanDua(Number(c.startAtSeconds)||0);
       if(c.type==='stopAzaan'&&typeof window.stopAzaan==='function')window.stopAzaan();
       if(c.type==='reloadDisplay'&&window.ASLIMARecovery&&typeof window.ASLIMARecovery.requestReload==='function')window.ASLIMARecovery.requestReload('phone-command');
       aslimaLastHandledCommandId=id;aslimaLastHandledCommandType=String(c.type||'');publishAslimaHealth('command-'+aslimaLastHandledCommandType);
@@ -6367,6 +6368,9 @@ function bindAzaanAudioControls(){
   const drawerVolDown=$('drawerVolDown');
   const drawerVolUp=$('drawerVolUp');
   const drawerVolumeRange=$('drawerVolumeRange');
+  const bindPlaybackSeek=(id,stage,labelId)=>{const input=$(id),label=$(labelId);if(!input||input.__aslimaSeekBound)return;input.__aslimaSeekBound=true;const format=value=>Math.floor(value/60)+':'+String(Math.floor(value%60)).padStart(2,'0');input.oninput=event=>{event.stopPropagation();if(label)label.textContent=format(Number(input.value))};input.onchange=event=>{event.stopPropagation();const position=Number(input.value),active=window.aslimaPlaybackState&&String(window.aslimaPlaybackState.stage||'');if((stage==='azaan'&&active==='azaan')||(stage==='dua'&&active.includes('dua')))audio.currentTime=position;else if(stage==='azaan')window.playAzaan(null,{force:true,source:'tablet-seek',startAtSeconds:position});else window.playPostAzaanDua(position)}};
+  bindPlaybackSeek('drawerAzaanSeek','azaan','drawerAzaanSeekLabel');bindPlaybackSeek('drawerDuaSeek','dua','drawerDuaSeekLabel');
+  if(!audio.__aslimaSeekProgressBound){audio.__aslimaSeekProgressBound=true;audio.addEventListener('timeupdate',()=>{const dua=window.aslimaPlaybackState&&String(window.aslimaPlaybackState.stage||'').includes('dua'),input=$(dua?'drawerDuaSeek':'drawerAzaanSeek'),label=$(dua?'drawerDuaSeekLabel':'drawerAzaanSeekLabel');if(input&&document.activeElement!==input){input.max=String(Math.max(1,Math.floor(Number(audio.duration)||Number(input.max))));input.value=String(Math.floor(audio.currentTime||0));if(label)label.textContent=Math.floor((audio.currentTime||0)/60)+':'+String(Math.floor((audio.currentTime||0)%60)).padStart(2,'0')}})}
   document.querySelectorAll('[data-prayer-volume]').forEach(input=>{if(input.__aslimaPrayerVolumeBound)return;input.__aslimaPrayerVolumeBound=true;input.addEventListener('input',event=>{event.stopPropagation();setPrayerVolume(input.dataset.prayerVolume,Number(input.value)/100)});input.addEventListener('change',event=>event.stopPropagation())});updatePrayerVolumeControls();
 
   if(test)test.onclick=()=>{window.playAzaan(null,{force:true,source:'local-test'});showAdmin();};
@@ -7576,7 +7580,7 @@ body.drawer-open #azaanDrawer.azaan-drawer{
 .drawer-volume-row{grid-template-columns:36px minmax(0,1fr) 36px!important;gap:10px!important;}
 .drawer-volume-row button{min-height:36px!important;height:36px;border-radius:11px!important;font-size:18px;}
 #drawerVolumeRange{width:100%;height:30px;margin:0;accent-color:#f8c86f;touch-action:none;cursor:pointer;}
-.drawer-prayer-volumes{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:11px 0}.drawer-prayer-volumes label{display:grid;grid-template-columns:1fr auto;gap:3px 7px;padding:8px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.035);font-size:10px;font-weight:800}.drawer-prayer-volumes label:last-child{grid-column:1/-1}.drawer-prayer-volumes span{color:#f8c86f}.drawer-prayer-volumes input{grid-column:1/-1;width:100%;accent-color:#f8c86f}
+.drawer-prayer-volumes{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:11px 0}.drawer-prayer-volumes label{display:grid;grid-template-columns:1fr auto;gap:3px 7px;padding:8px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.035);font-size:10px;font-weight:800}.drawer-prayer-volumes label:last-child{grid-column:1/-1}.drawer-prayer-volumes span{color:#f8c86f}.drawer-prayer-volumes input{grid-column:1/-1;width:100%;accent-color:#f8c86f}.drawer-seek-controls{display:grid;gap:8px;margin:12px 0}.drawer-seek-controls label{display:grid;grid-template-columns:1fr auto;gap:5px 8px;font-size:11px;font-weight:800}.drawer-seek-controls output{color:#f8c86f}.drawer-seek-controls input{grid-column:1/-1;width:100%;accent-color:#34e89f}
 #drawerVolumeRange::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,rgba(248,200,111,.85),rgba(248,200,111,.22));}
 #drawerVolumeRange::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;border:3px solid #1a170f;background:#f8c86f;box-shadow:0 2px 10px rgba(0,0,0,.45),0 0 0 3px rgba(248,200,111,.13);}
 .drawer-playback-actions{display:grid;grid-template-columns:1.35fr .8fr;gap:9px;margin-top:11px;}
@@ -7809,7 +7813,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function clearMediaListeners(){const cleanup=state.mediaCleanup;state.mediaCleanup=null;if(typeof cleanup==='function')try{cleanup();}catch(_error){}}
   function beginSession(source,occurrenceKey,prayer,phase){
     clearPending();clearMediaListeners();
-    state.generation+=1;state.token=state.generation;state.source=String(source||'local-test');state.occurrenceKey=String(occurrenceKey||'');state.schedulerAttemptGeneration=0;state.prayer=String(prayer||'');state.stage='azaan';setPhase(phase||'loading');
+    state.generation+=1;state.token=state.generation;state.source=String(source||'local-test');state.occurrenceKey=String(occurrenceKey||'');state.schedulerAttemptGeneration=0;state.prayer=String(prayer||'');state.startAtSeconds=0;state.stage='azaan';setPhase(phase||'loading');
     return state.generation;
   }
   const controller={
@@ -7894,14 +7898,14 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     renderLine(POST_AZAAN_DUA,'dua');overlay(true);
     try{
       await loadAsset(POST_AZAAN_DUA.url,token,'Du‘a after Azaan');if(token!==state.token)return false;
-      bindMediaLifecycle(token,'dua');a.muted=false;a.volume=Math.min(Number(window.aslimaDuaVolume??.65),Number(window.aslimaMaxVolume??1));a.currentTime=0;await a.play();if(token!==state.token)return false;
+      bindMediaLifecycle(token,'dua');a.muted=false;a.volume=Math.min(Number(window.aslimaDuaVolume??.65),Number(window.aslimaMaxVolume??1));a.currentTime=Math.max(0,Math.min(Number(a.duration)||Infinity,Number(state.startAtSeconds)||0));state.startAtSeconds=0;await a.play();if(token!==state.token)return false;
       setPhase('dua-playing');startDuaVisual(token);showToast('Du‘a after Azaan');return true;
     }catch(error){
       if(token===state.token){console.error(error);showToast('Du‘a audio could not play');finishPlayback(token);}
       return false;
     }
   }
-  window.playPostAzaanDua=function(){const token=beginSession('phone-command','',state.prayer||'Prayer','dua-loading');return playPostAzaanDua(token)};
+  window.playPostAzaanDua=function(startAtSeconds){const token=beginSession('phone-command','',state.prayer||'Prayer','dua-loading');state.startAtSeconds=Math.max(0,Number(startAtSeconds)||0);return playPostAzaanDua(token)};
   function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
@@ -7921,7 +7925,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     const occurrenceKey=source==='automatic-scheduler'?String(opts.occurrenceKey||''):'';
     const token=beginSession(source,occurrenceKey,prayer,'loading'),id=normalize(state.voice);state.voice=id;state.schedulerAttemptGeneration=source==='automatic-scheduler'?Number(opts.attemptGeneration)||0:0;overlay(false);clearVisual();
     try{
-      await load(id,token,prayer);if(token!==state.token)return false;bindMediaLifecycle(token,'azaan');a.muted=false;const prayerVolume=Number(window.aslimaPrayerVolumes&&window.aslimaPrayerVolumes[prayer]),targetVolume=Math.min(Number(Number.isFinite(prayerVolume)?prayerVolume:window.aslimaAzaanVolume??a.volume),Number(window.aslimaMaxVolume??1)),fadeSeconds=Number(window.aslimaFadeInSeconds||0);a.volume=fadeSeconds?0:targetVolume;a.currentTime=0;await a.play();if(fadeSeconds){const fadeStarted=Date.now(),ramp=()=>{if(token!==state.token||state.stage!=='azaan')return;const progress=Math.min(1,(Date.now()-fadeStarted)/(fadeSeconds*1000));a.volume=targetVolume*progress;if(progress<1)requestAnimationFrame(ramp)};requestAnimationFrame(ramp)}
+      await load(id,token,prayer);if(token!==state.token)return false;bindMediaLifecycle(token,'azaan');a.muted=false;const prayerVolume=Number(window.aslimaPrayerVolumes&&window.aslimaPrayerVolumes[prayer]),targetVolume=Math.min(Number(Number.isFinite(prayerVolume)?prayerVolume:window.aslimaAzaanVolume??a.volume),Number(window.aslimaMaxVolume??1)),fadeSeconds=Number(window.aslimaFadeInSeconds||0),seekAllowed=['phone-command','tablet-seek','local-test'].includes(source);a.volume=fadeSeconds?0:targetVolume;a.currentTime=seekAllowed?Math.max(0,Math.min(Number(a.duration)||Infinity,Number(opts.startAtSeconds)||0)):0;await a.play();if(fadeSeconds){const fadeStarted=Date.now(),ramp=()=>{if(token!==state.token||state.stage!=='azaan')return;const progress=Math.min(1,(Date.now()-fadeStarted)/(fadeSeconds*1000));a.volume=targetVolume*progress;if(progress<1)requestAnimationFrame(ramp)};requestAnimationFrame(ramp)}
       if(token!==state.token)return false;
       setPhase('playing');const op=document.getElementById('overlayPrayer');if(op)op.textContent=String(prayer).toUpperCase();overlay(true);startVisual(prayer,id);showToast('Azaan playing for '+prayer);return true;
     }catch(err){if(token===state.token){try{a.pause();a.currentTime=0;}catch(e){}setPhase('idle');overlay(false);showToast('Azaan could not play — local audio error');console.error(err);}return false;}
@@ -7936,7 +7940,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=971').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=972').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

@@ -54,6 +54,21 @@ test('phone and tablet expose independent Azaan volume for every prayer',()=>{
   assert.match(controllerSource,/a\.volume=Math\.min\(Number\(window\.aslimaDuaVolume\?\?\.65\),Number\(window\.aslimaMaxVolume\?\?1\)\)/);
 });
 
+test('phone and tablet can seek independently through Azaan and translated dua',()=>{
+  assert.match(admin,/id="phoneAzaanSeek"[^>]+aria-label="Azaan playback position"/);
+  assert.match(admin,/id="phoneDuaSeek"[^>]+aria-label="Dua playback position"/);
+  assert.match(admin,/startAtSeconds:Number\(\$\('phoneAzaanSeek'\)\.value\)/);
+  assert.match(admin,/startAtSeconds:Number\(\$\('phoneDuaSeek'\)\.value\)/);
+  assert.match(html,/id="drawerAzaanSeek"[^>]+aria-label="Azaan playback position"/);
+  assert.match(html,/id="drawerDuaSeek"[^>]+aria-label="Dua playback position"/);
+  assert.match(html,/source:'tablet-seek',startAtSeconds:position/);
+  assert.match(controllerSource,/Number\(opts\.startAtSeconds\)\|\|0/);
+  assert.match(controllerSource,/seekAllowed=\['phone-command','tablet-seek','local-test'\]\.includes\(source\)/);
+  assert.match(controllerSource,/a\.currentTime=seekAllowed\?.*:0/);
+  assert.match(controllerSource,/window\.playPostAzaanDua=function\(startAtSeconds\)/);
+  assert.match(controllerSource,/Number\(state\.startAtSeconds\)\|\|0/);
+});
+
 test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
   const pendingSource=html.match(/(let pendingAzaanVoiceSync=[\s\S]*?)\n\nfunction getAzaanVoice/)[1];
   const saved=storage(new Map([['aslima_pending_azaan_voice','doha']]));
