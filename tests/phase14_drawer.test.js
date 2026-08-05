@@ -36,8 +36,8 @@ test('drawer connection status reflects Firebase success and failure',()=>{
   assert.match(index,/#drawerSyncStatus\[data-state="unavailable"\] \.drawer-sync-dot/);
 });
 
-test('tablet volume slider is accessible and wired to canonical setVolume',()=>{
-  assert.match(index,/id="drawerVolumeRange"[^>]*min="0"[^>]*max="100"[^>]*step="1"[^>]*aria-label="Azaan volume"/);
+test('tablet test-playback volume slider is accessible and wired to canonical setVolume',()=>{
+  assert.match(index,/id="drawerVolumeRange"[^>]*min="0"[^>]*max="100"[^>]*step="1"[^>]*aria-label="Test Azaan and dua volume"/);
   assert.match(index,/drawerVolumeRange\.addEventListener\('input',[\s\S]*?setVolume\(Number\(drawerVolumeRange\.value\)\/100\)/);
   assert.match(index,/document\.activeElement!==drawerRange[\s\S]*?drawerRange\.value=String\(Math\.round\(audio\.volume\*100\)\)/);
 });

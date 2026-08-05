@@ -51,22 +51,34 @@ test('phone and tablet expose independent Azaan volume for every prayer',()=>{
   assert.match(html,/child\('prayerVolumes'\)\.set\(window\.aslimaPrayerVolumes\)/);
   assert.match(controllerSource,/window\.aslimaPrayerVolumes&&window\.aslimaPrayerVolumes\[prayer\]/);
   assert.match(controllerSource,/Number\.isFinite\(prayerVolume\)\?prayerVolume/);
-  assert.match(controllerSource,/a\.volume=Math\.min\(Number\(window\.aslimaDuaVolume\?\?\.65\),Number\(window\.aslimaMaxVolume\?\?1\)\)/);
+  assert.match(controllerSource,/testPlayback\?window\.aslimaAzaanVolume\?\?a\.volume:window\.aslimaDuaVolume\?\?\.65/);
+  assert.match(admin,/Test Azaan &amp; Dua Volume/);
+  assert.match(html,/drawer-test-volume/);
+  assert.match(html,/Scheduled Azaan Volumes/);
+  assert.doesNotMatch(admin,/All prayers/);
 });
 
-test('phone and tablet can seek independently through Azaan and translated dua',()=>{
+test('phone and tablet can seek and play or pause Azaan and translated dua',()=>{
   assert.match(admin,/id="phoneAzaanSeek"[^>]+aria-label="Azaan playback position"/);
   assert.match(admin,/id="phoneDuaSeek"[^>]+aria-label="Dua playback position"/);
   assert.match(admin,/startAtSeconds:Number\(\$\('phoneAzaanSeek'\)\.value\)/);
   assert.match(admin,/startAtSeconds:Number\(\$\('phoneDuaSeek'\)\.value\)/);
+  assert.match(admin,/id="phoneAzaanPlayPause"/);
+  assert.match(admin,/id="phoneDuaPlayPause"/);
+  assert.match(admin,/sendTabletCommand\('toggleTestPlayback'/);
   assert.match(html,/id="drawerAzaanSeek"[^>]+aria-label="Azaan playback position"/);
   assert.match(html,/id="drawerDuaSeek"[^>]+aria-label="Dua playback position"/);
-  assert.match(html,/source:'tablet-seek',startAtSeconds:position/);
+  assert.match(html,/id="drawerAzaanPlayPause"/);
+  assert.match(html,/id="drawerDuaPlayPause"/);
+  assert.match(html,/window\.toggleTestPlayback\(stage,null,Number\(input\.value\),'tablet-seek'\)/);
+  assert.match(html,/input\.onchange=event=>event\.stopPropagation\(\)/);
   assert.match(controllerSource,/Number\(opts\.startAtSeconds\)\|\|0/);
-  assert.match(controllerSource,/seekAllowed=\['phone-command','tablet-seek','local-test'\]\.includes\(source\)/);
+  assert.match(controllerSource,/testPlayback=\['phone-command','tablet-seek','local-test'\]\.includes\(source\)/);
+  assert.match(controllerSource,/seekAllowed=testPlayback/);
   assert.match(controllerSource,/a\.currentTime=seekAllowed\?.*:0/);
   assert.match(controllerSource,/window\.playPostAzaanDua=function\(startAtSeconds\)/);
   assert.match(controllerSource,/Number\(state\.startAtSeconds\)\|\|0/);
+  assert.match(controllerSource,/window\.toggleTestPlayback=async function/);
 });
 
 test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
@@ -232,6 +244,16 @@ test('duplicate scheduler evaluation and start do not duplicate listeners',()=>{
 test('controller records automatic source, occurrence, prayer, generation and phase',async()=>{
   const h=controllerHarness();h.audio.readyState=1;await h.window.playAzaan('Dhuhr',{source:'automatic-scheduler',occurrenceKey:'key'});
   assert.equal(h.window.aslimaPlaybackState.source,'automatic-scheduler');assert.equal(h.window.aslimaPlaybackState.occurrenceKey,'key');assert.equal(h.window.aslimaPlaybackState.prayer,'Dhuhr');assert.equal(h.window.aslimaPlaybackState.phase,'playing');assert.ok(h.window.aslimaPlaybackState.generation>0);
+});
+
+test('test scrubber playback starts explicitly and toggles pause without losing position',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;
+  await h.window.toggleTestPlayback('azaan','Dhuhr',45,'tablet-seek');
+  assert.equal(h.audio.currentTime,45);assert.equal(h.audio.paused,false);assert.equal(h.window.aslimaPlaybackState.phase,'playing');
+  await h.window.toggleTestPlayback('azaan','Dhuhr',45,'tablet-seek');
+  assert.equal(h.audio.currentTime,45);assert.equal(h.audio.paused,true);assert.equal(h.window.aslimaPlaybackState.phase,'paused');
+  await h.window.toggleTestPlayback('azaan','Dhuhr',45,'tablet-seek');
+  assert.equal(h.audio.currentTime,45);assert.equal(h.audio.paused,false);assert.equal(h.window.aslimaPlaybackState.phase,'playing');
 });
 
 test('Stop during load removes listeners, clears timeout, dismisses occurrence and settles play',async()=>{
