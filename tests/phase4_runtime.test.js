@@ -23,9 +23,35 @@ test('recommended Mishary voice uses one full standalone offline Azaan',()=>{
   assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
   assert.match(html,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
   assert.match(serviceWorkerSource,new RegExp(`assets/audio/${file.replace('.', '\\.')}`));
-  assert.match(html,/doha:\{id:'doha',name:'Mishary Alafasy'[\s\S]*?url:'\.\/assets\/audio\/azaan-mishary-alafasy\.mp3',visualMode:'full'/);
+  assert.match(html,/doha:\{id:'doha',name:'Mishary Alafasy'[\s\S]*?url:'\.\/assets\/audio\/azaan-mishary-alafasy\.mp3'[\s\S]*?visualMode:'full'/);
   assert.match(html,/playbackEnd:231\.10/);
   assert.match(controllerSource,/doha:Object\.freeze\(\[0\.00,21\.29,40\.78,64\.12,81\.71,103\.10,123\.69,142\.34,162\.63,182\.22,198\.31,216\.35,231\.10\]\)/);
+});
+
+test('Mishary Fajr uses its dedicated offline Azaan and then the shared translated dua',()=>{
+  const file='azaan-mishary-alafasy-fajr.mp3';
+  assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
+  assert.match(html,/prayerUrls:\{Fajr:'\.\/assets\/audio\/azaan-mishary-alafasy-fajr\.mp3'\}/);
+  assert.match(html,/prayerPlaybackEnds:\{Fajr:287\.782\}/);
+  assert.match(html,/fajrSleep:\{ar:'الصلاة خير من النوم',en:'Prayer is better than sleep'\}/);
+  assert.match(controllerSource,/const FAJR_VISUAL_SEQUENCE=[\s\S]*?'fajrSleep','fajrSleep'/);
+  assert.match(controllerSource,/prayer==='Fajr'&&normalized==='doha'\?'dohaFajr':normalized/);
+  assert.match(serviceWorkerSource,/assets\/audio\/azaan-mishary-alafasy-fajr\.mp3/);
+  assert.match(controllerSource,/if\(stage==='azaan'\)\{advanceFromAzaan\(token\);return;\}/);
+  assert.match(controllerSource,/void playPostAzaanDua\(token\)/);
+});
+
+test('phone and tablet expose independent Azaan volume for every prayer',()=>{
+  for(const prayer of ['Fajr','Dhuhr','Asr','Maghrib','Isha']){
+    assert.match(html,new RegExp(`data-prayer-volume="${prayer}"[^>]+aria-label="${prayer} Azaan volume"`));
+  }
+  assert.match(admin,/id="prayerVolume_\$\{p\}"[\s\S]*?aria-label="\$\{p\} Azaan volume"/);
+  assert.match(admin,/prayerVolumes:\{Fajr:\.70,Dhuhr:\.70,Asr:\.70,Maghrib:\.70,Isha:\.70\}/);
+  assert.match(admin,/pushPatch\(\{prayerVolumes:state\.prayerVolumes\}\)/);
+  assert.match(html,/child\('prayerVolumes'\)\.set\(window\.aslimaPrayerVolumes\)/);
+  assert.match(controllerSource,/window\.aslimaPrayerVolumes&&window\.aslimaPrayerVolumes\[prayer\]/);
+  assert.match(controllerSource,/Number\.isFinite\(prayerVolume\)\?prayerVolume/);
+  assert.match(controllerSource,/a\.volume=Math\.min\(Number\(window\.aslimaDuaVolume\?\?\.65\),Number\(window\.aslimaMaxVolume\?\?1\)\)/);
 });
 
 test('a stale Firebase voice cannot overwrite the tablet selection awaiting sync',()=>{
@@ -282,7 +308,7 @@ test('Mishary embedded dua is skipped and translated dua readout follows the aud
   assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.94,50\.711\]\)/);
   assert.match(controllerSource,/if\(end&&a\.currentTime>=end\)\{advanceFromAzaan\(state\.token\);return;\}/);
   assert.match(controllerSource,/state\.stage='azaan-ending'/);
-  assert.match(controllerSource,/i===1[\s\S]*?English Translation[\s\S]*?i===0[\s\S]*?POST_AZAAN_DUA\.ur|i===1[\s\S]*?POST_AZAAN_DUA\.en[\s\S]*?else\{if\(ar\)\{ar\.textContent=POST_AZAAN_DUA\.ur/);
+  assert.match(controllerSource,/i===1[\s\S]*?POST_AZAAN_DUA\.ur[\s\S]*?Urdu translation[\s\S]*?else\{if\(ar\)\{ar\.textContent='English Translation'[\s\S]*?POST_AZAAN_DUA\.en/);
   assert.match(controllerSource,/Urdu translation/);
 });
 
