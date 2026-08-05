@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071016">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./admin-manifest.webmanifest">
+<link rel="apple-touch-icon" href="./assets/aslima-admin-icon.svg">
 <title>Aslima Remote</title>
 <style>
 :root{--bg:#04070b;--card:rgba(255,255,255,.075);--card2:rgba(255,255,255,.045);--line:rgba(255,255,255,.13);--gold:#f5c86b;--gold2:#b9832f;--green:#49e6a4;--red:#ff6075;--text:#f8f3e9;--muted:rgba(248,243,233,.62);--shadow:0 22px 70px rgba(0,0,0,.46)}
@@ -33,12 +38,16 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 .card{margin:11px 0;padding:15px;border-radius:22px;box-shadow:0 17px 44px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.065)}.card h2{font-size:16px;margin-bottom:11px}.sectionHint{font-size:12px;margin-bottom:12px}.mode{gap:7px}.mode button,.primary,.ghost,.danger,.miniAction{min-height:46px;border-radius:15px;font-size:13px;padding:12px 10px}.row{grid-template-columns:1fr 112px;gap:10px;border-radius:16px;padding:11px}.name{font-size:14px}.hint{font-size:11px}.grid{gap:8px}.switch{width:52px;height:30px}.thumb{width:24px;height:24px}.switch input:checked+.track .thumb{transform:translateX(22px)}
 .voiceGrid{gap:8px}.voiceCard{min-height:64px;padding:12px;border-radius:16px}.voiceCard .voiceName{font-size:14px}.voiceBadge{padding:6px 9px;font-size:9px}.backupActions,.quickCommands{gap:8px}.systemDetails{margin:11px 0;border-radius:18px}.systemDetails summary{min-height:48px;padding:12px 14px}.deviceHealthGrid{gap:7px}.healthItem{padding:8px}.healthValue{font-size:12px}
 @media(max-width:360px){.dailyScheduleGrid{grid-template-columns:1fr}.top{align-items:flex-start}.status{max-width:104px;white-space:normal;text-align:center}.row{grid-template-columns:1fr 106px}}
+.alertCenter{display:grid;gap:8px;margin:10px 0}.alertCard{border:1px solid rgba(255,193,94,.35);border-radius:16px;background:rgba(255,174,43,.09);padding:11px 13px;font-size:12px;line-height:1.4}.alertCard strong{display:block;color:#ffd98b;font-size:13px}.nowPlaying{display:none;margin:10px 0 14px;padding:14px;border:1px solid rgba(73,230,164,.34);border-radius:20px;background:linear-gradient(135deg,rgba(73,230,164,.13),rgba(255,255,255,.04))}.nowPlaying.show{display:block}.nowHead{display:flex;justify-content:space-between;align-items:center}.nowTitle{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--green);font-weight:950}.nowStage{font-size:11px;color:var(--muted)}.nowMain{font-size:21px;font-weight:950;margin:6px 0}.progressTrack{height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.progressBar{height:100%;width:25%;background:linear-gradient(90deg,var(--green),var(--gold));animation:playing 2.2s ease-in-out infinite alternate}@keyframes playing{to{width:82%}}
+.schedulePrayer{appearance:none;color:inherit;text-align:left;width:100%;cursor:pointer}.scheduleTimes{display:flex;gap:8px;align-items:baseline}.iqamah{color:var(--gold);font-size:10px}.schedulePrayer:focus-visible,.tabBtn:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(245,200,107,.7);outline-offset:2px}.commandSetup{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}.commandSetup select{min-height:44px;border:1px solid var(--line);border-radius:14px;background:#10171b;color:var(--text);padding:0 10px;font-weight:850}.voiceActions{display:flex;gap:7px;align-items:center}.voiceActions button{width:auto;min-height:38px;padding:7px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.06);font-size:11px;font-weight:900}.voiceActions .selectVoice{color:var(--gold)}.presetRow{display:flex;gap:7px;margin:10px 0}.presetRow button{flex:1;min-height:38px;padding:8px;border-radius:12px;font-size:11px}.activityList{display:grid;gap:7px}.activityItem{display:grid;grid-template-columns:1fr auto;gap:5px;border-bottom:1px solid rgba(255,255,255,.08);padding:8px 0}.activityItem:last-child{border:0}.activityDetail{font-size:11px;color:var(--muted)}.activityState{font-size:10px;color:var(--green);font-weight:900}.installRow{display:flex;gap:8px}.installRow button{flex:1}.sheet{position:fixed;inset:0;z-index:20;display:none;align-items:flex-end;background:rgba(0,0,0,.65);padding:16px}.sheet.show{display:flex}.sheetPanel{width:min(100%,540px);margin:0 auto;border:1px solid var(--line);border-radius:26px;background:#10171b;padding:18px;box-shadow:var(--shadow)}.sheetTitle{font-size:22px;font-weight:950}.sheetTimes{color:var(--muted);margin:6px 0 16px}.sheetActions{display:grid;gap:8px}.sheetActions button{width:100%}button:disabled{opacity:.42;cursor:not-allowed}.offlineNote{display:none;color:#ffd27b;font-size:11px;margin-top:8px}body[data-tablet="offline"] .offlineNote{display:block}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <div class="lock" id="lock"><div class="lockbox"><div class="eyebrow">Aslima Remote</div><h1>Sign in to Admin</h1><p>Use the authorized ASLIMA Google account to control the tablet.</p><button class="primary" id="signIn" style="width:100%">Continue with Google</button><div class="authError" id="authError" role="alert" aria-live="polite"></div></div></div>
 <div class="shell">
   <div class="top"><div><div class="eyebrow">Aslima Admin</div><div class="title">Azaan Remote</div><div class="sub">Clean controls for the tablet. Azaan voice changes apply instantly—no Save tap required.</div><button class="accountAction" id="signOut" type="button" hidden>Sign out</button></div><div class="status" id="status"><span class="dot"></span>Sign in required</div></div>
+  <div class="alertCenter" id="alertCenter" role="status" aria-live="polite"></div>
+  <section class="nowPlaying" id="nowPlaying" aria-live="polite"><div class="nowHead"><span class="nowTitle">Now playing on tablet</span><span class="nowStage" id="nowStage">Azaan</span></div><div class="nowMain" id="nowMain">Dhuhr Azaan</div><div class="progressTrack" aria-hidden="true"><div class="progressBar"></div></div><button class="danger" id="nowStop" type="button" style="width:100%;margin-top:12px">Stop playback</button></section>
 
   <section class="hero">
     <div class="heroTop"><div class="pill" id="modePill">● VRIC Live</div><div class="pill" id="syncPill">Synced</div></div>
@@ -70,16 +79,20 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 
   <section class="page" id="azaanPage">
     <section class="card"><h2>Azaan Toggles</h2><div class="sectionHint">Control which prayers play Azaan on the tablet.</div><div class="grid" id="azaanGrid"></div></section>
-    <section class="card"><h2>Quick Commands</h2><div class="sectionHint">Control playback or safely refresh the display.</div><div class="quickCommands"><button class="ghost" id="test">Test Azaan</button><button class="danger" id="stop">Stop Azaan</button><button class="ghost reloadCommand" id="reloadDisplay" type="button">Reload Tablet Display</button></div><div class="small">Reload waits until Azaan playback is idle.</div></section>
+    <section class="card"><h2>Playback Test</h2><div class="sectionHint">Choose a prayer, then test exactly what the tablet will play.</div><div class="commandSetup"><select id="testPrayer" aria-label="Prayer to test"><option>Fajr</option><option selected>Dhuhr</option><option>Asr</option><option>Maghrib</option><option>Isha</option></select><button class="ghost" id="test" data-live-command>Test Azaan</button></div><div class="quickCommands"><button class="ghost" id="testDua" data-live-command>Test translated dua</button><button class="danger" id="stop" data-live-command>Stop playback</button><button class="ghost reloadCommand" id="reloadDisplay" type="button" data-live-command>Reload Tablet Display</button></div><div class="small">Reload waits until Azaan playback is idle.</div><div class="offlineNote">Live controls are unavailable until the tablet reconnects.</div></section>
+    <section class="card"><h2>Recent Activity</h2><div class="sectionHint">Shows commands sent from this phone and tablet acknowledgements.</div><div class="activityList" id="activityList"></div></section>
   </section>
 
 
   <section class="page" id="voicePage">
     <section class="card"><h2>Azaan Voice</h2><div class="sectionHint">Choose the Azaan recording used by the tablet. Selection syncs immediately.</div><div class="voiceGrid" id="voiceGrid"></div></section>
-    <section class="card volumeCard"><h2>Tablet Volume</h2><div class="sectionHint">Changes sync while you drag.</div><div class="row"><div><div class="name">Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70" aria-label="Tablet Azaan volume"></div></section>
+    <section class="card volumeCard"><h2>Safe Tablet Volume</h2><div class="sectionHint">Separate levels for Azaan and the translated dua, with a hard maximum.</div><div class="presetRow"><button class="ghost" type="button" data-preset="quiet">Quiet</button><button class="ghost" type="button" data-preset="balanced">Balanced</button><button class="ghost" type="button" data-preset="full">Full</button></div><div class="row"><div><div class="name">Azaan Volume</div><div class="hint"><span id="volLabel">70%</span></div></div><input id="volume" type="range" min="0" max="100" value="70" aria-label="Tablet Azaan volume"></div><div class="row"><div><div class="name">Dua Volume</div><div class="hint"><span id="duaVolLabel">65%</span></div></div><input id="duaVolume" type="range" min="0" max="100" value="65" aria-label="Tablet dua volume"></div><div class="row"><div><div class="name">Maximum Limit</div><div class="hint"><span id="maxVolLabel">90%</span> safety cap</div></div><input id="maxVolume" type="range" min="40" max="100" value="90" aria-label="Maximum tablet volume"></div><div class="row"><div><div class="name">Gentle Fade-in</div><div class="hint">Prevents a sudden loud start</div></div><label class="switch"><input id="fadeIn" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div></section>
+    <section class="card"><h2>Phone App</h2><div class="sectionHint">Install for faster access and optionally receive device alerts.</div><div class="installRow"><button class="ghost" id="installApp" type="button" hidden>Install app</button><button class="ghost" id="enableAlerts" type="button">Enable alerts</button></div><div class="small" id="appStatus">Offline access will be prepared automatically.</div></section>
   </section>
 </div>
 <div class="toast" id="toast">Saved</div>
+<div class="sheet" id="prayerSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheetPanel"><div class="sheetTitle" id="sheetTitle">Prayer</div><div class="sheetTimes" id="sheetTimes"></div><div class="sheetActions"><button class="ghost" id="sheetToggle" type="button">Turn Azaan off</button><button class="primary" id="sheetTest" type="button" data-live-command>Test on tablet</button><button class="ghost" id="sheetClose" type="button">Close</button></div></div></div>
+<audio id="phonePreview" preload="none"></audio>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -89,13 +102,20 @@ const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail.com';
 const PATH='aslima/devices/home/settings';
 const STATUS_PATH='aslima/devices/home/status/display';
 const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-const AZAAN_VOICES={doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan'},azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13'},azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06'},azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21'},azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57'},azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32'}};
+const AZAAN_VOICES={doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3'},azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3'},azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3'},azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3'},azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57',url:'./assets/audio/azaan-4.mp3'},azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32',url:'./assets/audio/azaan-5.mp3'}};
 const AZAAN_VOICE_ORDER=['doha','azaan1','azaan2','azaan3','azaan4','azaan5'];
-const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.70,muezzin:'doha',homeLocation:null};
+const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},iqamah:{},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.70,duaVolume:.65,maxVolume:.90,fadeInSeconds:0,muezzin:'doha',homeLocation:null};
 const HOME_LOCATION_PROXY='https://aslima-masjid-search.aslima-azaan.workers.dev/nearby';
 let state=JSON.parse(JSON.stringify(DEFAULT));
 let tabletHealth=null;
+let activePrayerSheet=null;let pendingInstallPrompt=null;let lastHealthAlert='';
+let activity=(()=>{try{return JSON.parse(localStorage.getItem('aslima_admin_activity')||'[]')}catch(_){return []}})();
 const $=id=>document.getElementById(id); function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000)}
+function saveActivity(){try{localStorage.setItem('aslima_admin_activity',JSON.stringify(activity.slice(0,12)))}catch(_){}}
+function logActivity(title,stateLabel,detail,id){activity.unshift({title,state:stateLabel||'Sent',detail:detail||'',id:id||'',at:Date.now()});activity=activity.slice(0,12);saveActivity();renderActivity()}
+function renderActivity(){const el=$('activityList');if(!el)return;el.innerHTML=activity.length?activity.map(item=>`<div class="activityItem"><div><strong>${item.title}</strong><div class="activityDetail">${item.detail||new Date(item.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</div></div><span class="activityState">${item.state}</span></div>`).join(''):'<div class="small">No commands from this phone yet.</div>'}
+function tabletOnline(){const seen=Number(tabletHealth&&tabletHealth.lastSeen)||0;return !!(tabletHealth&&tabletHealth.online!==false&&seen&&Date.now()-seen<=150000)}
+function sendTabletCommand(type,extra,label){if(!window.ref||!tabletOnline()){toast('Tablet is offline');return Promise.reject(new Error('offline'))}const payload=command(type,extra);logActivity(label||type,'Sending','Waiting for tablet',payload.id);return window.ref.child('command').set(payload).then(()=>{activity=activity.map(x=>x.id===payload.id?{...x,state:'Sent',detail:'Delivered to cloud'}:x);saveActivity();renderActivity();toast((label||'Command')+' sent')}).catch(error=>{activity=activity.map(x=>x.id===payload.id?{...x,state:'Failed',detail:'Could not send'}:x);saveActivity();renderActivity();toast('Command failed');throw error})}
 function setStatus(txt,cls){const s=$('status');s.className='status '+(cls||'');s.innerHTML='<span class="dot"></span>'+txt}
 function normalizeHomeLocation(value){if(!value||typeof value!=='object'||Array.isArray(value))return null;const latitude=Number(value.latitude),longitude=Number(value.longitude);if(!Number.isFinite(latitude)||latitude<-90||latitude>90||!Number.isFinite(longitude)||longitude<-180||longitude>180)return null;const postalCode=/^\d{5}$/.test(String(value.postalCode||''))?String(value.postalCode):'';return {latitude:Math.round(latitude*1000)/1000,longitude:Math.round(longitude*1000)/1000,label:String(value.label||postalCode||'Location sent from phone').slice(0,90),postalCode,source:['zip','phone'].includes(String(value.source||''))?String(value.source):'phone',updatedAt:Math.max(0,Number(value.updatedAt)||Date.now())}}
 function setHomeAreaStatus(text,kind){const element=$('homeAreaStatus');element.textContent=text||'';element.className='homeAreaStatus '+(kind||'')}
@@ -157,6 +177,11 @@ function renderTabletHealth(){
  $('healthIssues').textContent=health?String(issueCount):'—';
  const issueAt=Math.max(0,Number(health&&health.lastRuntimeIssueAt)||0);
  $('healthLastIssue').textContent=!health?'—':(issueAt?String(health.lastRuntimeIssueCategory||'runtime')+' · '+String(health.lastRuntimeIssueStatus||'issue')+' · '+(Date.now()-issueAt<65000?'now':Math.max(1,Math.round((Date.now()-issueAt)/60000))+'m ago'):'None');
+ document.body.dataset.tablet=online?'online':'offline';document.querySelectorAll('[data-live-command]').forEach(button=>button.disabled=!online);
+ const stage=String(health&&health.playbackStage||health&&health.playbackPhase||'idle');const playing=online&&!['idle','stopped',''].includes(stage);$('nowPlaying').classList.toggle('show',playing);$('nowStage').textContent=stage.includes('dua')?'Translated dua':'Azaan';$('nowMain').textContent=(health&&health.activePrayer?health.activePrayer+' · ':'')+(stage.includes('dua')?'Urdu + English translation':'Azaan playing');
+ const alerts=[];if(lastSeen&&!online)alerts.push(['Tablet offline','Last contact was '+$('healthLastSeen').textContent+'. Live controls are paused.']);if(online&&health.timingStatus==='unavailable')alerts.push(['Prayer times need attention','The tablet does not currently have a valid timing schedule.']);if(online&&issueCount)alerts.push(['Tablet reported an issue',issueCount+' runtime issue'+(issueCount===1?'':'s')+' in the last 24 hours. Open Device details below.']);$('alertCenter').innerHTML=alerts.map(a=>`<div class="alertCard"><strong>${a[0]}</strong>${a[1]}</div>`).join('');
+ if(health&&health.lastCommandId){const match=activity.find(x=>x.id===health.lastCommandId);if(match&&match.state!=='Received'){match.state='Received';match.detail='Acknowledged by tablet';saveActivity();renderActivity()}}
+ const alertKey=alerts.map(a=>a[0]).join('|');if(alertKey&&alertKey!==lastHealthAlert&&'Notification'in window&&Notification.permission==='granted')new Notification('ASLIMA tablet',{body:alerts[0][1]});lastHealthAlert=alertKey;
 }
 function updateNextPrayer(){
  const names=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
@@ -170,7 +195,8 @@ function updateNextPrayer(){
 }
 function renderDailySchedule(nextPrayer){
  const grid=$('dailyScheduleGrid');if(!grid)return;
- grid.innerHTML=PRAYERS.map(prayer=>{const enabled=prayer==='Sunrise'?false:state.azaanEnabled[prayer]!==false;const meta=prayer==='Sunrise'?'No Azaan':(enabled?'Azaan on':'Azaan off');return `<div class="schedulePrayer${prayer===nextPrayer?' next':''}" data-prayer="${prayer}" data-enabled="${enabled}"><div class="schedulePrayerName">${prayer}</div><div class="schedulePrayerTime">${displayTime(state.timings&&state.timings[prayer])}</div><div class="schedulePrayerMeta">${meta}</div></div>`}).join('');
+ grid.innerHTML=PRAYERS.map(prayer=>{const enabled=prayer==='Sunrise'?false:state.azaanEnabled[prayer]!==false;const meta=prayer==='Sunrise'?'No Azaan':(enabled?'Azaan on':'Azaan off');const iqamah=state.iqamah&&state.iqamah[prayer];return `<button type="button" class="schedulePrayer${prayer===nextPrayer?' next':''}" data-prayer="${prayer}" data-enabled="${enabled}" aria-label="${prayer}, Azaan ${displayTime(state.timings&&state.timings[prayer])}${iqamah?', Iqamah '+displayTime(iqamah):''}"><div class="schedulePrayerName">${prayer}</div><div class="scheduleTimes"><span class="schedulePrayerTime">${displayTime(state.timings&&state.timings[prayer])}</span>${iqamah?`<span class="iqamah">Iq ${displayTime(iqamah)}</span>`:''}</div><div class="schedulePrayerMeta">${meta} · tap for actions</div></button>`}).join('');
+ grid.querySelectorAll('.schedulePrayer').forEach(button=>button.onclick=()=>openPrayerSheet(button.dataset.prayer));
  $('dailyScheduleMeta').textContent=state.mode==='manual'?'Manual schedule':(state.mode==='calculated-location'?'Location schedule':'VRIC schedule');
 }
 function render(){
@@ -180,6 +206,7 @@ function render(){
  $('manualTimesCard').hidden=!manualMode;
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.checked=state.azaanEnabled[p]!==false;const time=$('azTime_'+p);if(time)time.textContent=displayTime(state.timings&&state.timings[p])});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
+ $('duaVolume').value=Math.round((state.duaVolume??.65)*100);$('duaVolLabel').textContent=$('duaVolume').value+'%';$('maxVolume').value=Math.round((state.maxVolume??.9)*100);$('maxVolLabel').textContent=$('maxVolume').value+'%';$('fadeIn').checked=Number(state.fadeInSeconds)>0;
  $('modePill').textContent=(state.mode==='manual'?'● Manual':(state.mode==='calculated-location'?'● Location':'● VRIC Live'));
  updateNextPrayer();
  document.querySelectorAll('.voiceCard').forEach(card=>{const active=card.id==='voice_'+(state.muezzin||'azaan1');card.classList.toggle('active',active);const badge=card.querySelector('.voiceBadge');if(badge)badge.textContent=active?'Active':'Select'});
@@ -188,7 +215,8 @@ function render(){
 function build(){
  $('timeGrid').innerHTML=PRAYERS.map(p=>`<div class="row"><div><div class="name">${p}</div><div class="hint">${p==='Sunrise'?'Shown only, no Azaan':'24-hour time'}</div></div><input id="time_${p}" type="time" step="60"></div>`).join('');
  $('azaanGrid').innerHTML=AZAAN.map(p=>`<div class="row toggle"><div><div class="name">${p} Azaan</div><div class="hint"><span id="azTime_${p}">${displayTime(state.timings&&state.timings[p])}</span> · ${p==='Fajr'?'Morning Azaan':'Auto-play'}</div></div><label class="switch"><input id="az_${p}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
- $('voiceGrid').innerHTML=AZAAN_VOICE_ORDER.map(id=>{const v=AZAAN_VOICES[id];return `<div class="voiceCard" id="voice_${id}"><button type="button" data-voice="${id}"><div class="voiceName">${v.name}</div><div class="voiceMeta">${v.note}</div></button><div class="voiceBadge">Select</div></div>`}).join('');
+ $('voiceGrid').innerHTML=AZAAN_VOICE_ORDER.map(id=>{const v=AZAAN_VOICES[id];return `<div class="voiceCard" id="voice_${id}"><div><div class="voiceName">${v.name}</div><div class="voiceMeta">${v.note}</div></div><div class="voiceActions"><button type="button" data-preview="${id}">Preview</button><button type="button" class="selectVoice" data-voice="${id}">Use</button></div><div class="voiceBadge">Select</div></div>`}).join('');
+ document.querySelectorAll('[data-preview]').forEach(btn=>btn.onclick=()=>{const audio=$('phonePreview'),voice=AZAAN_VOICES[btn.dataset.preview];if(!voice)return;if(!audio.paused&&audio.dataset.voice===voice.id){audio.pause();audio.currentTime=0;btn.textContent='Preview';return}document.querySelectorAll('[data-preview]').forEach(x=>x.textContent='Preview');audio.src=voice.url;audio.dataset.voice=voice.id;audio.volume=Math.min(.75,state.maxVolume||.9);audio.play().then(()=>btn.textContent='Stop').catch(()=>toast('Preview could not play'));audio.onended=()=>btn.textContent='Preview'});
  document.querySelectorAll('[data-voice]').forEach(btn=>btn.onclick=async()=>{
    const id=btn.dataset.voice;
    if(!AZAAN_VOICES[id])return;
@@ -209,15 +237,22 @@ function collect(){
    PRAYERS.forEach(p=>{state.timings[p]=$('time_'+p).value||state.timings[p]||DEFAULT.timings[p]});
  }
  AZAAN.forEach(p=>{state.azaanEnabled[p]=$('az_'+p).checked});
- state.volume=parseInt($('volume').value,10)/100; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
+ state.volume=parseInt($('volume').value,10)/100;state.duaVolume=parseInt($('duaVolume').value,10)/100;state.maxVolume=parseInt($('maxVolume').value,10)/100;state.fadeInSeconds=$('fadeIn').checked?3:0; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
  return state;
 }
-build(); render(); renderTabletHealth(); setInterval(updateNextPrayer,30000); setInterval(renderTabletHealth,30000);
+function openPrayerSheet(prayer){activePrayerSheet=prayer;$('sheetTitle').textContent=prayer;$('sheetTimes').textContent='Azaan '+displayTime(state.timings[prayer])+(state.iqamah&&state.iqamah[prayer]?' · Iqamah '+displayTime(state.iqamah[prayer]):'');$('sheetToggle').hidden=prayer==='Sunrise';$('sheetTest').hidden=prayer==='Sunrise';$('sheetToggle').textContent=state.azaanEnabled[prayer]===false?'Turn Azaan on':'Turn Azaan off';$('prayerSheet').classList.add('show');$('sheetClose').focus()}
+function closePrayerSheet(){$('prayerSheet').classList.remove('show');activePrayerSheet=null}
+build(); render(); renderActivity();renderTabletHealth(); setInterval(updateNextPrayer,30000); setInterval(renderTabletHealth,30000);
 
 function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('exportBackup').onclick=exportSettingsBackup;$('restoreBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};$('backupFile').onchange=async event=>{try{const restored=await restoreSettingsBackup(event.target.files&&event.target.files[0]);if(restored)setBackupStatus('Backup restored to the tablet.','ok')}catch(error){setBackupStatus(error.message||'Restore failed.','error')}};
 $('homeZipForm').onsubmit=saveHomeZip;$('usePhoneLocation').onclick=usePhoneLocation;
+$('sheetClose').onclick=closePrayerSheet;$('prayerSheet').onclick=event=>{if(event.target===$('prayerSheet'))closePrayerSheet()};$('sheetToggle').onclick=()=>{if(!activePrayerSheet||activePrayerSheet==='Sunrise')return;state.azaanEnabled[activePrayerSheet]=state.azaanEnabled[activePrayerSheet]===false;const prayer=activePrayerSheet;render();openPrayerSheet(prayer);if(window.ref)window.ref.update({azaanEnabled:state.azaanEnabled,updatedAt:new Date().toISOString()}).then(()=>toast(prayer+' updated'))};$('sheetTest').onclick=()=>{if(activePrayerSheet)sendTabletCommand('testAzaan',{prayer:activePrayerSheet},'Test '+activePrayerSheet).catch(()=>{});closePrayerSheet()};
+$('nowStop').onclick=()=>sendTabletCommand('stopAzaan',{},'Stop playback').catch(()=>{});
+document.querySelectorAll('[data-preset]').forEach(button=>button.onclick=()=>{const values={quiet:[45,40,60],balanced:[70,60,85],full:[85,75,95]}[button.dataset.preset];if(!values)return;$('volume').value=values[0];$('duaVolume').value=values[1];$('maxVolume').value=values[2];collect();render();if(window.ref)window.ref.update({volume:state.volume,duaVolume:state.duaVolume,maxVolume:state.maxVolume,updatedAt:new Date().toISOString()}).then(()=>toast('Volume preset applied'))});
+$('enableAlerts').onclick=async()=>{if(!('Notification'in window)){toast('Notifications are unavailable');return}const permission=await Notification.requestPermission();$('appStatus').textContent=permission==='granted'?'Tablet alerts are enabled.':'Alerts were not enabled.'};
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();pendingInstallPrompt=event;$('installApp').hidden=false});$('installApp').onclick=async()=>{if(!pendingInstallPrompt)return;pendingInstallPrompt.prompt();await pendingInstallPrompt.userChoice;pendingInstallPrompt=null;$('installApp').hidden=true};
 function saveRemote(label){
  const payload=collect();
  return window.ref.update(payload).then(()=>toast(label||'Saved to tablet')).catch(e=>toast('Save failed'));
@@ -231,15 +266,18 @@ function initializeAuthorizedRemote(){
  const ref=firebase.database().ref(PATH);const statusRef=firebase.database().ref(STATUS_PATH);const voiceRef=ref.child('muezzin');window.ref=ref;window.statusRef=statusRef;window.voiceRef=voiceRef;
  statusRef.on('value',snap=>{tabletHealth=snap.val();renderTabletHealth();},()=>{tabletHealth=null;renderTabletHealth();});
  voiceRef.on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}});
- ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}};render();}},()=>setStatus('Access denied','bad'));
+ ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},iqamah:{...DEFAULT.iqamah,...(v.iqamah||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})}};render();}},()=>setStatus('Access denied','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
- $('test').onclick=()=>{ref.child('command').set(command('testAzaan')).then(()=>toast('Test sent to tablet')).catch(()=>toast('Test command failed'))};
- $('stop').onclick=()=>{ref.child('command').set(command('stopAzaan')).then(()=>toast('Stop sent to tablet')).catch(()=>toast('Stop command failed'))};
- $('reloadDisplay').onclick=()=>{if(!window.confirm('Reload the tablet display? It will wait until Azaan playback is idle.'))return;ref.child('command').set(command('reloadDisplay')).then(()=>toast('Safe reload sent to tablet')).catch(()=>toast('Reload command failed'))};
+ $('test').onclick=()=>sendTabletCommand('testAzaan',{prayer:$('testPrayer').value},'Test '+$('testPrayer').value).catch(()=>{});
+ $('testDua').onclick=()=>sendTabletCommand('testDua',{},'Test translated dua').catch(()=>{});
+ $('stop').onclick=()=>sendTabletCommand('stopAzaan',{},'Stop playback').catch(()=>{});
+ $('reloadDisplay').onclick=()=>{if(!window.confirm('Reload the tablet display? It will wait until Azaan playback is idle.'))return;const payload=command('reloadDisplay');logActivity('Reload display','Sending','Waiting for tablet',payload.id);ref.child('command').set(payload).then(()=>toast('Reload display sent')).catch(()=>toast('Reload command failed'))};
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.onchange=()=>{state.azaanEnabled[p]=el.checked;pushPatch({azaanEnabled:state.azaanEnabled},p+' updated')}});
  const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
  $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%';pushVolume()};
+ const pushAudioSafety=debounce(()=>{state.duaVolume=parseInt($('duaVolume').value,10)/100;state.maxVolume=parseInt($('maxVolume').value,10)/100;state.fadeInSeconds=$('fadeIn').checked?3:0;pushPatch({duaVolume:state.duaVolume,maxVolume:state.maxVolume,fadeInSeconds:state.fadeInSeconds})},180);
+ $('duaVolume').oninput=()=>{$('duaVolLabel').textContent=$('duaVolume').value+'%';pushAudioSafety()};$('maxVolume').oninput=()=>{$('maxVolLabel').textContent=$('maxVolume').value+'%';pushAudioSafety()};$('fadeIn').onchange=pushAudioSafety;
  PRAYERS.forEach(p=>{const el=$('time_'+p);if(el)el.onchange=()=>{if(state.mode!=='manual')return;state.timings[p]=el.value||state.timings[p];pushPatch({timings:state.timings},p+' time updated')}});
 }
 try{
@@ -253,6 +291,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
    showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
  });
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=969').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>

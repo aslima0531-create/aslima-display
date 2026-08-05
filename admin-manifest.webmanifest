@@ -1,0 +1,11 @@
+{
+  "name": "ASLIMA Azaan Remote",
+  "short_name": "ASLIMA",
+  "description": "Secure phone controls for the ASLIMA Azaan display.",
+  "start_url": "./admin.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#020405",
+  "theme_color": "#071016",
+  "icons": [{"src":"./assets/aslima-admin-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

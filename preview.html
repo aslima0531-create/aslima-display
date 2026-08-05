@@ -6011,6 +6011,8 @@ let aslimaRemoteInitialSnapshot=true;
 let aslimaHealthRef=null;
 let aslimaHealthTimer=0;
 let aslimaHealthListenersBound=false;
+let aslimaLastHandledCommandId='';
+let aslimaLastHandledCommandType='';
 window.aslimaRemoteManualEnabled=false;
 window.aslimaRemoteManualTimings=null;
 
@@ -6022,12 +6024,17 @@ function aslimaHealthPayload(online){
   const lastIssue=diagnostics.lastIssue&&typeof diagnostics.lastIssue==='object'?diagnostics.lastIssue:{};
   return {
     online:online!==false&&navigator.onLine!==false,
-    appVersion:'967',
+    appVersion:'969',
     integrationVersion:document.documentElement.dataset.aslimaIntegration||'961',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
     playbackPhase:playback.phase||'idle',
+    playbackStage:playback.stage||playback.phase||'idle',
     activePrayer:playback.prayer||'',
+    activeVoice:playback.voice||'',
+    appliedVolume:Math.round(audio.volume*100)/100,
+    lastCommandId:aslimaLastHandledCommandId,
+    lastCommandType:aslimaLastHandledCommandType,
     schedulerStatus:scheduler.status||'starting',
     recoveryStatus:recovery.status||'starting',
     recoveryReason:recovery.reason||'',
@@ -6143,9 +6150,13 @@ function applyAslimaRemoteSettings(data){
     }
     if(typeof data.volume==='number' && Number.isFinite(data.volume)){
       audio.volume=Math.max(0,Math.min(1,data.volume));
+      window.aslimaAzaanVolume=audio.volume;
       localStorage.setItem('aslima_azaan_volume',String(audio.volume));
       updateVolumeLabel();
     }
+    if(typeof data.duaVolume==='number'&&Number.isFinite(data.duaVolume))window.aslimaDuaVolume=Math.max(0,Math.min(1,data.duaVolume));
+    if(typeof data.maxVolume==='number'&&Number.isFinite(data.maxVolume))window.aslimaMaxVolume=Math.max(.4,Math.min(1,data.maxVolume));
+    if(typeof data.fadeInSeconds==='number'&&Number.isFinite(data.fadeInSeconds))window.aslimaFadeInSeconds=Math.max(0,Math.min(5,data.fadeInSeconds));
     if(typeof data.muezzin==='string' && data.muezzin.trim()){
       const remoteVoice=normalizeAzaanVoiceId(data.muezzin);
       if(acceptRemoteAzaanVoice(remoteVoice)){
@@ -6203,8 +6214,10 @@ function initAslimaFirebaseRemote(){
       aslimaRemoteLastCommand=id;
       try{localStorage.setItem('aslima_last_remote_command',id);}catch(e){}
       if(c.type==='testAzaan'&&typeof window.playAzaan==='function')window.playAzaan(c.prayer||null,{force:true,source:'phone-command'});
+      if(c.type==='testDua'&&typeof window.playPostAzaanDua==='function')window.playPostAzaanDua();
       if(c.type==='stopAzaan'&&typeof window.stopAzaan==='function')window.stopAzaan();
       if(c.type==='reloadDisplay'&&window.ASLIMARecovery&&typeof window.ASLIMARecovery.requestReload==='function')window.ASLIMARecovery.requestReload('phone-command');
+      aslimaLastHandledCommandId=id;aslimaLastHandledCommandType=String(c.type||'');publishAslimaHealth('command-'+aslimaLastHandledCommandType);
     });
     ref.on('value',snap=>{
       aslimaRemoteReady=true;
@@ -7867,13 +7880,14 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     renderLine(POST_AZAAN_DUA,'dua');overlay(true);
     try{
       await loadAsset(POST_AZAAN_DUA.url,token,'Du‘a after Azaan');if(token!==state.token)return false;
-      bindMediaLifecycle(token,'dua');a.muted=false;a.currentTime=0;await a.play();if(token!==state.token)return false;
+      bindMediaLifecycle(token,'dua');a.muted=false;a.volume=Math.min(Number(window.aslimaDuaVolume??.65),Number(window.aslimaMaxVolume??1));a.currentTime=0;await a.play();if(token!==state.token)return false;
       setPhase('dua-playing');startDuaVisual(token);showToast('Du‘a after Azaan');return true;
     }catch(error){
       if(token===state.token){console.error(error);showToast('Du‘a audio could not play');finishPlayback(token);}
       return false;
     }
   }
+  window.playPostAzaanDua=function(){const token=beginSession('phone-command','',state.prayer||'Prayer','dua-loading');return playPostAzaanDua(token)};
   function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
@@ -7893,7 +7907,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     const occurrenceKey=source==='automatic-scheduler'?String(opts.occurrenceKey||''):'';
     const token=beginSession(source,occurrenceKey,prayer,'loading'),id=normalize(state.voice);state.voice=id;state.schedulerAttemptGeneration=source==='automatic-scheduler'?Number(opts.attemptGeneration)||0:0;overlay(false);clearVisual();
     try{
-      await load(id,token,prayer);if(token!==state.token)return false;bindMediaLifecycle(token,'azaan');a.muted=false;a.currentTime=0;await a.play();
+      await load(id,token,prayer);if(token!==state.token)return false;bindMediaLifecycle(token,'azaan');a.muted=false;const targetVolume=Math.min(Number(window.aslimaAzaanVolume??a.volume),Number(window.aslimaMaxVolume??1)),fadeSeconds=Number(window.aslimaFadeInSeconds||0);a.volume=fadeSeconds?0:targetVolume;a.currentTime=0;await a.play();if(fadeSeconds){const fadeStarted=Date.now(),ramp=()=>{if(token!==state.token||state.stage!=='azaan')return;const progress=Math.min(1,(Date.now()-fadeStarted)/(fadeSeconds*1000));a.volume=targetVolume*progress;if(progress<1)requestAnimationFrame(ramp)};requestAnimationFrame(ramp)}
       if(token!==state.token)return false;
       setPhase('playing');const op=document.getElementById('overlayPrayer');if(op)op.textContent=String(prayer).toUpperCase();overlay(true);startVisual(prayer,id);showToast('Azaan playing for '+prayer);return true;
     }catch(err){if(token===state.token){try{a.pause();a.currentTime=0;}catch(e){}setPhase('idle');overlay(false);showToast('Azaan could not play — local audio error');console.error(err);}return false;}
@@ -7908,7 +7922,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=968').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=969').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
