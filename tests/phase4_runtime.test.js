@@ -313,6 +313,15 @@ test('completed Azaan continues into the bundled post-Azaan dua with visual tran
   assert.equal(h.body.classList.values.has('azaan-playing'),true);
 });
 
+test('Fajr audio lifecycle cuts off its embedded dua before starting the translated dua once',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;h.window.AZAAN_VOICES.azaan1.prayerPlaybackEnds={Fajr:237};
+  await h.window.playAzaan('Fajr',{source:'automatic-scheduler',occurrenceKey:'fajr-key'});
+  h.audio.currentTime=237;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'dua');assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');assert.match(h.audio.src,/dua-after-azaan\.mp3$/);
+  h.audio.currentTime=238;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'dua');assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');
+});
+
 test('Stop cancels post-Azaan dua audio and closes the shared overlay',async()=>{
   const h=controllerHarness();h.audio.readyState=1;
   await h.window.playAzaan('Dhuhr',{source:'local-test',force:true});

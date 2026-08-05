@@ -7915,10 +7915,12 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
-    const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
+    const selectedVoice=voice(state.voice),cutoff=stage==='azaan'?Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[state.prayer]||selectedVoice.playbackEnd)||0:0;
+    const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);a.removeEventListener('timeupdate',progress);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
     const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){advanceFromAzaan(token);return;}finishPlayback(token);};
     const failed=()=>{if(!owns()||state.stage!==stage)return;clean();try{a.pause();a.currentTime=0;}catch(_error){}showToast(stage==='dua'?'Du‘a audio could not be opened':'Local Azaan audio could not be opened');finishPlayback(token);};
-    a.addEventListener('ended',ended);a.addEventListener('error',failed);state.mediaCleanup=clean;
+    const progress=()=>{if(owns()&&state.stage==='azaan'&&cutoff&&a.currentTime>=cutoff)advanceFromAzaan(token)};
+    a.addEventListener('ended',ended);a.addEventListener('error',failed);a.addEventListener('timeupdate',progress);state.mediaCleanup=clean;
   }
   function advanceFromAzaan(token){
     if(token!==state.token||state.stage!=='azaan')return false;
@@ -7946,7 +7948,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=973').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=974').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
