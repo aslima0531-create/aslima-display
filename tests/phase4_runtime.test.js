@@ -32,7 +32,7 @@ test('Mishary Fajr uses its dedicated offline Azaan and then the shared translat
   const file='azaan-mishary-alafasy-fajr.mp3';
   assert.ok(fs.existsSync(path.join(ROOT,'assets/audio',file)),`${file} must be bundled`);
   assert.match(html,/prayerUrls:\{Fajr:'\.\/assets\/audio\/azaan-mishary-alafasy-fajr\.mp3'\}/);
-  assert.match(html,/prayerPlaybackEnds:\{Fajr:287\.782\}/);
+  assert.match(html,/prayerPlaybackEnds:\{Fajr:237\.00\}/);
   assert.match(html,/fajrSleep:\{ar:'الصلاة خير من النوم',en:'Prayer is better than sleep'\}/);
   assert.match(controllerSource,/const FAJR_VISUAL_SEQUENCE=[\s\S]*?'fajrSleep','fajrSleep'/);
   assert.match(controllerSource,/prayer==='Fajr'&&normalized==='doha'\?'dohaFajr':normalized/);

@@ -4335,7 +4335,7 @@ try{window.aslimaPrayerVolumes={Fajr:audio.volume,Dhuhr:audio.volume,Asr:audio.v
 
 // ASLIMA V9.1.16 — deterministic Azaan voice/audio engine
 const AZAAN_VOICES={
-  doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3',prayerUrls:{Fajr:'./assets/audio/azaan-mishary-alafasy-fajr.mp3'},visualMode:'full',playbackEnd:231.10,prayerPlaybackEnds:{Fajr:287.782}},
+  doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3',prayerUrls:{Fajr:'./assets/audio/azaan-mishary-alafasy-fajr.mp3'},visualMode:'full',playbackEnd:231.10,prayerPlaybackEnds:{Fajr:237.00}},
   azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3',visualMode:'full'},
   azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3',visualMode:'full'},
   azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3',visualMode:'full'},
@@ -7767,7 +7767,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
      12 cue starts plus the measured file end. Start times deliberately remain
      absolute; scaling them by duration was the source of the previous drift. */
   const CUE_SECONDS=Object.freeze({
-    dohaFajr:Object.freeze([0.00,20.00,40.00,60.00,80.00,100.00,120.00,140.00,160.00,180.00,200.00,220.00,240.00,260.00,287.782]),
+    dohaFajr:Object.freeze([0.00,18.00,36.00,54.00,72.00,90.00,108.00,126.00,144.00,162.00,180.00,198.00,216.00,227.00,237.00]),
     doha:Object.freeze([0.00,21.29,40.78,64.12,81.71,103.10,123.69,142.34,162.63,182.22,198.31,216.35,231.10]),
     azaan1:Object.freeze([0.00,8.05,22.34,30.36,42.75,51.64,65.93,72.94,90.58,97.50,112.64,121.97,133.3284]),
     azaan2:Object.freeze([0.00,16.68,34.94,48.41,65.03,79.39,96.22,107.37,132.65,143.59,163.49,174.31,186.2640]),
@@ -7936,7 +7936,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=970').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=971').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
