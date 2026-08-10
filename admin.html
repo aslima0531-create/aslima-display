@@ -80,6 +80,7 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 
   <section class="page" id="azaanPage">
     <section class="card"><h2>Azaan Toggles</h2><div class="sectionHint">Control which prayers play Azaan on the tablet.</div><div class="grid" id="azaanGrid"></div></section>
+    <section class="card"><h2>Days of the Week</h2><div class="sectionHint">Scheduled Azaans play only on enabled days.</div><div class="grid" id="azaanDayGrid"></div></section>
     <section class="card"><h2>Playback Test</h2><div class="sectionHint">Choose a prayer, then test exactly what the tablet will play.</div><div class="commandSetup"><select id="testPrayer" aria-label="Prayer to test"><option>Fajr</option><option selected>Dhuhr</option><option>Asr</option><option>Maghrib</option><option>Isha</option></select><button class="ghost" id="test" data-live-command>Test Azaan</button></div><div class="quickCommands"><button class="ghost" id="testDua" data-live-command>Test translated dua</button><button class="danger" id="stop" data-live-command>Stop playback</button><button class="ghost reloadCommand" id="reloadDisplay" type="button" data-live-command>Reload Tablet Display</button></div><div class="small">Reload waits until Azaan playback is idle.</div><div class="offlineNote">Live controls are unavailable until the tablet reconnects.</div></section>
     <section class="card"><h2>Playback Position</h2><div class="sectionHint">Testing only. Drag to choose a position, then use Play / Pause. Scheduled playback always starts from the beginning.</div><div class="row"><div><div class="name">Azaan</div><div class="hint" id="phoneAzaanSeekLabel">0:00</div></div><button class="ghost" id="phoneAzaanPlayPause" type="button" data-live-command>Play / Pause</button><input id="phoneAzaanSeek" type="range" min="0" max="231" step="1" value="0" aria-label="Azaan playback position"></div><div class="row"><div><div class="name">Translated Dua</div><div class="hint" id="phoneDuaSeekLabel">0:00</div></div><button class="ghost" id="phoneDuaPlayPause" type="button" data-live-command>Play / Pause</button><input id="phoneDuaSeek" type="range" min="0" max="50" step="1" value="0" aria-label="Dua playback position"></div></section><section class="card"><h2>Recent Activity</h2><div class="sectionHint">Shows commands sent from this phone and tablet acknowledgements.</div><div class="activityList" id="activityList"></div></section>
   </section>
@@ -102,10 +103,10 @@ const firebaseConfig={apiKey:"AIzaSyBqe4PHKA3ZaiZuGuX65G9sh-I40yz_aOI",authDomai
 const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail.com';
 const PATH='aslima/devices/home/settings';
 const STATUS_PATH='aslima/devices/home/status/display';
-const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['Fajr','Dhuhr','Asr','Maghrib','Isha']; const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const AZAAN_VOICES={doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3'},azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3'},azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3'},azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3'},azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57',url:'./assets/audio/azaan-4.mp3'},azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32',url:'./assets/audio/azaan-5.mp3'}};
 const AZAAN_VOICE_ORDER=['doha','azaan1','azaan2','azaan3','azaan4','azaan5'];
-const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},iqamah:{},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},volume:.70,prayerVolumes:{Fajr:.70,Dhuhr:.70,Asr:.70,Maghrib:.70,Isha:.70},duaVolume:.65,maxVolume:.90,fadeInSeconds:0,muezzin:'doha',homeLocation:null};
+const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},iqamah:{},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},azaanDays:{Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true},volume:.70,prayerVolumes:{Fajr:.70,Dhuhr:.70,Asr:.70,Maghrib:.70,Isha:.70},duaVolume:.65,maxVolume:.90,fadeInSeconds:0,muezzin:'doha',homeLocation:null};
 const HOME_LOCATION_PROXY='https://aslima-masjid-search.aslima-azaan.workers.dev/nearby';
 let state=JSON.parse(JSON.stringify(DEFAULT));
 let tabletHealth=null;
@@ -135,12 +136,13 @@ function validateSettingsBackup(input){
  const timings={};for(const prayer of PRAYERS){if(!isBackupClock(settings.timings&&settings.timings[prayer]))throw new Error(prayer+' time is invalid');timings[prayer]=settings.timings[prayer]}
  for(let index=1;index<PRAYERS.length;index++)if(backupMinutes(timings[PRAYERS[index]])<=backupMinutes(timings[PRAYERS[index-1]]))throw new Error('Prayer times must be chronological');
  const azaanEnabled={};for(const prayer of AZAAN){if(typeof (settings.azaanEnabled&&settings.azaanEnabled[prayer])!=='boolean')throw new Error(prayer+' Azaan setting is invalid');azaanEnabled[prayer]=settings.azaanEnabled[prayer]}
+ const azaanDays={};for(const day of DAYS){const value=settings.azaanDays&&settings.azaanDays[day];if(settings.azaanDays!==undefined&&typeof value!=='boolean')throw new Error(day+' Azaan setting is invalid');azaanDays[day]=settings.azaanDays===undefined?true:value}
  if(typeof settings.volume!=='number'||!Number.isFinite(settings.volume)||settings.volume<0||settings.volume>1)throw new Error('Volume is invalid');
  if(typeof settings.muezzin!=='string'||!AZAAN_VOICES[settings.muezzin])throw new Error('Azaan voice is invalid');
- return {mode:settings.mode,timings,azaanEnabled,volume:settings.volume,muezzin:settings.muezzin};
+ return {mode:settings.mode,timings,azaanEnabled,azaanDays,volume:settings.volume,muezzin:settings.muezzin};
 }
 function currentBackup(){
- const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,azaanEnabled:state.azaanEnabled,volume:Number(state.volume),muezzin:state.muezzin}});
+ const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,azaanEnabled:state.azaanEnabled,azaanDays:state.azaanDays,volume:Number(state.volume),muezzin:state.muezzin}});
  return {schemaVersion:1,app:'aslima-display',exportedAt:new Date().toISOString(),settings};
 }
 function setBackupStatus(message,kind){const element=$('backupStatus');element.textContent=message||'';element.className='backupStatus '+(kind||'')}
@@ -152,7 +154,7 @@ async function restoreSettingsBackup(file){
  const parsed=JSON.parse(await file.text());const restored=validateSettingsBackup(parsed);
  if(!window.ref)throw new Error('Phone is not connected to Firebase');
  if(!window.confirm('Restore this backup and replace the current tablet settings?'))return false;
- await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...state,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled}};render();return true;
+ await window.ref.update({...restored,updatedAt:new Date().toISOString()});state={...state,...restored,timings:{...restored.timings},azaanEnabled:{...restored.azaanEnabled},azaanDays:{...restored.azaanDays}};render();return true;
 }
 function formatClock(date){return date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}
 function displayTime(value){if(!/^\d{2}:\d{2}$/.test(String(value||'')))return '—';const parts=String(value).split(':').map(Number),date=new Date();date.setHours(parts[0],parts[1],0,0);return formatClock(date)}
@@ -206,6 +208,7 @@ function render(){
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
  $('manualTimesCard').hidden=!manualMode;
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.checked=state.azaanEnabled[p]!==false;const time=$('azTime_'+p);if(time)time.textContent=displayTime(state.timings&&state.timings[p])});
+ DAYS.forEach(day=>{const el=$('day_'+day);if(el)el.checked=state.azaanDays[day]!==false});
  $('volume').value=Math.round((state.volume??.7)*100); $('volLabel').textContent=$('volume').value+'%';
  $('duaVolume').value=Math.round((state.duaVolume??.65)*100);$('duaVolLabel').textContent=$('duaVolume').value+'%';$('maxVolume').value=Math.round((state.maxVolume??.9)*100);$('maxVolLabel').textContent=$('maxVolume').value+'%';$('fadeIn').checked=Number(state.fadeInSeconds)>0;
  AZAAN.forEach(prayer=>{const input=$('prayerVolume_'+prayer),label=$('prayerVolumeLabel_'+prayer),value=Math.round(Number((state.prayerVolumes&&state.prayerVolumes[prayer])??state.volume??.7)*100);if(input)input.value=value;if(label)label.textContent=value+'%'});
@@ -217,6 +220,7 @@ function render(){
 function build(){
  $('timeGrid').innerHTML=PRAYERS.map(p=>`<div class="row"><div><div class="name">${p}</div><div class="hint">${p==='Sunrise'?'Shown only, no Azaan':'24-hour time'}</div></div><input id="time_${p}" type="time" step="60"></div>`).join('');
  $('azaanGrid').innerHTML=AZAAN.map(p=>`<div class="row toggle"><div><div class="name">${p} Azaan</div><div class="hint"><span id="azTime_${p}">${displayTime(state.timings&&state.timings[p])}</span> · ${p==='Fajr'?'Morning Azaan':'Auto-play'}</div></div><label class="switch"><input id="az_${p}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
+ $('azaanDayGrid').innerHTML=DAYS.map(day=>`<div class="row toggle"><div><div class="name">${day}</div><div class="hint">Scheduled Azaans</div></div><label class="switch"><input id="day_${day}" type="checkbox"><span class="track"><span class="thumb"></span></span></label></div>`).join('');
  $('prayerVolumeGrid').innerHTML=AZAAN.map(p=>`<div class="row"><div><div class="name">${p}</div><div class="hint" id="prayerVolumeLabel_${p}">70%</div></div><input id="prayerVolume_${p}" type="range" min="0" max="100" value="70" aria-label="${p} Azaan volume"></div>`).join('');
  $('voiceGrid').innerHTML=AZAAN_VOICE_ORDER.map(id=>{const v=AZAAN_VOICES[id];return `<div class="voiceCard" id="voice_${id}"><div><div class="voiceName">${v.name}</div><div class="voiceMeta">${v.note}</div></div><div class="voiceActions"><button type="button" data-preview="${id}">Preview</button><button type="button" class="selectVoice" data-voice="${id}">Use</button></div><div class="voiceBadge">Select</div></div>`}).join('');
  document.querySelectorAll('[data-preview]').forEach(btn=>btn.onclick=()=>{const audio=$('phonePreview'),voice=AZAAN_VOICES[btn.dataset.preview];if(!voice)return;if(!audio.paused&&audio.dataset.voice===voice.id){audio.pause();audio.currentTime=0;btn.textContent='Preview';return}document.querySelectorAll('[data-preview]').forEach(x=>x.textContent='Preview');audio.src=voice.url;audio.dataset.voice=voice.id;audio.volume=Math.min(.75,state.maxVolume||.9);audio.play().then(()=>btn.textContent='Stop').catch(()=>toast('Preview could not play'));audio.onended=()=>btn.textContent='Preview'});
@@ -240,6 +244,7 @@ function collect(){
    PRAYERS.forEach(p=>{state.timings[p]=$('time_'+p).value||state.timings[p]||DEFAULT.timings[p]});
  }
  AZAAN.forEach(p=>{state.azaanEnabled[p]=$('az_'+p).checked});
+ DAYS.forEach(day=>{state.azaanDays[day]=$('day_'+day).checked});
  state.volume=parseInt($('volume').value,10)/100;state.prayerVolumes=state.prayerVolumes||{};AZAAN.forEach(prayer=>state.prayerVolumes[prayer]=parseInt($('prayerVolume_'+prayer).value,10)/100);state.duaVolume=parseInt($('duaVolume').value,10)/100;state.maxVolume=parseInt($('maxVolume').value,10)/100;state.fadeInSeconds=$('fadeIn').checked?3:0; state.muezzin=state.muezzin||'azaan1'; state.updatedAt=new Date().toISOString();
  return state;
 }
@@ -270,7 +275,7 @@ function initializeAuthorizedRemote(){
  const ref=firebase.database().ref(PATH);const statusRef=firebase.database().ref(STATUS_PATH);const voiceRef=ref.child('muezzin');window.ref=ref;window.statusRef=statusRef;window.voiceRef=voiceRef;
  statusRef.on('value',snap=>{tabletHealth=snap.val();renderTabletHealth();},()=>{tabletHealth=null;renderTabletHealth();});
  voiceRef.on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}});
- ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},iqamah:{...DEFAULT.iqamah,...(v.iqamah||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})},prayerVolumes:{...DEFAULT.prayerVolumes,...(v.prayerVolumes||{})}};render();}},()=>setStatus('Access denied','bad'));
+ ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},iqamah:{...DEFAULT.iqamah,...(v.iqamah||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})},azaanDays:{...DEFAULT.azaanDays,...(v.azaanDays||{})},prayerVolumes:{...DEFAULT.prayerVolumes,...(v.prayerVolumes||{})}};render();}},()=>setStatus('Access denied','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
  $('test').onclick=()=>sendTabletCommand('testAzaan',{prayer:$('testPrayer').value},'Test '+$('testPrayer').value).catch(()=>{});
@@ -278,6 +283,7 @@ function initializeAuthorizedRemote(){
  $('stop').onclick=()=>sendTabletCommand('stopAzaan',{},'Stop playback').catch(()=>{});
  $('reloadDisplay').onclick=()=>{if(!window.confirm('Reload the tablet display? It will wait until Azaan playback is idle.'))return;const payload=command('reloadDisplay');logActivity('Reload display','Sending','Waiting for tablet',payload.id);ref.child('command').set(payload).then(()=>toast('Reload display sent')).catch(()=>toast('Reload command failed'))};
  AZAAN.forEach(p=>{const el=$('az_'+p);if(el)el.onchange=()=>{state.azaanEnabled[p]=el.checked;pushPatch({azaanEnabled:state.azaanEnabled},p+' updated')}});
+ DAYS.forEach(day=>{const el=$('day_'+day);if(el)el.onchange=()=>{state.azaanDays[day]=el.checked;pushPatch({azaanDays:state.azaanDays},day+' updated')}});
  const pushVolume=debounce(()=>{state.volume=parseInt($('volume').value,10)/100;pushPatch({volume:state.volume})},180);
  $('volume').oninput=()=>{$('volLabel').textContent=$('volume').value+'%';pushVolume()};
  AZAAN.forEach(prayer=>{$('prayerVolume_'+prayer).oninput=()=>{const value=parseInt($('prayerVolume_'+prayer).value,10)/100;$('prayerVolumeLabel_'+prayer).textContent=Math.round(value*100)+'%';state.prayerVolumes={...(state.prayerVolumes||DEFAULT.prayerVolumes),[prayer]:value};pushPatch({prayerVolumes:state.prayerVolumes})}});

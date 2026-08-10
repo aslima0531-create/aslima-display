@@ -107,9 +107,9 @@
     return null;
   }
 
-  function prayerEnabled(prayer){
-    try{if(typeof isAzaanEnabled==='function')return isAzaanEnabled(prayer)!==false;}catch(_error){}
-    if(typeof window.isAzaanEnabled==='function')return window.isAzaanEnabled(prayer)!==false;
+  function prayerEnabled(prayer,date){
+    try{if(typeof isAzaanEnabled==='function')return isAzaanEnabled(prayer,date)!==false;}catch(_error){}
+    if(typeof window.isAzaanEnabled==='function')return window.isAzaanEnabled(prayer,date)!==false;
     return true;
   }
 
@@ -263,7 +263,7 @@
   function candidateFor(now,events){
     const current=now.getTime();
     return events.filter(event=>{
-      if(!prayerEnabled(event.prayer)||isFired(event)||isDismissed(event))return false;
+      if(!prayerEnabled(event.prayer,event.at)||isFired(event)||isDismissed(event))return false;
       return current>=event.at-EARLY_TOLERANCE_MS&&current<=event.at+GRACE_MS;
     }).sort((a,b)=>a.at-b.at)[0]||null;
   }
