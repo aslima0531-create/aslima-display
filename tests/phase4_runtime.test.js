@@ -316,7 +316,7 @@ test('completed Azaan continues into the bundled Arabic and Urdu post-Azaan dua'
 test('post-Azaan dua stops before the English audio section',async()=>{
   const h=controllerHarness();h.audio.readyState=1;
   await h.window.playPostAzaanDua();
-  h.audio.currentTime=32.94;h.audio.emit('timeupdate');
+  h.audio.currentTime=32.80;h.audio.emit('timeupdate');
   assert.equal(h.window.aslimaPlaybackState.phase,'idle');
   assert.equal(h.window.aslimaPlaybackState.stage,'');
   assert.equal(h.audio.paused,true);
@@ -361,12 +361,13 @@ test('post-Azaan dua is bundled for offline service-worker playback',()=>{
 });
 
 test('Mishary embedded dua is skipped and Arabic/Urdu dua readout follows the audio',()=>{
-  assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.94\]\)/);
+  assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.80\]\)/);
   assert.match(controllerSource,/if\(end&&a\.currentTime>=end\)\{advanceFromAzaan\(state\.token\);return;\}/);
   assert.match(controllerSource,/state\.stage='azaan-ending'/);
   assert.match(controllerSource,/i===1[\s\S]*?POST_AZAAN_DUA\.ur[\s\S]*?Urdu translation/);
   assert.doesNotMatch(controllerSource,/POST_AZAAN_DUA\.en|English Translation/);
   assert.match(controllerSource,/stage==='dua'\?DUA_CUES\[DUA_CUES\.length-1\]/);
+  assert.match(controllerSource,/if\(a\.currentTime>=DUA_CUES\[DUA_CUES\.length-1\]\)\{try\{a\.pause\(\);a\.currentTime=0;/);
   assert.match(controllerSource,/Urdu translation/);
 });
 
