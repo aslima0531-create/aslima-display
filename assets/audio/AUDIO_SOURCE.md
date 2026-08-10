@@ -29,5 +29,8 @@ NooreSunnat / Baitul Mukarram Mosque, Karachi. Their site permits the content to
 be reused for dawah purposes:
 <https://www.nooresunnat.com/Audios/dua-after-azan-in-arabic>.
 
-Both recordings are bundled with the display so the Azaan-then-du‘a sequence
+The bundled MP3 ends during the silence after the Urdu translation, before the
+source recording's English translation begins.
+
+The recordings are bundled with the display so the Azaan-then-du‘a sequence
 works offline and does not depend on a streaming service.

@@ -1,6 +1,7 @@
 'use strict';
 
 const assert=require('node:assert/strict');
+const crypto=require('node:crypto');
 const fs=require('node:fs');
 const path=require('node:path');
 const test=require('node:test');
@@ -316,7 +317,7 @@ test('completed Azaan continues into the bundled Arabic and Urdu post-Azaan dua'
 test('post-Azaan dua stops before the English audio section',async()=>{
   const h=controllerHarness();h.audio.readyState=1;
   await h.window.playPostAzaanDua();
-  h.audio.currentTime=32.80;h.audio.emit('timeupdate');
+  h.audio.currentTime=32.70;h.audio.emit('timeupdate');
   assert.equal(h.window.aslimaPlaybackState.phase,'idle');
   assert.equal(h.window.aslimaPlaybackState.stage,'');
   assert.equal(h.audio.paused,true);
@@ -358,10 +359,12 @@ test('post-Azaan dua is bundled for offline service-worker playback',()=>{
   assert.match(html,/url:'\.\/assets\/audio\/dua-after-azaan\.mp3'/);
   assert.match(serviceWorkerSource,/\.\/assets\/audio\/dua-after-azaan\.mp3/);
   assert.match(serviceWorkerSource,/\(mp3\|ogg\|wav\)/);
+  const audio=fs.readFileSync(path.join(ROOT,'assets/audio/dua-after-azaan.mp3'));
+  assert.equal(crypto.createHash('sha256').update(audio).digest('hex'),'26751c6991e88982a90cd6043843913d8be4cf276a2f08e2a05ed43e5c2237bd');
 });
 
 test('Mishary embedded dua is skipped and Arabic/Urdu dua readout follows the audio',()=>{
-  assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.80\]\)/);
+  assert.match(controllerSource,/const DUA_CUES=Object\.freeze\(\[0\.00,15\.59,32\.70\]\)/);
   assert.match(controllerSource,/if\(end&&a\.currentTime>=end\)\{advanceFromAzaan\(state\.token\);return;\}/);
   assert.match(controllerSource,/state\.stage='azaan-ending'/);
   assert.match(controllerSource,/i===1[\s\S]*?POST_AZAAN_DUA\.ur[\s\S]*?Urdu translation/);
