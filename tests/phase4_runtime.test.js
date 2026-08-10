@@ -227,8 +227,15 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/azaanTimings:\{\.\.\.timings\}/);
   assert.match(html,/iqamahTimings:\{\.\.\.iqamahTimings\}/);
   assert.match(admin,/function applyTabletResolvedSchedule\(\)/);
+  assert.match(admin,/Date\.now\(\)-lastSeen>150000/);
   assert.match(admin,/state\.timings=\{\.\.\.state\.timings,\.\.\.health\.azaanTimings\}/);
   assert.match(admin,/statusRef\.on\('value',[\s\S]*?applyTabletResolvedSchedule\(\)/);
+  assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
+  assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
+  assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
+  assert.match(html,/register\('\.\/sw\.js\?v=980'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=980'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='980'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{

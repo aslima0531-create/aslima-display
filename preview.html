@@ -5056,6 +5056,7 @@ function applyTimingDataset(dataset,forcedStatus){
   timingLastLoadedAt=Date.now();
   lastVricSyncStatus=timingStatusText();
   renderTimingHealth();
+  if(window.publishAslimaHealth)window.publishAslimaHealth('timings-updated');
   return timingDataset;
 }
 
@@ -5079,6 +5080,7 @@ function setTimingUnavailable(reason){
   timingLastLoadedAt=now.getTime();
   lastVricSyncStatus=timingStatusText();
   renderTimingHealth();
+  if(window.publishAslimaHealth)window.publishAslimaHealth('timings-unavailable');
 }
 
 function persistOfficialTimingDataset(dataset){
@@ -6098,6 +6100,7 @@ function initAslimaHealth(){
     window.addEventListener('pageshow',()=>publishAslimaHealth('pageshow'),{passive:true});
     document.addEventListener('visibilitychange',()=>publishAslimaHealth(document.hidden?'hidden':'visible'),{passive:true});
     window.addEventListener('aslima:scheduler-state',()=>publishAslimaHealth('scheduler-state'),{passive:true});
+    window.addEventListener('aslima:playback-state',()=>publishAslimaHealth('playback-state'),{passive:true});
     aslimaHealthListenersBound=true;
   }
   publishAslimaHealth('startup');
@@ -7987,7 +7990,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=974').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=980').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
