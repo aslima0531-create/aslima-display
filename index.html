@@ -7783,10 +7783,9 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   const POST_AZAAN_DUA=Object.freeze({
     url:'./assets/audio/dua-after-azaan.mp3',
     ar:'اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ، وَالصَّلَاةِ الْقَائِمَةِ، آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ، وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ',
-    en:'O Allah, Lord of this perfect call and the established prayer, grant Muhammad the intercession and favor, and raise him to the honored station You have promised him.',
     ur:'اے اللہ! اس کامل پکار کے رب اور قائم ہونے والی نماز کے رب، محمد ﷺ کو وسیلہ اور فضیلت عطا فرما، اور انہیں مقامِ محمود تک پہنچا دے جس کا تو نے ان سے وعدہ فرمایا ہے۔'
   });
-  const DUA_CUES=Object.freeze([0.00,15.59,32.94,50.711]);
+  const DUA_CUES=Object.freeze([0.00,15.59,32.94]);
 
   const state={phase:'idle',stage:'',generation:0,token:0,voice:normalize(localStorage.getItem('aslima_azaan_voice')||'doha'),prayer:'',source:'',occurrenceKey:'',schedulerAttemptGeneration:0,raf:0,lastStopAt:0,lastCue:-1,pendingCleanup:null,pendingTimer:0,mediaCleanup:null};
   window.aslimaPlaybackState=state;
@@ -7874,7 +7873,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     const tick=()=>{
       if(token!==state.token||state.phase!=='dua-playing')return;
       const i=cueIndexAt(DUA_CUES,a.currentTime),ar=document.getElementById('azaanArabic'),en=document.getElementById('azaanEnglish');
-      if(i!==state.lastCue){state.lastCue=i;if(i===0)renderLine(POST_AZAAN_DUA,'dua-ar');else if(i===1){if(ar){ar.textContent=POST_AZAAN_DUA.ur;ar.dataset.azaanCue='dua-ur';}if(en){en.textContent='Urdu translation';en.dataset.azaanCue='dua-ur';}}else{if(ar){ar.textContent='English Translation';ar.dataset.azaanCue='dua-en';}if(en){en.textContent=POST_AZAAN_DUA.en;en.dataset.azaanCue='dua-en';}}}
+      if(i!==state.lastCue){state.lastCue=i;if(i===0){if(ar){ar.textContent=POST_AZAAN_DUA.ar;ar.dataset.azaanCue='dua-ar';}if(en){en.textContent='';en.dataset.azaanCue='dua-ar';}}else if(i===1){if(ar){ar.textContent=POST_AZAAN_DUA.ur;ar.dataset.azaanCue='dua-ur';}if(en){en.textContent='Urdu translation';en.dataset.azaanCue='dua-ur';}}document.documentElement.dataset.azaanCue=i===0?'dua-ar':'dua-ur';}
       state.raf=requestAnimationFrame(tick);
     };
     tick();
@@ -7895,7 +7894,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     if(token!==state.token)return false;
     clearVisual();state.stage='dua';setPhase('dua-loading');
     const op=document.getElementById('overlayPrayer');if(op)op.textContent='DU‘A AFTER AZAAN';
-    renderLine(POST_AZAAN_DUA,'dua');overlay(true);
+    const ar=document.getElementById('azaanArabic'),en=document.getElementById('azaanEnglish');if(ar){ar.textContent=POST_AZAAN_DUA.ar;ar.dataset.azaanCue='dua-ar';}if(en){en.textContent='';en.dataset.azaanCue='dua-ar';}document.documentElement.dataset.azaanCue='dua-ar';overlay(true);
     try{
       await loadAsset(POST_AZAAN_DUA.url,token,'Du‘a after Azaan');if(token!==state.token)return false;
       bindMediaLifecycle(token,'dua');a.muted=false;const testPlayback=['phone-command','tablet-seek','local-test'].includes(state.source);a.volume=Math.min(Number(testPlayback?window.aslimaAzaanVolume??a.volume:window.aslimaDuaVolume??.65),Number(window.aslimaMaxVolume??1));a.currentTime=Math.max(0,Math.min(Number(a.duration)||Infinity,Number(state.startAtSeconds)||0));state.startAtSeconds=0;await a.play();if(token!==state.token)return false;
@@ -7915,11 +7914,11 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
-    const selectedVoice=voice(state.voice),cutoff=stage==='azaan'?Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[state.prayer]||selectedVoice.playbackEnd)||0:0;
+    const selectedVoice=voice(state.voice),cutoff=stage==='azaan'?Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[state.prayer]||selectedVoice.playbackEnd)||0:stage==='dua'?DUA_CUES[DUA_CUES.length-1]:0;
     const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);a.removeEventListener('timeupdate',progress);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
     const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){advanceFromAzaan(token);return;}finishPlayback(token);};
     const failed=()=>{if(!owns()||state.stage!==stage)return;clean();try{a.pause();a.currentTime=0;}catch(_error){}showToast(stage==='dua'?'Du‘a audio could not be opened':'Local Azaan audio could not be opened');finishPlayback(token);};
-    const progress=()=>{if(owns()&&state.stage==='azaan'&&cutoff&&a.currentTime>=cutoff)advanceFromAzaan(token)};
+    const progress=()=>{if(!owns()||!cutoff||a.currentTime<cutoff)return;if(state.stage==='azaan'){advanceFromAzaan(token);return;}if(state.stage==='dua'){clean();try{a.pause();a.currentTime=0;}catch(_error){}finishPlayback(token)}};
     a.addEventListener('ended',ended);a.addEventListener('error',failed);a.addEventListener('timeupdate',progress);state.mediaCleanup=clean;
   }
   function advanceFromAzaan(token){
