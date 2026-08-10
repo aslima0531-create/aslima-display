@@ -48,14 +48,41 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 .phone-azaan-row strong{font-size:13px}.phone-azaan-row label{display:grid;place-items:center;cursor:pointer}.phone-azaan-row input{position:absolute;opacity:0;pointer-events:none}
 .phone-azaan-row label span{width:28px;height:28px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.035)}
 .phone-azaan-row input:checked+span{border-color:var(--gold);background:var(--gold)}.phone-azaan-row input:checked+span::after{content:'✓';display:grid;place-items:center;height:100%;color:#102021;font-size:17px;font-weight:900}
+/* Phone-first layout: reachable navigation and stable, readable data rows. */
+@media(max-width:520px){
+ body{padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 28px)}
+ .shell{max-width:none}.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin-bottom:10px;align-items:start}
+ .eyebrow{font-size:9px;letter-spacing:.18em}.title{font-size:28px;margin:3px 0 0}.top .sub{display:none}.status{margin-top:2px;padding:7px 9px;font-size:10px}
+ .accountAction{margin-top:7px;font-size:11px}.alertCenter{margin:8px 0}.alertCard{padding:10px 12px;border-radius:13px;font-size:11px}.alertCard strong{font-size:12px}
+ .tabs{top:calc(env(safe-area-inset-top) + 5px);margin:8px 0 10px;padding:4px;border-radius:15px}.tabBtn{min-height:40px;border-radius:11px;font-size:11px}
+ body:not([data-active-tab="timesPage"]) .hero{display:none}
+ .hero{margin:8px 0 10px;padding:12px;border-radius:20px}.heroTop{gap:8px}.pill{padding:5px 8px;font-size:9px}
+ .heroTitle{margin:9px 0 0;font-size:18px}.heroSub{display:none}.nextPrayer{margin-top:9px;padding:11px 12px;border-radius:15px}
+ .nextLabel{font-size:9px}.nextName{font-size:24px}.nextTime{font-size:18px}.nextMeta{margin-top:6px;font-size:10px}.nextMeta #heroVoice{max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+ .dailySchedule{margin-top:10px}.dailyScheduleHead{margin:0 1px 7px}.dailyScheduleTitle{font-size:9px}.dailyScheduleMeta{font-size:9px}
+ .dailyScheduleGrid{grid-template-columns:1fr;gap:6px}.schedulePrayer{grid-template-columns:minmax(74px,.72fr) minmax(0,1.28fr);min-height:56px;padding:9px 11px;border-radius:13px;gap:4px 10px}
+ .schedulePrayerName{font-size:13px}.scheduleTimes{justify-content:flex-end;gap:10px;min-width:0}.schedulePrayerTime{font-size:14px;white-space:nowrap}.iqamah{font-size:10px;white-space:nowrap}
+ .schedulePrayerMeta{margin:0;padding-left:12px;font-size:9px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .card{margin:9px 0;padding:13px;border-radius:18px}.card h2{font-size:16px;margin-bottom:9px}.sectionHint{font-size:11px;line-height:1.4;margin-bottom:10px}
+ .mode{gap:6px}.mode button,.primary,.ghost,.danger,.miniAction{min-height:43px;border-radius:13px;font-size:12px;padding:10px 8px}
+ .row{grid-template-columns:minmax(0,1fr) 104px;padding:10px;border-radius:14px}.name{font-size:13px}.hint{font-size:10px}
+ .phone-azaan-matrix{overflow-x:visible;border-radius:12px}.phone-azaan-head,.phone-azaan-row{grid-template-columns:52px repeat(5,minmax(0,1fr));min-width:0}
+ .phone-azaan-head{padding:8px 5px;font-size:8px}.phone-azaan-row{padding:8px 5px}.phone-azaan-row strong{font-size:11px}.phone-azaan-row label span{width:26px;height:26px;border-radius:8px}
+ .quickCommands,.commandSetup,.backupActions,.installRow{gap:7px}.sheet{padding:10px}.sheetPanel{border-radius:20px;padding:15px}
+}
 </style>
 </head>
-<body>
+<body data-active-tab="timesPage">
 <div class="lock" id="lock"><div class="lockbox"><div class="eyebrow">Aslima Remote</div><h1>Sign in to Admin</h1><p>Use the authorized ASLIMA Google account to control the tablet.</p><button class="primary" id="signIn" style="width:100%">Continue with Google</button><div class="authError" id="authError" role="alert" aria-live="polite"></div></div></div>
 <div class="shell">
   <div class="top"><div><div class="eyebrow">Aslima Admin</div><div class="title">Azaan Remote</div><div class="sub">Clean controls for the tablet. Azaan voice changes apply instantly—no Save tap required.</div><button class="accountAction" id="signOut" type="button" hidden>Sign out</button></div><div class="status" id="status"><span class="dot"></span>Sign in required</div></div>
   <div class="alertCenter" id="alertCenter" role="status" aria-live="polite"></div>
   <section class="nowPlaying" id="nowPlaying" aria-live="polite"><div class="nowHead"><span class="nowTitle">Now playing on tablet</span><span class="nowStage" id="nowStage">Azaan</span></div><div class="nowMain" id="nowMain">Dhuhr Azaan</div><div class="progressTrack" aria-hidden="true"><div class="progressBar"></div></div><button class="danger" id="nowStop" type="button" style="width:100%;margin-top:12px">Stop playback</button></section>
+
+  <nav class="tabs" aria-label="Admin sections">
+    <button class="tabBtn active" data-tab="timesPage">Times</button>
+    <button class="tabBtn" data-tab="azaanPage">Azaan</button><button class="tabBtn" data-tab="voicePage">Voice</button>
+  </nav>
 
   <section class="hero">
     <div class="heroTop"><div class="pill" id="modePill">● VRIC Live</div><div class="pill" id="syncPill">Synced</div></div>
@@ -71,11 +98,6 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
       <div class="dailyScheduleGrid" id="dailyScheduleGrid" aria-live="polite"></div>
     </section>
   </section>
-
-  <nav class="tabs" aria-label="Admin sections">
-    <button class="tabBtn active" data-tab="timesPage">Times</button>
-    <button class="tabBtn" data-tab="azaanPage">Azaan</button><button class="tabBtn" data-tab="voicePage">Voice</button>
-  </nav>
 
   <section class="page active" id="timesPage">
     <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
@@ -260,7 +282,7 @@ function openPrayerSheet(prayer){activePrayerSheet=prayer;const today=DAYS[new D
 function closePrayerSheet(){$('prayerSheet').classList.remove('show');activePrayerSheet=null}
 build(); render(); renderActivity();renderTabletHealth(); setInterval(updateNextPrayer,30000); setInterval(renderTabletHealth,30000);
 
-function switchTab(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
+function switchTab(id){document.body.dataset.activeTab=id;document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.tabBtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));}
 document.querySelectorAll('.tabBtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $('exportBackup').onclick=exportSettingsBackup;$('restoreBackup').onclick=()=>{$('backupFile').value='';$('backupFile').click()};$('backupFile').onchange=async event=>{try{const restored=await restoreSettingsBackup(event.target.files&&event.target.files[0]);if(restored)setBackupStatus('Backup restored to the tablet.','ok')}catch(error){setBackupStatus(error.message||'Restore failed.','error')}};
 $('homeZipForm').onsubmit=saveHomeZip;$('usePhoneLocation').onclick=usePhoneLocation;
@@ -309,7 +331,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
    showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
  });
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=980').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=981').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>

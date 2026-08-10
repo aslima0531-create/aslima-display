@@ -106,3 +106,14 @@ test('phone admin always presents the complete daily prayer schedule',()=>{
   assert.match(admin,/badge\.textContent=active\?'Active':'Select'/);
   assert.doesNotMatch(admin,/#lock\{display:none!important\}/);
 });
+
+test('phone admin uses a stable mobile-first hierarchy without cramped prayer cards',()=>{
+  assert.match(admin,/<body data-active-tab="timesPage">/);
+  assert.match(admin,/@media\(max-width:520px\)/);
+  assert.match(admin,/\.dailyScheduleGrid\{grid-template-columns:1fr/);
+  assert.match(admin,/\.schedulePrayerTime\{font-size:14px;white-space:nowrap\}/);
+  assert.match(admin,/\.phone-azaan-head,\.phone-azaan-row\{grid-template-columns:52px repeat\(5,minmax\(0,1fr\)\);min-width:0\}/);
+  assert.match(admin,/body:not\(\[data-active-tab="timesPage"\]\) \.hero\{display:none\}/);
+  assert.match(admin,/function switchTab\(id\)\{document\.body\.dataset\.activeTab=id/);
+  assert.ok(admin.indexOf('<nav class="tabs"')<admin.indexOf('<section class="hero">'));
+});
