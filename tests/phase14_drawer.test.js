@@ -102,7 +102,7 @@ test('phone admin always presents the complete daily prayer schedule',()=>{
   assert.match(admin,/prayer==='Sunrise'\?'No Azaan'/);
   assert.match(admin,/class="schedulePrayer\$\{prayer===nextPrayer\?' next':''\}"/);
   assert.match(admin,/function displayTime\(value\)/);
-  assert.match(admin,/id="azTime_\$\{p\}"/);
+  assert.match(admin,/id="time_\$\{p\}"/);
   assert.match(admin,/badge\.textContent=active\?'Active':'Select'/);
   assert.doesNotMatch(admin,/#lock\{display:none!important\}/);
 });

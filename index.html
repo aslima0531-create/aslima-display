@@ -4080,6 +4080,18 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
 
 
 
+<style id="aslima-weekly-azaan-matrix">
+.azaan-schedule-matrix{margin-top:12px;overflow-x:auto;border:1px solid rgba(255,241,210,.12);border-radius:12px}
+.azaan-matrix-head,.azaan-matrix-row{display:grid;grid-template-columns:54px repeat(5,minmax(50px,1fr));align-items:center;min-width:340px}
+.azaan-matrix-head{padding:8px 6px;color:rgba(255,241,210,.62);font-size:9px;font-weight:700;text-align:center;text-transform:uppercase}
+.azaan-matrix-row{padding:7px 6px;border-top:1px solid rgba(255,241,210,.08)}
+.azaan-matrix-row strong{color:rgba(255,241,210,.88);font-size:12px}
+.azaan-matrix-row label{display:grid;place-items:center;cursor:pointer}
+.azaan-matrix-row input{position:absolute;opacity:0;pointer-events:none}
+.azaan-matrix-row label span{width:22px;height:22px;border:1px solid rgba(255,241,210,.24);border-radius:7px;background:rgba(255,255,255,.035)}
+.azaan-matrix-row input:checked+span{border-color:rgba(241,189,101,.75);background:#f1bd65;box-shadow:0 0 12px rgba(241,189,101,.2)}
+.azaan-matrix-row input:checked+span::after{content:'✓';display:grid;place-items:center;height:100%;color:#102021;font-size:14px;font-weight:900}
+</style>
 <section class="azaan-drawer" id="azaanDrawer" aria-label="Azaan controls drawer">
   <div class="azaan-drawer-tab" id="azaanDrawerTab" role="button" tabindex="0" aria-label="Tap or drag to open Azaan controls"><span>☰ Azaan</span></div>
   <div class="azaan-drawer-panel">
@@ -4096,10 +4108,8 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
       <button type="button" class="drawer-task-tab" data-drawer-section="timing"><span aria-hidden="true">◷</span>Timings</button>
     </div>
     <div class="drawer-section drawer-section-audio active" data-drawer-panel="audio">
-      <div id="azaanToggleList"></div>
-      <div class="azaan-drawer-title small-title">Days of the week</div>
-      <div class="muezzin-sub">Scheduled Azaans play only on enabled days.</div>
-      <div id="azaanDayToggleList"></div>
+      <div class="muezzin-sub">Choose each prayer independently for every day.</div>
+      <div id="azaanToggleList" class="azaan-schedule-matrix"></div>
     </div>
 
     <div class="drawer-section drawer-section-voice" data-drawer-panel="voice">
@@ -4317,6 +4327,7 @@ const PRAYER_ORDER=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 const DAY_ORDER=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 let azaanEnabled={Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true};
 let azaanDays={Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true};
+let azaanSchedule=Object.fromEntries(DAY_ORDER.map(day=>[day,Object.fromEntries(PRAYER_ORDER.map(prayer=>[prayer,true]))]));
 const BURN_IN_OFFSETS=[
   {x:0,y:0,bx:'50%',by:'50%'},
   {x:-7,y:4,bx:'49.7%',by:'50.2%'},
@@ -4577,64 +4588,45 @@ function loadAzaanPrefs(){
     }
     const savedDays=JSON.parse(localStorage.getItem('aslima_azaan_days')||'null');
     if(savedDays&&typeof savedDays==='object')DAY_ORDER.forEach(day=>{azaanDays[day]=savedDays[day]!==false;});
+    const savedSchedule=JSON.parse(localStorage.getItem('aslima_azaan_schedule')||'null');
+    DAY_ORDER.forEach(day=>PRAYER_ORDER.forEach(prayer=>{azaanSchedule[day][prayer]=savedSchedule&&savedSchedule[day]&&typeof savedSchedule[day][prayer]==='boolean'?savedSchedule[day][prayer]:azaanDays[day]!==false&&azaanEnabled[prayer]!==false;}));
   }catch(e){}
 }
 
 function saveAzaanPrefs(){
   try{localStorage.setItem('aslima_azaan_enabled',JSON.stringify(azaanEnabled));}catch(e){}
   try{localStorage.setItem('aslima_azaan_days',JSON.stringify(azaanDays));}catch(e){}
+  try{localStorage.setItem('aslima_azaan_schedule',JSON.stringify(azaanSchedule));}catch(e){}
 }
 
 function isAzaanEnabled(prayer,date){
   const value=date instanceof Date?date:new Date(date||Date.now());
   const day=DAY_ORDER[value.getDay()];
-  return azaanEnabled[prayer]!==false&&azaanDays[day]!==false;
+  return !!(azaanSchedule[day]&&azaanSchedule[day][prayer]!==false);
 }
 window.isAzaanEnabled=isAzaanEnabled;
 
 function setAzaanEnabled(prayer,enabled,quiet){
   azaanEnabled[prayer]=!!enabled;
+  DAY_ORDER.forEach(day=>{azaanSchedule[day][prayer]=!!enabled;});
   saveAzaanPrefs();
   renderAzaanControls();
   if(!quiet)showToast(prayer+' Azaan '+(enabled?'on':'off'));
 }
 
-function setAzaanDayEnabled(day,enabled,quiet){
-  if(!DAY_ORDER.includes(day))return;
-  azaanDays[day]=!!enabled;
+function setScheduledAzaan(day,prayer,enabled,quiet){
+  if(!DAY_ORDER.includes(day)||!PRAYER_ORDER.includes(prayer))return;
+  azaanSchedule[day][prayer]=!!enabled;
   saveAzaanPrefs();
   renderAzaanControls();
-  if(!quiet)showToast(day+' Azaans '+(enabled?'on':'off'));
+  if(!quiet)showToast(day+' '+prayer+' Azaan '+(enabled?'on':'off'));
 }
 
 function renderAzaanControls(){
   const list=$('azaanToggleList');
   if(!list)return;
-  list.innerHTML=PRAYER_ORDER.map(p=>{
-    const checked=isAzaanEnabled(p)?'checked':'';
-    const status=isAzaanEnabled(p)?'Will play automatically':'Muted until turned on';
-    return `<div class="azaan-toggle-row">
-      <div><div class="azaan-toggle-name">${p}</div><div class="azaan-toggle-note">${status}</div></div>
-      <label class="azaan-switch" aria-label="${p} Azaan on or off">
-        <input type="checkbox" data-azaan-toggle="${p}" ${checked}>
-        <span class="track"><span class="thumb"></span></span>
-      </label>
-    </div>`;
-  }).join('');
-  list.querySelectorAll('[data-azaan-toggle]').forEach(input=>{
-    input.addEventListener('change',e=>setAzaanEnabled(e.target.dataset.azaanToggle,e.target.checked));
-  });
-  const dayList=$('azaanDayToggleList');
-  if(dayList){
-    dayList.innerHTML=DAY_ORDER.map(day=>`<div class="azaan-toggle-row">
-      <div><div class="azaan-toggle-name">${day}</div><div class="azaan-toggle-note">${azaanDays[day]!==false?'Scheduled Azaans enabled':'Scheduled Azaans muted'}</div></div>
-      <label class="azaan-switch" aria-label="${day} scheduled Azaans on or off">
-        <input type="checkbox" data-azaan-day-toggle="${day}" ${azaanDays[day]!==false?'checked':''}>
-        <span class="track"><span class="thumb"></span></span>
-      </label>
-    </div>`).join('');
-    dayList.querySelectorAll('[data-azaan-day-toggle]').forEach(input=>input.addEventListener('change',e=>setAzaanDayEnabled(e.target.dataset.azaanDayToggle,e.target.checked)));
-  }
+  list.innerHTML=`<div class="azaan-matrix-head"><span>Day</span>${PRAYER_ORDER.map(prayer=>`<span>${prayer}</span>`).join('')}</div>${DAY_ORDER.map(day=>`<div class="azaan-matrix-row"><strong>${day.slice(0,3)}</strong>${PRAYER_ORDER.map(prayer=>`<label aria-label="${day} ${prayer} Azaan on or off"><input type="checkbox" data-azaan-schedule-day="${day}" data-azaan-schedule-prayer="${prayer}" ${azaanSchedule[day][prayer]!==false?'checked':''}><span></span></label>`).join('')}</div>`).join('')}`;
+  list.querySelectorAll('[data-azaan-schedule-day]').forEach(input=>input.addEventListener('change',e=>setScheduledAzaan(e.target.dataset.azaanScheduleDay,e.target.dataset.azaanSchedulePrayer,e.target.checked)));
 }
 
 function openAzaanDrawer(){
@@ -4721,8 +4713,8 @@ function bindAzaanDrawer(){
   const allOn=$('azaanAllOn');
   const allOff=$('azaanAllOff');
   if(close)close.onclick=closeAzaanDrawer;
-  if(allOn)allOn.onclick=()=>{PRAYER_ORDER.forEach(p=>azaanEnabled[p]=true);saveAzaanPrefs();renderAzaanControls();showToast('All Azaans on');};
-  if(allOff)allOff.onclick=()=>{PRAYER_ORDER.forEach(p=>azaanEnabled[p]=false);saveAzaanPrefs();renderAzaanControls();showToast('All Azaans off');};
+  if(allOn)allOn.onclick=()=>{DAY_ORDER.forEach(day=>PRAYER_ORDER.forEach(prayer=>{azaanSchedule[day][prayer]=true;}));saveAzaanPrefs();renderAzaanControls();showToast('All Azaans on');};
+  if(allOff)allOff.onclick=()=>{DAY_ORDER.forEach(day=>PRAYER_ORDER.forEach(prayer=>{azaanSchedule[day][prayer]=false;}));saveAzaanPrefs();renderAzaanControls();showToast('All Azaans off');};
 }
 
 function clean(t){
@@ -6057,6 +6049,9 @@ function aslimaHealthPayload(online){
     integrationVersion:document.documentElement.dataset.aslimaIntegration||'961',
     timingMode:CONFIG.timingSource||'vric',
     timingStatus:timingDataset&&timingDataset.runtimeStatus||'loading',
+    timingPrayerDate:String(timingDataset&&timingDataset.prayerDate||''),
+    azaanTimings:{...timings},
+    iqamahTimings:{...iqamahTimings},
     playbackPhase:playback.phase||'idle',
     playbackStage:playback.stage||playback.phase||'idle',
     activePrayer:playback.prayer||'',
@@ -6179,6 +6174,15 @@ function applyAslimaRemoteSettings(data){
     }
     if(data.azaanDays&&typeof data.azaanDays==='object'){
       DAY_ORDER.forEach(day=>{if(typeof data.azaanDays[day]==='boolean')azaanDays[day]=data.azaanDays[day];});
+      saveAzaanPrefs();
+      renderAzaanControls();
+    }
+    if(data.azaanSchedule&&typeof data.azaanSchedule==='object'){
+      DAY_ORDER.forEach(day=>PRAYER_ORDER.forEach(prayer=>{if(data.azaanSchedule[day]&&typeof data.azaanSchedule[day][prayer]==='boolean')azaanSchedule[day][prayer]=data.azaanSchedule[day][prayer];}));
+      saveAzaanPrefs();
+      renderAzaanControls();
+    }else if((data.azaanEnabled&&typeof data.azaanEnabled==='object')||(data.azaanDays&&typeof data.azaanDays==='object')){
+      DAY_ORDER.forEach(day=>PRAYER_ORDER.forEach(prayer=>{azaanSchedule[day][prayer]=azaanDays[day]!==false&&azaanEnabled[prayer]!==false;}));
       saveAzaanPrefs();
       renderAzaanControls();
     }

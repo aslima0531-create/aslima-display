@@ -212,14 +212,23 @@ test('weekday setting prevents scheduled Azaan on a disabled day',async()=>{
   h.scheduler.stop();
 });
 
-test('tablet and phone expose synchronized weekday Azaan controls',()=>{
-  assert.match(html,/id="azaanDayToggleList"/);
+test('tablet and phone expose synchronized per-day, per-prayer Azaan controls',()=>{
+  assert.match(html,/id="azaanToggleList" class="azaan-schedule-matrix"/);
   assert.match(html,/const DAY_ORDER=\['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'\]/);
-  assert.match(html,/azaanEnabled\[prayer\]!==false&&azaanDays\[day\]!==false/);
-  assert.match(html,/data-azaan-day-toggle/);
-  assert.match(admin,/id="azaanDayGrid"/);
-  assert.match(admin,/pushPatch\(\{azaanDays:state\.azaanDays\}/);
+  assert.match(html,/azaanSchedule\[day\]\[prayer\]!==false/);
+  assert.match(html,/data-azaan-schedule-day/);
+  assert.match(admin,/id="azaanScheduleGrid"/);
+  assert.match(admin,/data-schedule-day/);
+  assert.match(admin,/pushPatch\(\{azaanSchedule:state\.azaanSchedule\}/);
   assert.match(schedulerSource,/prayerEnabled\(event\.prayer,event\.at\)/);
+});
+
+test('phone uses the tablet resolved Azaan timings as its authoritative schedule',()=>{
+  assert.match(html,/azaanTimings:\{\.\.\.timings\}/);
+  assert.match(html,/iqamahTimings:\{\.\.\.iqamahTimings\}/);
+  assert.match(admin,/function applyTabletResolvedSchedule\(\)/);
+  assert.match(admin,/state\.timings=\{\.\.\.state\.timings,\.\.\.health\.azaanTimings\}/);
+  assert.match(admin,/statusRef\.on\('value',[\s\S]*?applyTabletResolvedSchedule\(\)/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -618,19 +627,19 @@ function backupValidator(){
   return context.validateSettingsBackup;
 }
 
-function validBackup(){return {schemaVersion:1,app:'aslima-display',settings:{mode:'vric',timings:{Fajr:'05:15',Sunrise:'06:30',Dhuhr:'13:34',Asr:'17:17',Maghrib:'20:35',Isha:'21:54'},jumuah:['1:45 PM','3:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},azaanDays:{Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true},volume:.7,muezzin:'azaan1'}}}
+function validBackup(){const prayers=['Fajr','Dhuhr','Asr','Maghrib','Isha'],days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],azaanSchedule=Object.fromEntries(days.map(day=>[day,Object.fromEntries(prayers.map(prayer=>[prayer,true]))]));return {schemaVersion:1,app:'aslima-display',settings:{mode:'vric',timings:{Fajr:'05:15',Sunrise:'06:30',Dhuhr:'13:34',Asr:'17:17',Maghrib:'20:35',Isha:'21:54'},jumuah:['1:45 PM','3:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},azaanDays:{Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true},azaanSchedule,volume:.7,muezzin:'azaan1'}}}
 
 test('configuration backup validator accepts only the explicit safe settings schema',()=>{
   const validate=backupValidator(),input=validBackup();input.settings.command={type:'stopAzaan'};input.settings.diagnostics=['private'];input.extra='ignored';
   const result=validate(input);
-  assert.deepEqual(Object.keys(result).sort(),['azaanDays','azaanEnabled','mode','muezzin','timings','volume']);
+  assert.deepEqual(Object.keys(result).sort(),['azaanDays','azaanEnabled','azaanSchedule','mode','muezzin','timings','volume']);
   assert.equal('jumuah' in result,false);
   assert.equal('command' in result,false);assert.equal('diagnostics' in result,false);
 });
 
-test('older configuration backups default every Azaan weekday to enabled',()=>{
-  const validate=backupValidator(),input=validBackup();delete input.settings.azaanDays;
-  assert.deepEqual(Object.values(validate(input).azaanDays),[true,true,true,true,true,true,true]);
+test('older configuration backups expand coarse toggles into the weekly matrix',()=>{
+  const validate=backupValidator(),input=validBackup();delete input.settings.azaanSchedule;input.settings.azaanDays.Tuesday=false;input.settings.azaanEnabled.Fajr=false;
+  const result=validate(input);assert.equal(result.azaanSchedule.Monday.Fajr,false);assert.equal(result.azaanSchedule.Tuesday.Dhuhr,false);assert.equal(result.azaanSchedule.Monday.Dhuhr,true);
 });
 
 test('configuration restore rejects malformed, partial, unsafe, and nonchronological backups',()=>{
@@ -642,6 +651,7 @@ test('configuration restore rejects malformed, partial, unsafe, and nonchronolog
     value=>{value.settings.timings.Dhuhr='04:00';},
     value=>{value.settings.azaanEnabled.Fajr='yes';},
     value=>{value.settings.azaanDays.Friday='yes';},
+    value=>{value.settings.azaanSchedule.Monday.Fajr='yes';},
     value=>{value.settings.volume=2;},
     value=>{value.settings.muezzin='remote-url';}
   ]){const value=validBackup();mutate(value);assert.throws(()=>validate(value));}
