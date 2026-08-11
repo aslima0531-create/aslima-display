@@ -171,7 +171,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/background-image:url\("aslima-focus-background-v1\.png"\)!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1000/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1001/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
@@ -185,6 +185,8 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/\.pname::after[\s\S]*?\.ptime:first-child::after/);
   assert.match(fidelity,/\.dock-content-row\{[\s\S]*?51\.2fr[\s\S]*?48\.8fr/);
   assert.match(fidelity,/\.jumuah-pill\{[\s\S]*?grid-template-columns:3\.7vw auto auto minmax\(0,1fr\) 1\.5vw!important/);
+  assert.match(fidelity,/#jumuahPillTimes\{grid-column:4!important\}/);
+  assert.match(fidelity,/\.bottom-dock\.detail-open\{overflow:visible!important\}/);
   assert.match(fidelity,/\.supp-status-prefix\{display:block!important/);
   assert.match(fidelity,/focus-bell\.svg/);
   assert.match(fidelity,/@media \(max-aspect-ratio:5\/3\)/);

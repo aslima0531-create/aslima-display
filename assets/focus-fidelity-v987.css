@@ -131,6 +131,11 @@ body[data-display-layout="focus"] .dock-separator{margin:1.2vh 0!important;backg
 body[data-display-layout="focus"] .jumuah-pill{
   grid-template-columns:3.7vw auto auto minmax(0,1fr) 1.5vw!important;gap:.65vw!important;padding:0 1.45vw!important;
 }
+body[data-display-layout="focus"] .jumuah-pill>.jumuah-icon{grid-column:1!important}
+body[data-display-layout="focus"] #jumuahPillLabel{grid-column:2!important}
+body[data-display-layout="focus"] #jumuahPillBadge{grid-column:3!important}
+body[data-display-layout="focus"] #jumuahPillTimes{grid-column:4!important}
+body[data-display-layout="focus"] #jumuahChevron{grid-column:5!important}
 body[data-display-layout="focus"] .jumuah-icon{width:clamp(25px,2.15vw,33px)!important;height:clamp(25px,2.15vw,33px)!important}
 body[data-display-layout="focus"] .jumuah-pill-label{font-size:clamp(16px,1.42vw,22px)!important;font-weight:610!important;color:#e8aa42!important;white-space:nowrap!important}
 body[data-display-layout="focus"] .jumuah-pill-badge{transform:none!important;padding:.18vh .48vw!important;background:rgba(48,122,81,.13)!important;border:1px solid rgba(111,184,128,.38)!important;border-radius:999px!important;color:#a7d29f!important;font-size:clamp(9px,.62vw,10px)!important;font-weight:520!important;text-transform:none!important}
@@ -161,6 +166,7 @@ body[data-display-layout="focus"] .supp-ticker-view{
   border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#fff0dc!important;transform:none!important;text-transform:none!important;
 }
 body[data-display-layout="focus"] .supp-ticker-chevron{color:#e6a83e!important}
+body[data-display-layout="focus"] .bottom-dock.detail-open{overflow:visible!important}
 
 /* Match the reference's compact right-edge drawer affordance. */
 body[data-display-layout="focus"] .aslima-persistent-handle{
