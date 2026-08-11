@@ -170,6 +170,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(index,/assets\/focus-fidelity-v987\.css/);
   assert.match(fidelity,/background-image:url\("aslima-focus-background-v1\.png"\)!important/);
   assert.match(fidelity,/background-size:cover!important/);
+  assert.match(fidelity,/\.focus-progress-ring\{display:none\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
   assert.match(fidelity,/\.focus-ring-progress\{[\s\S]*?stroke:#ffd36d/);

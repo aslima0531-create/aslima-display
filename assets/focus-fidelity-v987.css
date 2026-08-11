@@ -1,4 +1,6 @@
 /* ASLIMA Focus fidelity pass — visual alignment for both 16:9 and 16:10 tablets. */
+.focus-progress-ring{display:none}
+
 body[data-display-layout="focus"] .app{
   background-image:url("aslima-focus-background-v1.png")!important;
   background-position:center!important;
