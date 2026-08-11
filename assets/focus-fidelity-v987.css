@@ -112,44 +112,48 @@ body[data-display-layout="focus"] #prayerPanel .row.active .ptime,
 body[data-display-layout="focus"] #prayerPanel .row.active .iqamah-time,
 body[data-display-layout="focus"] #prayerPanel .row.active .ptime::before{color:#f3c35f!important}
 
-/* One coherent, slim dock with resilient content-sized columns. */
+/* Approved dock: one centered capsule with balanced Jumu'ah and supplementary halves. */
+body[data-display-layout="focus"] .bottom{
+  left:4.55vw!important;bottom:7.3vh!important;width:90.9vw!important;height:9vh!important;padding:0!important;
+}
+body[data-display-layout="focus"] .bottom-dock{width:100%!important;height:100%!important}
 body[data-display-layout="focus"] .dock-content-row{
-  padding:0 1vw!important;grid-template-columns:minmax(0,51.4fr) 1px minmax(0,48.6fr)!important;
-  border-color:rgba(200,142,43,.72)!important;border-radius:1.35vw!important;
-  background:linear-gradient(180deg,rgba(0,31,29,.97),rgba(0,18,20,.98))!important;
-  box-shadow:inset 0 1px 0 rgba(255,229,176,.035),0 10px 24px rgba(0,0,0,.24)!important;
+  height:100%!important;padding:0!important;grid-template-columns:minmax(0,51.2fr) 1px minmax(0,48.8fr)!important;
+  border:1px solid rgba(207,145,37,.78)!important;border-radius:1.45vw!important;
+  background:linear-gradient(180deg,rgba(2,35,32,.96),rgba(0,20,21,.97))!important;
+  box-shadow:inset 0 1px 0 rgba(255,231,181,.035),0 11px 25px rgba(0,0,0,.22)!important;
 }
-body[data-display-layout="focus"] .dock-separator{margin:1.35vh 0!important;background:rgba(211,158,65,.45)!important}
+body[data-display-layout="focus"] .dock-separator{margin:1.2vh 0!important;background:rgba(211,158,65,.50)!important}
 body[data-display-layout="focus"] .jumuah-pill{
-  grid-template-columns:auto auto auto minmax(0,1fr) auto!important;gap:.7vw!important;padding:0 1.25vw!important;
+  grid-template-columns:3.7vw auto auto minmax(0,1fr) 1.5vw!important;gap:.65vw!important;padding:0 1.45vw!important;
 }
-body[data-display-layout="focus"] .jumuah-icon{width:clamp(22px,2vw,32px)!important;height:clamp(22px,2vw,32px)!important}
-body[data-display-layout="focus"] .jumuah-pill-label{font-size:clamp(15px,1.35vw,21px)!important;font-weight:560!important;color:#e8aa42!important;white-space:nowrap!important}
-body[data-display-layout="focus"] .jumuah-pill-badge{transform:none!important;padding:.14vh .42vw!important;background:rgba(48,122,81,.16)!important;border:1px solid rgba(111,184,128,.34)!important;color:#a7d29f!important;font-size:clamp(8px,.58vw,10px)!important;font-weight:520!important;text-transform:none!important}
-body[data-display-layout="focus"] .jumuah-pill-times{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#fff0dc!important;font-size:clamp(13px,1.18vw,18px)!important;font-weight:520!important;letter-spacing:.01em!important}
+body[data-display-layout="focus"] .jumuah-icon{width:clamp(25px,2.15vw,33px)!important;height:clamp(25px,2.15vw,33px)!important}
+body[data-display-layout="focus"] .jumuah-pill-label{font-size:clamp(16px,1.42vw,22px)!important;font-weight:610!important;color:#e8aa42!important;white-space:nowrap!important}
+body[data-display-layout="focus"] .jumuah-pill-badge{transform:none!important;padding:.18vh .48vw!important;background:rgba(48,122,81,.13)!important;border:1px solid rgba(111,184,128,.38)!important;border-radius:999px!important;color:#a7d29f!important;font-size:clamp(9px,.62vw,10px)!important;font-weight:520!important;text-transform:none!important}
+body[data-display-layout="focus"] .jumuah-pill-times{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#fff0dc!important;font-size:clamp(14px,1.2vw,18px)!important;font-weight:560!important;letter-spacing:.005em!important}
 body[data-display-layout="focus"] .jumuah-chevron{justify-self:end!important;transform:none!important;color:#e6a83e!important;font-size:clamp(16px,1.25vw,20px)!important}
 
 body[data-display-layout="focus"] .supp-ticker{
-  grid-template-columns:auto auto minmax(0,.86fr) auto minmax(0,1.25fr) auto auto auto!important;
-  gap:.5vw!important;padding:.45vh 1vw .45vh 1.55vw!important;
+  grid-template-columns:2.8vw 3.05vw minmax(0,7.2vw) .8vw minmax(0,8.5vw) minmax(0,6vw) 4.4vw 3.8vw!important;
+  gap:0!important;padding:.4vh .75vw .4vh 1.8vw!important;
 }
-body[data-display-layout="focus"] .supp-ticker-icon{min-width:20px!important;color:#e7a83e!important}
-body[data-display-layout="focus"] .supp-ticker-label{color:#c8d8c4!important;font-size:clamp(7px,.53vw,9px)!important;font-weight:500!important;letter-spacing:.1em!important}
-body[data-display-layout="focus"] .supp-ticker-name{overflow:hidden!important;text-overflow:ellipsis!important;color:#fff0dc!important;font-size:clamp(11px,1vw,15px)!important;font-weight:540!important;white-space:nowrap!important}
+body[data-display-layout="focus"] .supp-ticker-icon{min-width:20px!important;color:#e7a83e!important;font-size:clamp(21px,1.8vw,27px)!important}
+body[data-display-layout="focus"] .supp-ticker-label{color:#bfcfc0!important;font-size:clamp(7px,.55vw,9px)!important;font-weight:520!important;letter-spacing:.13em!important}
+body[data-display-layout="focus"] .supp-ticker-name{overflow:hidden!important;text-overflow:ellipsis!important;color:#fff0dc!important;font-size:clamp(12px,1.02vw,16px)!important;font-weight:580!important;white-space:nowrap!important}
 body[data-display-layout="focus"] .supp-ticker-separator{color:#d49c3c!important}
-body[data-display-layout="focus"] .supp-ticker-time{color:#fff0dc!important;font-size:clamp(10px,.88vw,14px)!important;font-weight:500!important;white-space:nowrap!important}
+body[data-display-layout="focus"] .supp-ticker-time{color:#fff0dc!important;font-size:clamp(10px,.9vw,14px)!important;font-weight:520!important;white-space:nowrap!important}
 body[data-display-layout="focus"] .supp-ticker-status{
-  padding-left:.62vw!important;border-left:1px solid rgba(212,158,62,.28)!important;color:#d8decf!important;font-size:clamp(8px,.65vw,11px)!important;white-space:nowrap!important;
+  display:grid!important;align-content:center!important;gap:.05vh!important;padding-left:.65vw!important;border-left:1px solid rgba(212,158,62,.32)!important;color:#e7eadf!important;font-size:clamp(9px,.7vw,11px)!important;line-height:1.05!important;white-space:nowrap!important;
 }
-body[data-display-layout="focus"] .supp-status-prefix{display:inline!important}
+body[data-display-layout="focus"] .supp-status-prefix{display:block!important;color:#bdc9bc!important;font-size:.78em!important}
 body[data-display-layout="focus"] .supp-reminder-status{
-  padding:.15vh .42vw!important;border:0!important;border-left:1px solid rgba(212,158,62,.28)!important;border-radius:0!important;
+  display:flex!important;align-items:center!important;gap:.22vw!important;padding:.15vh .45vw!important;border:0!important;border-left:1px solid rgba(212,158,62,.32)!important;border-radius:0!important;
   background:transparent!important;color:#e5ae48!important;font-size:clamp(8px,.62vw,10px)!important;white-space:nowrap!important;
 }
 body[data-display-layout="focus"] .supp-reminder-dot{display:none!important}
-body[data-display-layout="focus"] .supp-reminder-status::before{content:"♧";font-size:.9em}
+body[data-display-layout="focus"] .supp-reminder-status::before{content:"";width:clamp(12px,1vw,15px);height:clamp(12px,1vw,15px);background:url("focus-bell.svg") center/contain no-repeat}
 body[data-display-layout="focus"] .supp-ticker-view{
-  min-width:0!important;padding:.15vh 0 .15vh .52vw!important;border:0!important;border-left:1px solid rgba(212,158,62,.28)!important;
+  min-width:0!important;padding:.15vh 0 .15vh .6vw!important;border:0!important;border-left:1px solid rgba(212,158,62,.32)!important;
   border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#fff0dc!important;transform:none!important;text-transform:none!important;
 }
 body[data-display-layout="focus"] .supp-ticker-chevron{color:#e6a83e!important}

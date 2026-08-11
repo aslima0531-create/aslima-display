@@ -176,11 +176,13 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/\.focus-ring-side-shine\{[\s\S]*?stroke-linecap:round/);
   assert.match(fidelity,/\.brand-mark\{[\s\S]*?letter-spacing:\.22em!important/);
   assert.match(fidelity,/\.brand-mark::before\{[\s\S]*?3\.05vw/);
-  assert.match(fidelity,/transform:rotate\(var\(--focus-ring-angle,0deg\)\)/);
+  assert.match(index,/endpoint\.setAttribute\('transform','rotate\('\+angle\+' 120 120\)'\)/);
   assert.match(fidelity,/text-transform:uppercase!important/);
   assert.match(fidelity,/\.pname::after[\s\S]*?\.ptime:first-child::after/);
-  assert.match(fidelity,/\.jumuah-pill\{[\s\S]*?grid-template-columns:auto auto auto minmax\(0,1fr\) auto!important/);
-  assert.match(fidelity,/\.supp-status-prefix\{display:inline!important\}/);
+  assert.match(fidelity,/\.dock-content-row\{[\s\S]*?51\.2fr[\s\S]*?48\.8fr/);
+  assert.match(fidelity,/\.jumuah-pill\{[\s\S]*?grid-template-columns:3\.7vw auto auto minmax\(0,1fr\) 1\.5vw!important/);
+  assert.match(fidelity,/\.supp-status-prefix\{display:block!important/);
+  assert.match(fidelity,/focus-bell\.svg/);
   assert.match(fidelity,/@media \(max-aspect-ratio:5\/3\)/);
   assert.match(index,/class="aslima-persistent-handle"[^>]*><span><\/span><span><\/span><span><\/span>/);
   assert.match(index,/if\(!entries\.length\)[\s\S]*?CONFIG\.jumuah/);
