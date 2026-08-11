@@ -73,10 +73,12 @@ body[data-display-layout="focus"] .focus-ring-endpoint circle{
   fill:url(#focusRingEndpoint);filter:drop-shadow(0 0 3px rgba(255,234,169,.78)) drop-shadow(0 0 7px rgba(255,190,62,.48));
 }
 body[data-display-layout="focus"] .next-label::after{content:none!important}
-body[data-display-layout="focus"] .next-label,body[data-display-layout="focus"] .next-name,body[data-display-layout="focus"] .next-time,body[data-display-layout="focus"] .remaining{right:12.35%!important}
+body[data-display-layout="focus"] .left .next-label,body[data-display-layout="focus"] .left .next-name,body[data-display-layout="focus"] .left .next-time,body[data-display-layout="focus"] .left .remaining{
+  right:11.35%!important;width:clamp(180px,15.3vw,230px)!important;box-sizing:border-box!important;
+}
 body[data-display-layout="focus"] .remaining::before{content:none!important}
-body[data-display-layout="focus"] .next-label{color:#fff0dc!important;font-weight:540!important;letter-spacing:.045em!important}
-body[data-display-layout="focus"] .remaining{color:#dfa94a!important;font-weight:470!important}
+body[data-display-layout="focus"] .left .next-label{padding:0 12px!important;color:#fff0dc!important;font-size:clamp(14px,1.25vw,20px)!important;font-weight:540!important;letter-spacing:.035em!important;white-space:nowrap!important}
+body[data-display-layout="focus"] .left .remaining{padding:0 8px!important;color:#dfa94a!important;font-size:clamp(25px,2.3vw,36px)!important;font-weight:470!important;white-space:nowrap!important}
 
 /* Prayer cards: lighter type, uppercase headings, and the two ornamental dividers. */
 body[data-display-layout="focus"] #prayerPanel .row{

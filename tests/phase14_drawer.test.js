@@ -171,11 +171,12 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/background-image:url\("aslima-focus-background-v1\.png"\)!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=998/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1000/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
   assert.match(fidelity,/\.focus-ring-progress\{[\s\S]*?stroke:#ffd36d/);
+  assert.match(fidelity,/\.left \.next-label[\s\S]*?right:11\.35%!important;width:clamp\(180px,15\.3vw,230px\)!important/);
   assert.match(fidelity,/\.focus-ring-side-shine\{[\s\S]*?stroke-linecap:round/);
   assert.match(fidelity,/\.brand-mark\{[\s\S]*?letter-spacing:\.22em!important/);
   assert.match(fidelity,/\.brand-mark::before\{[\s\S]*?3\.05vw/);
