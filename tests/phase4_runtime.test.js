@@ -233,9 +233,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=987'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=987'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='987'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=995'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=995'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='995'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -360,10 +360,14 @@ test('post-Azaan dua stops before the English audio section',async()=>{
   assert.equal(h.body.classList.values.has('azaan-playing'),false);
 });
 
-test('Fajr audio lifecycle cuts off its embedded dua before starting the translated dua once',async()=>{
+test('Fajr waits for the audio ended event before starting the translated dua once',async()=>{
   const h=controllerHarness();h.audio.readyState=1;h.window.AZAAN_VOICES.azaan1.prayerPlaybackEnds={Fajr:237};
   await h.window.playAzaan('Fajr',{source:'automatic-scheduler',occurrenceKey:'fajr-key'});
   h.audio.currentTime=237;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'azaan');assert.equal(h.window.aslimaPlaybackState.phase,'playing');
+  h.audio.currentTime=999;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'azaan');assert.equal(h.window.aslimaPlaybackState.phase,'playing');
+  h.audio.ended=true;h.audio.emit('ended');await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.window.aslimaPlaybackState.stage,'dua');assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');assert.match(h.audio.src,/dua-after-azaan\.mp3$/);
   h.audio.currentTime=1;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.window.aslimaPlaybackState.stage,'dua');assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');
@@ -408,6 +412,13 @@ test('Mishary embedded dua is skipped and Arabic/Urdu dua readout follows the au
   assert.match(controllerSource,/stage==='dua'\?DUA_CUES\[DUA_CUES\.length-1\]/);
   assert.match(controllerSource,/if\(a\.currentTime>=DUA_CUES\[DUA_CUES\.length-1\]\)\{try\{a\.pause\(\);a\.currentTime=0;/);
   assert.match(controllerSource,/Urdu translation/);
+});
+
+test('non-Fajr prayers preserve their configured timeupdate cutoff',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;h.window.AZAAN_VOICES.azaan1.playbackEnd=231.1;
+  await h.window.playAzaan('Dhuhr',{source:'automatic-scheduler',occurrenceKey:'dhuhr-key'});
+  h.audio.currentTime=231.1;h.audio.emit('timeupdate');await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.window.aslimaPlaybackState.stage,'dua');assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');assert.match(h.audio.src,/dua-after-azaan\.mp3$/);
 });
 
 test('Azaan and dua Arabic use the premium Naskh typography with a fitted dua layout',()=>{
@@ -488,7 +499,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v987 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
+test('v995 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -507,6 +518,7 @@ test('v987 service-worker upgrade removes older caches and precaches runtime, Fo
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
   assert.ok(precache.includes('./assets/js/masjid-discovery-v962.js'));
   assert.ok(precache.includes('./assets/focus-fidelity-v987.css'));
+  assert.ok(precache.includes('./assets/aslima-focus-background-v1.png'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
 });
 

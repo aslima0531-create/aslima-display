@@ -1,15 +1,18 @@
 /* ASLIMA Focus fidelity pass — visual alignment for both 16:9 and 16:10 tablets. */
 body[data-display-layout="focus"] .app{
-  background-image:url("focus-arch-overlay.svg"),radial-gradient(ellipse at 50% 18%,rgba(12,54,48,.22),transparent 46%),linear-gradient(180deg,#001614 0%,#00110f 61%,#00090a 100%)!important;
-  background-blend-mode:normal,screen,normal!important;
+  background-image:url("aslima-focus-background-v1.png")!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
 }
 body[data-display-layout="focus"] .app::before{
-  border-color:rgba(201,147,57,.20)!important;
-  background:linear-gradient(rgba(1,20,18,.08),rgba(0,9,10,.22))!important;
-  box-shadow:inset 0 0 0 1px rgba(255,226,165,.025),0 0 24px rgba(0,0,0,.2)!important;
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 body[data-display-layout="focus"] .app::after{
-  background:radial-gradient(ellipse at 50% 19%,rgba(11,60,52,.14),transparent 47%),linear-gradient(180deg,rgba(0,9,9,.02),rgba(0,4,5,.38))!important;
+  background:linear-gradient(180deg,rgba(0,7,7,.02),rgba(0,4,5,.18))!important;
 }
 
 body[data-display-layout="focus"] .layout-toggle{
@@ -24,7 +27,15 @@ body[data-display-layout="focus"] .layout-toggle button{
 body[data-display-layout="focus"] .layout-toggle button[aria-pressed="true"]{color:#f7c963!important}
 body[data-display-layout="focus"] .layout-toggle button+button::before{top:7px!important;bottom:7px!important;background:rgba(211,160,73,.64)!important}
 
-body[data-display-layout="focus"] .brand-mark{color:#efbb59!important;font-weight:590!important;letter-spacing:.2em!important}
+body[data-display-layout="focus"] .brand-mark{
+  left:3.05vw!important;top:3.1vh!important;gap:.72vw!important;color:#efb84f!important;
+  font-family:Inter,system-ui,sans-serif!important;font-size:clamp(22px,2.08vw,32px)!important;
+  font-weight:520!important;letter-spacing:.22em!important;text-shadow:0 0 14px rgba(239,184,79,.12)!important;
+}
+body[data-display-layout="focus"] .brand-mark::before{
+  width:clamp(34px,3.05vw,47px)!important;height:clamp(50px,5.25vw,72px)!important;
+  filter:drop-shadow(0 0 5px rgba(239,184,79,.16))!important;
+}
 body[data-display-layout="focus"] .clock{font-weight:570!important;color:#fff0dc!important;text-shadow:0 13px 38px rgba(0,0,0,.5)!important}
 body[data-display-layout="focus"] .date{
   text-transform:none!important;font-size:clamp(21px,2.45vw,38px)!important;font-weight:540!important;
@@ -34,21 +45,36 @@ body[data-display-layout="focus"] .hijri-date{
   font-size:clamp(16px,1.68vw,26px)!important;font-weight:450!important;letter-spacing:.035em!important;color:#d8a64d!important;
 }
 
-/* The reference ring uses fine radial ticks plus one restrained progress arc. */
-body[data-display-layout="focus"] .left::before{
-  right:6.1%!important;top:9.35vh!important;width:clamp(150px,15.65vw,235px)!important;
-  background:repeating-conic-gradient(from -90deg,rgba(237,180,75,.94) 0 .85deg,transparent .85deg 3.05deg)!important;
-  padding:clamp(2px,.2vw,3px)!important;opacity:.94!important;
-  filter:drop-shadow(0 0 5px rgba(225,165,60,.24))!important;
+/* One SVG coordinate system keeps every target-ring layer perfectly registered. */
+body[data-display-layout="focus"] .left::before,body[data-display-layout="focus"] .left::after{content:none!important}
+body[data-display-layout="focus"] .focus-progress-ring{
+  display:block;position:absolute;right:11.35%;top:10.7vh;width:clamp(180px,15.3vw,230px);height:auto;
+  z-index:3;overflow:visible;pointer-events:none;filter:drop-shadow(0 9px 18px rgba(0,0,0,.22));
 }
-body[data-display-layout="focus"] .left::after{
-  right:6.7%!important;top:10.05vh!important;width:clamp(140px,14.45vw,217px)!important;
-  background:conic-gradient(from -90deg,#f1bd60 0 var(--focus-ring-progress,43%),rgba(174,123,42,.20) var(--focus-ring-progress,43%) 100%)!important;
-  padding:clamp(4px,.48vw,7px)!important;filter:drop-shadow(0 0 7px rgba(224,163,55,.4))!important;
+body[data-display-layout="focus"] .focus-ring-ticks{
+  fill:none;stroke:rgba(206,151,50,.62);stroke-width:3;stroke-dasharray:.32 .72;stroke-linecap:butt;
 }
+body[data-display-layout="focus"] .focus-ring-track{
+  fill:none;stroke:rgba(142,103,33,.30);stroke-width:9;stroke-linecap:butt;transform:rotate(-90deg);transform-origin:120px 120px;
+}
+body[data-display-layout="focus"] .focus-ring-progress{
+  fill:none;stroke:#ffd36d;stroke-width:9;stroke-linecap:butt;stroke-dasharray:0 100;
+  transform:rotate(-90deg);transform-origin:120px 120px;filter:drop-shadow(0 0 4px rgba(255,206,96,.38));
+  transition:stroke-dasharray .6s linear;
+}
+body[data-display-layout="focus"] .focus-ring-side-shine{
+  fill:none;stroke:url(#focusRingSideShine);stroke-width:8;stroke-linecap:round;opacity:.66;
+  filter:drop-shadow(0 0 4px rgba(255,203,91,.34));
+}
+body[data-display-layout="focus"] .focus-ring-endpoint{transition:transform .6s linear}
+body[data-display-layout="focus"] .focus-ring-endpoint circle{
+  fill:url(#focusRingEndpoint);filter:drop-shadow(0 0 3px rgba(255,234,169,.78)) drop-shadow(0 0 7px rgba(255,190,62,.48));
+}
+body[data-display-layout="focus"] .next-label::after{content:none!important}
+body[data-display-layout="focus"] .next-label,body[data-display-layout="focus"] .next-name,body[data-display-layout="focus"] .next-time,body[data-display-layout="focus"] .remaining{right:12.35%!important}
+body[data-display-layout="focus"] .remaining::before{content:none!important}
 body[data-display-layout="focus"] .next-label{color:#fff0dc!important;font-weight:540!important;letter-spacing:.045em!important}
 body[data-display-layout="focus"] .remaining{color:#dfa94a!important;font-weight:470!important}
-body[data-display-layout="focus"] .remaining::before{background:#f4c466!important;box-shadow:0 0 7px #e9b24e,0 0 15px rgba(222,157,43,.68)!important}
 
 /* Prayer cards: lighter type, uppercase headings, and the two ornamental dividers. */
 body[data-display-layout="focus"] #prayerPanel .row{
@@ -144,7 +170,7 @@ body[data-display-layout="focus"] .aslima-persistent-handle span{
 @media (max-aspect-ratio:5/3) and (min-width:900px){
   body[data-display-layout="focus"] .layout-toggle{top:2.8vh!important;right:3vw!important}
   body[data-display-layout="focus"] .layout-toggle button{min-width:66px!important;min-height:28px!important;font-size:11px!important}
-  body[data-display-layout="focus"] .brand-mark{top:2.1vh!important;left:2.1vw!important;font-size:clamp(19px,1.8vw,26px)!important}
+  body[data-display-layout="focus"] .brand-mark{top:2.5vh!important;left:2.6vw!important;font-size:clamp(19px,1.8vw,26px)!important}
   body[data-display-layout="focus"] .clock{font-size:clamp(112px,13.5vw,190px)!important}
   body[data-display-layout="focus"] .date{font-size:clamp(21px,2.25vw,34px)!important}
   body[data-display-layout="focus"] .hijri-date{font-size:clamp(16px,1.55vw,24px)!important}

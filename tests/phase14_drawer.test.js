@@ -145,9 +145,15 @@ test('Focus matches the approved centered clock, complete cards, progress ring, 
   assert.match(index,/\.clock\{[\s\S]*?left:50%!important[\s\S]*?transform:translateX\(-50%\)!important/);
   assert.match(index,/\.date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
   assert.match(index,/\.hijri-date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
-  assert.match(index,/\.left::before\{[\s\S]*?repeating-conic-gradient/);
-  assert.match(index,/\.left::after\{[\s\S]*?--focus-ring-progress/);
   assert.match(index,/function updateFocusCountdownProgress\(next\)/);
+  assert.match(index,/class="focus-progress-ring" viewBox="0 0 240 240"/);
+  assert.match(index,/class="focus-ring-ticks"/);
+  assert.match(index,/class="focus-ring-track"/);
+  assert.match(index,/class="focus-ring-progress"/);
+  assert.match(index,/class="focus-ring-side-shine"/);
+  assert.match(index,/class="focus-ring-endpoint"/);
+  assert.match(index,/progress\.style\.strokeDasharray=pct\+' '\+\(100-pct\)/);
+  assert.match(index,/endpoint\.setAttribute\('transform','rotate\('\+angle\+' 120 120\)'\)/);
   assert.match(index,/\.iqamah-time\{[\s\S]*?font-size:clamp\(24px,2\.5vw,38px\)!important/);
   assert.match(index,/\.dock-content-row\{[\s\S]*?51\.4fr[\s\S]*?48\.6fr/);
   assert.match(index,/assets\/focus-arch-overlay\.svg/);
@@ -162,6 +168,15 @@ test('Focus matches the approved centered clock, complete cards, progress ring, 
 test('Focus fidelity layer preserves complete live content at both tablet aspect ratios',()=>{
   const fidelity=fs.readFileSync(path.join(root,'assets/focus-fidelity-v987.css'),'utf8');
   assert.match(index,/assets\/focus-fidelity-v987\.css/);
+  assert.match(fidelity,/background-image:url\("aslima-focus-background-v1\.png"\)!important/);
+  assert.match(fidelity,/background-size:cover!important/);
+  assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
+  assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
+  assert.match(fidelity,/\.focus-ring-progress\{[\s\S]*?stroke:#ffd36d/);
+  assert.match(fidelity,/\.focus-ring-side-shine\{[\s\S]*?stroke-linecap:round/);
+  assert.match(fidelity,/\.brand-mark\{[\s\S]*?letter-spacing:\.22em!important/);
+  assert.match(fidelity,/\.brand-mark::before\{[\s\S]*?3\.05vw/);
+  assert.match(fidelity,/transform:rotate\(var\(--focus-ring-angle,0deg\)\)/);
   assert.match(fidelity,/text-transform:uppercase!important/);
   assert.match(fidelity,/\.pname::after[\s\S]*?\.ptime:first-child::after/);
   assert.match(fidelity,/\.jumuah-pill\{[\s\S]*?grid-template-columns:auto auto auto minmax\(0,1fr\) auto!important/);

@@ -4132,6 +4132,18 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wr
   <div class="layout-toggle" role="group" aria-label="Display layout"><button type="button" data-display-layout-choice="classic" aria-pressed="true">Classic</button><button type="button" data-display-layout-choice="focus" aria-pressed="false">Focus</button></div>
 
   <section class="left">
+    <svg class="focus-progress-ring" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="focusRingEndpoint" cx="38%" cy="34%" r="68%"><stop offset="0" stop-color="#fffef2"/><stop offset=".28" stop-color="#fff3b2"/><stop offset=".58" stop-color="#ffd36a"/><stop offset=".82" stop-color="#f5ad32"/><stop offset="1" stop-color="#df8616" stop-opacity="0"/></radialGradient>
+        <linearGradient id="focusRingSideShine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efb64f" stop-opacity="0"/><stop offset=".5" stop-color="#ffe39a" stop-opacity=".72"/><stop offset="1" stop-color="#efb64f" stop-opacity="0"/></linearGradient>
+        <filter id="focusRingSoftGlow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <circle class="focus-ring-ticks" cx="120" cy="120" r="112" pathLength="100"/>
+      <circle class="focus-ring-track" cx="120" cy="120" r="100" pathLength="100"/>
+      <circle class="focus-ring-progress" cx="120" cy="120" r="100" pathLength="100"/>
+      <path class="focus-ring-side-shine" d="M20.8 105 A100 100 0 0 0 20.8 135"/>
+      <g class="focus-ring-endpoint" transform="rotate(0 120 120)"><circle cx="120" cy="20" r="8"/></g>
+    </svg>
     <div class="clock" id="clock">--:--<span class="ampm">--</span></div>
     <div class="divider"></div>
     <div class="next-label">Next Prayer</div>
@@ -6206,12 +6218,13 @@ function updateProgress(){
 }
 
 function updateFocusCountdownProgress(next){
-  if(!next||next.unavailable){document.documentElement.style.setProperty('--focus-ring-progress','0%');return;}
+  const applyFocusRing=pct=>{const progress=document.querySelector('.focus-ring-progress'),endpoint=document.querySelector('.focus-ring-endpoint'),angle=pct*3.6;if(progress)progress.style.strokeDasharray=pct+' '+(100-pct);if(endpoint)endpoint.setAttribute('transform','rotate('+angle+' 120 120)');document.documentElement.style.setProperty('--focus-ring-progress',pct+'%');document.documentElement.style.setProperty('--focus-ring-angle',angle+'deg');};
+  if(!next||next.unavailable){applyFocusRing(0);return;}
   const index=PRAYER_ORDER.indexOf(next.name),previous=PRAYER_ORDER[(index-1+PRAYER_ORDER.length)%PRAYER_ORDER.length];
   let interval=index===0?mins(timings.Fajr)+1440-mins(timings.Isha):mins(timings[next.name])-mins(timings[previous]);
   if(!Number.isFinite(interval)||interval<=0)interval=360;
   const elapsed=Math.max(0,interval-next.seconds/60),pct=Math.max(0,Math.min(100,elapsed/interval*100));
-  document.documentElement.style.setProperty('--focus-ring-progress',pct+'%');
+  applyFocusRing(pct);
 }
 
 function render(){
@@ -8142,7 +8155,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     try{schedule=boundaries(id,lines.length,a.duration,prayer);}catch(err){console.error(err);renderLine(lines[0],0);return;}
     const tick=()=>{
       if(state.phase!=='playing')return;
-      const selectedVoice=voice(id),end=Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[prayer]||selectedVoice.playbackEnd)||0;
+      const selectedVoice=voice(id),end=prayer==='Fajr'?0:Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[prayer]||selectedVoice.playbackEnd)||0;
       if(end&&a.currentTime>=end){advanceFromAzaan(state.token);return;}
       const i=cueIndexAt(schedule,a.currentTime);
       if(i!==state.lastCue&&lines[i]){state.lastCue=i;renderLine(lines[i],i);}
@@ -8197,7 +8210,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   function bindMediaLifecycle(token,stage){
     clearMediaListeners();
     const owns=()=>token===state.token;
-    const selectedVoice=voice(state.voice),cutoff=stage==='azaan'?Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[state.prayer]||selectedVoice.playbackEnd)||0:stage==='dua'?DUA_CUES[DUA_CUES.length-1]:0;
+    const selectedVoice=voice(state.voice),cutoff=stage==='azaan'&&state.prayer!=='Fajr'?Number(selectedVoice.prayerPlaybackEnds&&selectedVoice.prayerPlaybackEnds[state.prayer]||selectedVoice.playbackEnd)||0:stage==='dua'?DUA_CUES[DUA_CUES.length-1]:0;
     const clean=()=>{a.removeEventListener('ended',ended);a.removeEventListener('error',failed);a.removeEventListener('timeupdate',progress);if(state.mediaCleanup===clean)state.mediaCleanup=null;};
     const ended=()=>{if(!owns()||!a.ended||state.stage!==stage)return;clean();if(stage==='azaan'){advanceFromAzaan(token);return;}finishPlayback(token);};
     const failed=()=>{if(!owns()||state.stage!==stage)return;clean();try{a.pause();a.currentTime=0;}catch(_error){}showToast(stage==='dua'?'Du‘a audio could not be opened':'Local Azaan audio could not be opened');finishPlayback(token);};
@@ -8230,7 +8243,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=987').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=995').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
