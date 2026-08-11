@@ -48,6 +48,7 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 .phone-azaan-row strong{font-size:13px}.phone-azaan-row label{display:grid;place-items:center;cursor:pointer}.phone-azaan-row input{position:absolute;opacity:0;pointer-events:none}
 .phone-azaan-row label span{width:28px;height:28px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.035)}
 .phone-azaan-row input:checked+span{border-color:var(--gold);background:var(--gold)}.phone-azaan-row input:checked+span::after{content:'✓';display:grid;place-items:center;height:100%;color:#102021;font-size:17px;font-weight:900}
+.layoutChoice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.layoutChoice button{min-height:48px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.055);color:var(--muted);font-size:13px;font-weight:900}.layoutChoice button.active{border-color:rgba(245,200,107,.76);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.07));color:var(--gold);box-shadow:0 0 22px rgba(245,200,107,.1)}
 /* Phone-first layout: reachable navigation and stable, readable data rows. */
 @media(max-width:520px){
  body{padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 28px)}
@@ -100,6 +101,7 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
   </section>
 
   <section class="page active" id="timesPage">
+    <section class="card"><h2>Tablet Layout</h2><div class="sectionHint">Classic keeps the current dashboard. Focus enlarges the clock and prayer schedule for viewing from farther away.</div><div class="layoutChoice" role="group" aria-label="Tablet display layout"><button id="layoutClassic" type="button">Classic</button><button id="layoutFocus" type="button">Focus</button></div></section>
     <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
     <section class="card"><h2>Tablet Home Area</h2><div class="sectionHint">Save a ZIP code, or use this phone’s location and send the rounded home area to the tablet.</div><div class="homeAreaSummary"><div class="homeAreaLabel">Saved tablet area</div><div class="homeAreaValue" id="homeAreaValue">Not set</div></div><form id="homeZipForm"><div class="homeAreaActions"><input type="text" id="homeZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="US ZIP code" aria-label="Tablet home ZIP code"><button class="ghost" type="submit">Save ZIP</button></div></form><button class="primary homeAreaPhone" id="usePhoneLocation" type="button">Use This Phone’s Location</button><div class="homeAreaStatus" id="homeAreaStatus" aria-live="polite">The tablet will reuse this area for calculated timings and nearby masjids.</div></section>
     <section class="card manualTimesCard" id="manualTimesCard" hidden><h2>Manual Prayer Times</h2><div class="sectionHint" id="timeHint">Use these only when Manual mode is selected.</div><div class="grid" id="timeGrid"></div></section>
@@ -135,7 +137,7 @@ const PRAYERS=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha']; const AZAAN=['F
 const allAzaansEnabled=()=>Object.fromEntries(DAYS.map(day=>[day,Object.fromEntries(AZAAN.map(prayer=>[prayer,true]))]));
 const AZAAN_VOICES={doha:{id:'doha',name:'Mishary Alafasy',note:'Recommended · full standalone Azaan',url:'./assets/audio/azaan-mishary-alafasy.mp3'},azaan1:{id:'azaan1',name:'Azaan 1',note:'Local recording · 2:13',url:'./assets/audio/azaan-1.mp3'},azaan2:{id:'azaan2',name:'Azaan 2',note:'Local recording · 3:06',url:'./assets/audio/azaan-2.mp3'},azaan3:{id:'azaan3',name:'Azaan 3',note:'Local recording · 3:21',url:'./assets/audio/azaan-3.mp3'},azaan4:{id:'azaan4',name:'Azaan 4',note:'Local recording · 3:57',url:'./assets/audio/azaan-4.mp3'},azaan5:{id:'azaan5',name:'Azaan 5',note:'Local recording · 3:32',url:'./assets/audio/azaan-5.mp3'}};
 const AZAAN_VOICE_ORDER=['doha','azaan1','azaan2','azaan3','azaan4','azaan5'];
-const DEFAULT={mode:'vric',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},iqamah:{},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},azaanDays:{Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true},azaanSchedule:allAzaansEnabled(),volume:.70,prayerVolumes:{Fajr:.70,Dhuhr:.70,Asr:.70,Maghrib:.70,Isha:.70},duaVolume:.65,maxVolume:.90,fadeInSeconds:0,muezzin:'doha',homeLocation:null};
+const DEFAULT={mode:'vric',displayLayout:'classic',timings:{Fajr:'05:01',Sunrise:'06:23',Dhuhr:'13:32',Asr:'17:14',Maghrib:'20:40',Isha:'22:02'},iqamah:{},jumuah:['1:45 PM','3:00 PM','4:00 PM'],azaanEnabled:{Fajr:true,Dhuhr:true,Asr:true,Maghrib:true,Isha:true},azaanDays:{Sunday:true,Monday:true,Tuesday:true,Wednesday:true,Thursday:true,Friday:true,Saturday:true},azaanSchedule:allAzaansEnabled(),volume:.70,prayerVolumes:{Fajr:.70,Dhuhr:.70,Asr:.70,Maghrib:.70,Isha:.70},duaVolume:.65,maxVolume:.90,fadeInSeconds:0,muezzin:'doha',homeLocation:null};
 const HOME_LOCATION_PROXY='https://aslima-masjid-search.aslima-azaan.workers.dev/nearby';
 let state=JSON.parse(JSON.stringify(DEFAULT));
 let tabletHealth=null;
@@ -164,6 +166,7 @@ function validateSettingsBackup(input){
  if(input.schemaVersion!==1||input.app!=='aslima-display')throw new Error('Unsupported ASLIMA backup');
  const settings=input.settings;if(!settings||typeof settings!=='object'||Array.isArray(settings))throw new Error('Backup settings are missing');
  if(!['vric','calculated-location','manual'].includes(settings.mode))throw new Error('Timing mode is invalid');
+ const displayLayout=settings.displayLayout===undefined?'classic':settings.displayLayout;if(!['classic','focus'].includes(displayLayout))throw new Error('Display layout is invalid');
  const timings={};for(const prayer of PRAYERS){if(!isBackupClock(settings.timings&&settings.timings[prayer]))throw new Error(prayer+' time is invalid');timings[prayer]=settings.timings[prayer]}
  for(let index=1;index<PRAYERS.length;index++)if(backupMinutes(timings[PRAYERS[index]])<=backupMinutes(timings[PRAYERS[index-1]]))throw new Error('Prayer times must be chronological');
  const azaanEnabled={};for(const prayer of AZAAN){if(typeof (settings.azaanEnabled&&settings.azaanEnabled[prayer])!=='boolean')throw new Error(prayer+' Azaan setting is invalid');azaanEnabled[prayer]=settings.azaanEnabled[prayer]}
@@ -171,10 +174,10 @@ function validateSettingsBackup(input){
  const azaanSchedule={};for(const day of DAYS){azaanSchedule[day]={};for(const prayer of AZAAN){const value=settings.azaanSchedule&&settings.azaanSchedule[day]&&settings.azaanSchedule[day][prayer];if(settings.azaanSchedule!==undefined&&typeof value!=='boolean')throw new Error(day+' '+prayer+' Azaan setting is invalid');azaanSchedule[day][prayer]=settings.azaanSchedule===undefined?azaanDays[day]&&azaanEnabled[prayer]:value}}
  if(typeof settings.volume!=='number'||!Number.isFinite(settings.volume)||settings.volume<0||settings.volume>1)throw new Error('Volume is invalid');
  if(typeof settings.muezzin!=='string'||!AZAAN_VOICES[settings.muezzin])throw new Error('Azaan voice is invalid');
- return {mode:settings.mode,timings,azaanEnabled,azaanDays,azaanSchedule,volume:settings.volume,muezzin:settings.muezzin};
+ return {mode:settings.mode,displayLayout,timings,azaanEnabled,azaanDays,azaanSchedule,volume:settings.volume,muezzin:settings.muezzin};
 }
 function currentBackup(){
- const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,timings:state.timings,azaanEnabled:state.azaanEnabled,azaanDays:state.azaanDays,azaanSchedule:state.azaanSchedule,volume:Number(state.volume),muezzin:state.muezzin}});
+ const settings=validateSettingsBackup({schemaVersion:1,app:'aslima-display',settings:{mode:state.mode,displayLayout:state.displayLayout,timings:state.timings,azaanEnabled:state.azaanEnabled,azaanDays:state.azaanDays,azaanSchedule:state.azaanSchedule,volume:Number(state.volume),muezzin:state.muezzin}});
  return {schemaVersion:1,app:'aslima-display',exportedAt:new Date().toISOString(),settings};
 }
 function setBackupStatus(message,kind){const element=$('backupStatus');element.textContent=message||'';element.className='backupStatus '+(kind||'')}
@@ -236,6 +239,7 @@ function renderDailySchedule(nextPrayer){
  $('dailyScheduleMeta').textContent=state.mode==='manual'?'Manual schedule':(state.mode==='calculated-location'?'Location schedule':'VRIC schedule');
 }
 function render(){
+ $('layoutClassic').classList.toggle('active',state.displayLayout!=='focus');$('layoutFocus').classList.toggle('active',state.displayLayout==='focus');
  $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeLocation').classList.toggle('active',state.mode==='calculated-location'); $('modeManual').classList.toggle('active',state.mode==='manual');
  const manualMode=state.mode==='manual';
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
@@ -307,6 +311,8 @@ function initializeAuthorizedRemote(){
  voiceRef.on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}});
  ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},iqamah:{...DEFAULT.iqamah,...(v.iqamah||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})},azaanDays:{...DEFAULT.azaanDays,...(v.azaanDays||{})},azaanSchedule:normalizedAzaanSchedule(v.azaanSchedule,v.azaanEnabled,v.azaanDays),prayerVolumes:{...DEFAULT.prayerVolumes,...(v.prayerVolumes||{})}};applyTabletResolvedSchedule();render();}},()=>setStatus('Access denied','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
+ $('layoutClassic').onclick=()=>{state.displayLayout='classic';render();pushPatch({displayLayout:'classic'},'Classic layout selected')};
+ $('layoutFocus').onclick=()=>{state.displayLayout='focus';render();pushPatch({displayLayout:'focus'},'Focus layout selected')};
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
  $('test').onclick=()=>sendTabletCommand('testAzaan',{prayer:$('testPrayer').value},'Test '+$('testPrayer').value).catch(()=>{});
  $('testDua').onclick=()=>sendTabletCommand('testDua',{},'Test translated dua').catch(()=>{});
@@ -331,7 +337,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
    showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
  });
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=981').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=983').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>

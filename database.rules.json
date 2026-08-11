@@ -13,6 +13,9 @@
             },
             "muezzin": {
               ".write": "newData.isString() && (newData.val() == 'doha' || newData.val() == 'azaan1' || newData.val() == 'azaan2' || newData.val() == 'azaan3' || newData.val() == 'azaan4' || newData.val() == 'azaan5')"
+            },
+            "displayLayout": {
+              ".write": "newData.isString() && (newData.val() == 'classic' || newData.val() == 'focus')"
             }
           },
           "status": {

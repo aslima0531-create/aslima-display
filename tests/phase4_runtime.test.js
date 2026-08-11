@@ -233,9 +233,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=981'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=981'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='981'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=983'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=983'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='983'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -639,7 +639,7 @@ function validBackup(){const prayers=['Fajr','Dhuhr','Asr','Maghrib','Isha'],day
 test('configuration backup validator accepts only the explicit safe settings schema',()=>{
   const validate=backupValidator(),input=validBackup();input.settings.command={type:'stopAzaan'};input.settings.diagnostics=['private'];input.extra='ignored';
   const result=validate(input);
-  assert.deepEqual(Object.keys(result).sort(),['azaanDays','azaanEnabled','azaanSchedule','mode','muezzin','timings','volume']);
+  assert.deepEqual(Object.keys(result).sort(),['azaanDays','azaanEnabled','azaanSchedule','displayLayout','mode','muezzin','timings','volume']);
   assert.equal('jumuah' in result,false);
   assert.equal('command' in result,false);assert.equal('diagnostics' in result,false);
 });
@@ -659,6 +659,7 @@ test('configuration restore rejects malformed, partial, unsafe, and nonchronolog
     value=>{value.settings.azaanEnabled.Fajr='yes';},
     value=>{value.settings.azaanDays.Friday='yes';},
     value=>{value.settings.azaanSchedule.Monday.Fajr='yes';},
+    value=>{value.settings.displayLayout='large';},
     value=>{value.settings.volume=2;},
     value=>{value.settings.muezzin='remote-url';}
   ]){const value=validBackup();mutate(value);assert.throws(()=>validate(value));}
@@ -743,7 +744,9 @@ test('database rules protect settings writes while preserving required tablet ac
   assert.match(home.settings.volume['.write'],/newData\.isNumber\(\)/);
   assert.match(home.settings.volume['.write'],/newData\.val\(\) >= 0/);
   assert.match(home.settings.volume['.write'],/newData\.val\(\) <= 1/);
-  assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','muezzin','volume']);
+  assert.match(home.settings.displayLayout['.write'],/classic/);
+  assert.match(home.settings.displayLayout['.write'],/focus/);
+  assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','displayLayout','muezzin','volume']);
   assert.match(home.status.display['.read'],/auth\.token\.email/);
   assert.equal(home.status.display['.write'],true);
 });

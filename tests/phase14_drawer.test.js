@@ -117,3 +117,32 @@ test('phone admin uses a stable mobile-first hierarchy without cramped prayer ca
   assert.match(admin,/function switchTab\(id\)\{document\.body\.dataset\.activeTab=id/);
   assert.ok(admin.indexOf('<nav class="tabs"')<admin.indexOf('<section class="hero">'));
 });
+
+test('Classic and Focus reuse the complete tablet display and sync from phone',()=>{
+  assert.match(index,/id="aslima-focus-layout"/);
+  assert.match(index,/data-display-layout-choice="classic"/);
+  assert.match(index,/data-display-layout-choice="focus"/);
+  assert.match(index,/body\[data-display-layout="focus"\] \.prayer-panel\{[\s\S]*?grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+  assert.match(index,/id="jumuahPillTimes"/);
+  assert.match(index,/body\[data-display-layout="focus"\] \.dock-content-row\{[\s\S]*?58fr[\s\S]*?42fr/);
+  assert.match(index,/const DISPLAY_LAYOUT_KEY='aslima_display_layout'/);
+  assert.match(index,/window\.aslimaRemoteRef\.child\('displayLayout'\)\.set\(displayLayout\)/);
+  assert.match(index,/if\(typeof data\.displayLayout==='string'\)setDisplayLayout\(data\.displayLayout/);
+  assert.match(admin,/id="layoutClassic"/);
+  assert.match(admin,/id="layoutFocus"/);
+  assert.match(admin,/pushPatch\(\{displayLayout:'focus'\}/);
+});
+
+test('Focus matches the approved centered clock, complete cards, progress ring, and unified dock',()=>{
+  assert.match(index,/id="aslima-focus-layout-exact"/);
+  assert.match(index,/\.clock\{[\s\S]*?left:50%!important[\s\S]*?transform:translateX\(-50%\)!important/);
+  assert.match(index,/\.date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
+  assert.match(index,/\.hijri-date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
+  assert.match(index,/\.left::before\{[\s\S]*?repeating-conic-gradient/);
+  assert.match(index,/\.left::after\{[\s\S]*?conic-gradient/);
+  assert.match(index,/\.iqamah-time\{[\s\S]*?font-size:clamp\(24px,2\.5vw,38px\)!important/);
+  assert.match(index,/\.dock-content-row\{[\s\S]*?51\.4fr[\s\S]*?48\.6fr/);
+  assert.match(index,/assets\/focus-arch-overlay\.svg/);
+  assert.match(index,/assets\/focus-calendar\.svg/);
+  assert.match(index,/assets\/aslima-mark\.svg/);
+});

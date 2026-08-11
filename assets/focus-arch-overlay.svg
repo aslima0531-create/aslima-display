@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 686" preserveAspectRatio="none">
+  <defs>
+    <pattern id="p" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M16 1 23 9 31 16 23 23 16 31 9 23 1 16 9 9Z" fill="none" stroke="#d9a94e" stroke-opacity=".08" stroke-width=".7"/>
+      <circle cx="16" cy="16" r="5" fill="none" stroke="#d9a94e" stroke-opacity=".055" stroke-width=".6"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dbab51" stop-opacity=".4"/><stop offset="1" stop-color="#dbab51" stop-opacity=".1"/></linearGradient>
+  </defs>
+  <path d="M8 8h315c24-37 68-58 112-58h330c44 0 88 21 112 58h315v670H8Z" fill="url(#p)" opacity=".45"/>
+  <path d="M63 319V270c0-74 57-136 130-144 29-55 83-91 146-94C362-7 404-28 451-28h298c47 0 89 21 112 60 63 3 117 39 146 94 73 8 130 70 130 144v49" fill="none" stroke="url(#fade)" stroke-width="2.5" opacity=".75"/>
+  <g fill="#061d1b" opacity=".72">
+    <path d="M78 322h250v-44h-20v-72h-13v72h-22v-45c0-36-30-65-67-65s-67 29-67 65v45h-23v-86h-11v86H78Z"/>
+    <path d="M872 322h250v-44h-27v-82h-11v82h-23v-45c0-36-30-65-67-65s-67 29-67 65v45h-21v-72h-13v72h-21Z"/>
+  </g>
+  <g fill="#c89a45" opacity=".22"><circle cx="206" cy="165" r="3"/><circle cx="994" cy="165" r="3"/><path d="M206 118v50M994 118v50" stroke="#c89a45" stroke-width="2"/></g>
+</svg>
