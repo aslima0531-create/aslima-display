@@ -169,10 +169,10 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   const fidelity=fs.readFileSync(path.join(root,'assets/focus-fidelity-v987.css'),'utf8');
   assert.match(index,/assets\/focus-fidelity-v987\.css/);
   assert.match(fidelity,/background-image:linear-gradient\(180deg[\s\S]*?url\("aslima-focus-background-v1\.png"\)!important/);
-  assert.match(fidelity,/background:url\("focus-arch-overlay\.svg"\) center\/100% 100% no-repeat!important/);
+  assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1004/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1005/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);

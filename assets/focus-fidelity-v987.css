@@ -10,7 +10,7 @@ html body[data-display-layout="focus"] .app{
 }
 html body[data-display-layout="focus"] .app::before{
   inset:0!important;border:0!important;border-radius:0!important;
-  background:url("focus-arch-overlay.svg") center/100% 100% no-repeat!important;
+  background:transparent!important;
   box-shadow:none!important;
 }
 body[data-display-layout="focus"] .app::after{
