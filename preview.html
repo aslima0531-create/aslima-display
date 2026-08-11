@@ -4039,10 +4039,10 @@ body[data-display-layout="focus"] .dock-content-row{position:relative!important;
 /* Approved Focus composition: preserve the live display DOM while matching the
    emerald, distance-readable reference layout. */
 body[data-display-layout="focus"] .app{
-  background-image:url("assets/focus-arch-overlay.svg"),radial-gradient(ellipse at 50% 19%,rgba(8,47,43,.43),transparent 48%),linear-gradient(180deg,#001817 0%,#001211 62%,#00090b 100%)!important;
-  background-position:center!important;background-size:cover!important;background-blend-mode:normal,screen,normal!important;
+  background-image:linear-gradient(180deg,rgba(0,50,35,.46),rgba(0,27,23,.58) 58%,rgba(0,9,11,.72)),url("assets/aslima-focus-background-v1.png")!important;
+  background-position:center!important;background-size:cover!important;background-blend-mode:normal,normal!important;
 }
-body[data-display-layout="focus"] .app::before{inset:1vh .75vw 1.2vh!important;border:1px solid rgba(241,189,101,.36)!important;border-radius:1.7vw!important;background:linear-gradient(rgba(1,21,20,.16),rgba(0,12,14,.32));box-shadow:inset 0 0 0 1px rgba(255,222,151,.055),0 0 24px rgba(0,0,0,.22)!important}
+body[data-display-layout="focus"] .app::before{inset:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
 body[data-display-layout="focus"] .app::after{background:radial-gradient(ellipse at 50% 21%,rgba(8,58,51,.25),transparent 49%),linear-gradient(180deg,rgba(0,12,13,.03),rgba(0,5,7,.5))!important}
 body[data-display-layout="focus"] .kalima,body[data-display-layout="focus"] .timing-health,body[data-display-layout="focus"] .timing-masjid-name{display:none!important}
 body[data-display-layout="focus"] .top{position:static!important;inset:auto!important;width:0!important;height:0!important;transform:none!important}
@@ -4115,7 +4115,7 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wr
 @media(max-height:650px){body[data-display-layout="focus"] .date{top:36vh!important}body[data-display-layout="focus"] .hijri-date{top:42.4vh!important}body[data-display-layout="focus"] .right{top:47vh!important;height:33.2vh!important}body[data-display-layout="focus"] .bottom{bottom:5.25vh!important;height:9.55vh!important}}
 </style>
 <style id="aslima-focus-ring-visibility-guard">body:not([data-display-layout="focus"]) .focus-progress-ring{display:none!important}</style>
-<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1005">
+<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1006">
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -8244,7 +8244,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1005').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1006').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

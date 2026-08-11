@@ -156,7 +156,7 @@ test('Focus matches the approved centered clock, complete cards, progress ring, 
   assert.match(index,/endpoint\.setAttribute\('transform','rotate\('\+angle\+' 120 120\)'\)/);
   assert.match(index,/\.iqamah-time\{[\s\S]*?font-size:clamp\(24px,2\.5vw,38px\)!important/);
   assert.match(index,/\.dock-content-row\{[\s\S]*?51\.4fr[\s\S]*?48\.6fr/);
-  assert.match(index,/assets\/focus-arch-overlay\.svg/);
+  assert.doesNotMatch(index,/assets\/focus-arch-overlay\.svg/);
   assert.match(index,/assets\/focus-calendar\.svg/);
   assert.match(index,/assets\/focus-mosque\.svg/);
   assert.match(index,/assets\/aslima-mark\.svg/);
@@ -172,7 +172,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1005/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1006/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
