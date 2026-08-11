@@ -130,6 +130,8 @@ test('Classic and Focus reuse the complete tablet display and sync from phone',(
   assert.match(index,/if\(typeof data\.displayLayout==='string'\)setDisplayLayout\(data\.displayLayout/);
   assert.match(admin,/id="layoutClassic"/);
   assert.match(admin,/id="layoutFocus"/);
+  assert.match(admin,/id="layoutCurrent"/);
+  assert.ok(admin.indexOf('class="layoutQuick"')<admin.indexOf('<section class="hero">'));
   assert.match(admin,/pushPatch\(\{displayLayout:'focus'\}/);
 });
 

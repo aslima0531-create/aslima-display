@@ -48,7 +48,7 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
 .phone-azaan-row strong{font-size:13px}.phone-azaan-row label{display:grid;place-items:center;cursor:pointer}.phone-azaan-row input{position:absolute;opacity:0;pointer-events:none}
 .phone-azaan-row label span{width:28px;height:28px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.035)}
 .phone-azaan-row input:checked+span{border-color:var(--gold);background:var(--gold)}.phone-azaan-row input:checked+span::after{content:'✓';display:grid;place-items:center;height:100%;color:#102021;font-size:17px;font-weight:900}
-.layoutChoice{display:grid;grid-template-columns:1fr 1fr;gap:8px}.layoutChoice button{min-height:48px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.055);color:var(--muted);font-size:13px;font-weight:900}.layoutChoice button.active{border-color:rgba(245,200,107,.76);background:linear-gradient(135deg,rgba(245,200,107,.22),rgba(245,200,107,.07));color:var(--gold);box-shadow:0 0 22px rgba(245,200,107,.1)}
+.layoutQuick{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,.9fr);align-items:center;gap:14px;margin:10px 0 12px;padding:13px 14px;border:1px solid rgba(245,200,107,.28);border-radius:20px;background:linear-gradient(135deg,rgba(245,200,107,.12),rgba(255,255,255,.035));box-shadow:0 14px 38px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07)}.layoutQuickEyebrow{font-size:9px;font-weight:950;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}.layoutQuickTitle{margin-top:3px;font-size:15px;font-weight:950;color:var(--text)}.layoutChoice{display:grid;grid-template-columns:1fr 1fr;gap:7px}.layoutChoice button{min-height:44px;border:1px solid var(--line);border-radius:13px;background:rgba(0,0,0,.20);color:var(--muted);font-size:13px;font-weight:900}.layoutChoice button.active{border-color:rgba(245,200,107,.76);background:linear-gradient(135deg,rgba(245,200,107,.27),rgba(245,200,107,.08));color:var(--gold);box-shadow:0 0 22px rgba(245,200,107,.1)}
 /* Phone-first layout: reachable navigation and stable, readable data rows. */
 @media(max-width:520px){
  body{padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 28px)}
@@ -56,6 +56,7 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
  .eyebrow{font-size:9px;letter-spacing:.18em}.title{font-size:28px;margin:3px 0 0}.top .sub{display:none}.status{margin-top:2px;padding:7px 9px;font-size:10px}
  .accountAction{margin-top:7px;font-size:11px}.alertCenter{margin:8px 0}.alertCard{padding:10px 12px;border-radius:13px;font-size:11px}.alertCard strong{font-size:12px}
  .tabs{top:calc(env(safe-area-inset-top) + 5px);margin:8px 0 10px;padding:4px;border-radius:15px}.tabBtn{min-height:40px;border-radius:11px;font-size:11px}
+ .layoutQuick{grid-template-columns:1fr;gap:9px;margin:7px 0 10px;padding:11px;border-radius:17px}.layoutQuickCopy{display:flex;align-items:center;justify-content:space-between;gap:12px}.layoutQuickTitle{margin:0;font-size:13px}.layoutChoice button{min-height:42px}
  body:not([data-active-tab="timesPage"]) .hero{display:none}
  .hero{margin:8px 0 10px;padding:12px;border-radius:20px}.heroTop{gap:8px}.pill{padding:5px 8px;font-size:9px}
  .heroTitle{margin:9px 0 0;font-size:18px}.heroSub{display:none}.nextPrayer{margin-top:9px;padding:11px 12px;border-radius:15px}
@@ -85,6 +86,11 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
     <button class="tabBtn" data-tab="azaanPage">Azaan</button><button class="tabBtn" data-tab="voicePage">Voice</button>
   </nav>
 
+  <section class="layoutQuick" aria-labelledby="layoutQuickLabel">
+    <div class="layoutQuickCopy"><div class="layoutQuickEyebrow" id="layoutQuickLabel">Tablet display</div><div class="layoutQuickTitle" id="layoutCurrent" aria-live="polite">Classic view</div></div>
+    <div class="layoutChoice" role="group" aria-label="Choose tablet display layout"><button id="layoutClassic" type="button">Classic</button><button id="layoutFocus" type="button">Focus</button></div>
+  </section>
+
   <section class="hero">
     <div class="heroTop"><div class="pill" id="modePill">● VRIC Live</div><div class="pill" id="syncPill">Synced</div></div>
     <div class="heroTitle">Tablet prayer status</div>
@@ -101,7 +107,6 @@ body{background:radial-gradient(circle at 12% -8%,rgba(245,200,107,.19),transpar
   </section>
 
   <section class="page active" id="timesPage">
-    <section class="card"><h2>Tablet Layout</h2><div class="sectionHint">Classic keeps the current dashboard. Focus enlarges the clock and prayer schedule for viewing from farther away.</div><div class="layoutChoice" role="group" aria-label="Tablet display layout"><button id="layoutClassic" type="button">Classic</button><button id="layoutFocus" type="button">Focus</button></div></section>
     <section class="card"><h2>Timing Source</h2><div class="sectionHint">Normal operation should stay on VRIC Live. Manual is only for corrections or testing.</div><div class="mode"><button id="modeVric">VRIC Live</button><button id="modeLocation">Location</button><button id="modeManual">Manual</button></div></section>
     <section class="card"><h2>Tablet Home Area</h2><div class="sectionHint">Save a ZIP code, or use this phone’s location and send the rounded home area to the tablet.</div><div class="homeAreaSummary"><div class="homeAreaLabel">Saved tablet area</div><div class="homeAreaValue" id="homeAreaValue">Not set</div></div><form id="homeZipForm"><div class="homeAreaActions"><input type="text" id="homeZipCode" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="US ZIP code" aria-label="Tablet home ZIP code"><button class="ghost" type="submit">Save ZIP</button></div></form><button class="primary homeAreaPhone" id="usePhoneLocation" type="button">Use This Phone’s Location</button><div class="homeAreaStatus" id="homeAreaStatus" aria-live="polite">The tablet will reuse this area for calculated timings and nearby masjids.</div></section>
     <section class="card manualTimesCard" id="manualTimesCard" hidden><h2>Manual Prayer Times</h2><div class="sectionHint" id="timeHint">Use these only when Manual mode is selected.</div><div class="grid" id="timeGrid"></div></section>
@@ -240,6 +245,7 @@ function renderDailySchedule(nextPrayer){
 }
 function render(){
  $('layoutClassic').classList.toggle('active',state.displayLayout!=='focus');$('layoutFocus').classList.toggle('active',state.displayLayout==='focus');
+ $('layoutCurrent').textContent=state.displayLayout==='focus'?'Focus view':'Classic view';
  $('modeVric').classList.toggle('active',state.mode==='vric'); $('modeLocation').classList.toggle('active',state.mode==='calculated-location'); $('modeManual').classList.toggle('active',state.mode==='manual');
  const manualMode=state.mode==='manual';
  PRAYERS.forEach(p=>{const el=$('time_'+p); if(el){el.value=state.timings[p]||''; el.disabled=!manualMode; const row=el.closest('.row'); if(row)row.classList.toggle('locked',!manualMode);}});
@@ -337,7 +343,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
    showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
  });
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=983').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=984').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>

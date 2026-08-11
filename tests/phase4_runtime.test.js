@@ -233,9 +233,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=983'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=983'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='983'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=984'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=984'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='984'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
