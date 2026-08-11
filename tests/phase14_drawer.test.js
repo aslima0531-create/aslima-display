@@ -127,7 +127,9 @@ test('Classic and Focus reuse the complete tablet display and sync from phone',(
   assert.match(index,/body\[data-display-layout="focus"\] \.dock-content-row\{[\s\S]*?58fr[\s\S]*?42fr/);
   assert.match(index,/const DISPLAY_LAYOUT_KEY='aslima_display_layout'/);
   assert.match(index,/window\.aslimaRemoteRef\.child\('displayLayout'\)\.set\(displayLayout\)/);
-  assert.match(index,/if\(typeof data\.displayLayout==='string'\)setDisplayLayout\(data\.displayLayout/);
+  assert.match(index,/function applyRemoteDisplayLayout\(data\)/);
+  assert.match(index,/displayLayoutLocalChangedAt&&remoteChangedAt<displayLayoutLocalChangedAt/);
+  assert.match(index,/applyRemoteDisplayLayout\(data\)/);
   assert.match(admin,/id="layoutClassic"/);
   assert.match(admin,/id="layoutFocus"/);
   assert.match(admin,/id="layoutCurrent"/);
@@ -144,10 +146,15 @@ test('Focus matches the approved centered clock, complete cards, progress ring, 
   assert.match(index,/\.date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
   assert.match(index,/\.hijri-date\{[\s\S]*?left:50vw!important[\s\S]*?transform:translateX\(-50%\)!important/);
   assert.match(index,/\.left::before\{[\s\S]*?repeating-conic-gradient/);
-  assert.match(index,/\.left::after\{[\s\S]*?conic-gradient/);
+  assert.match(index,/\.left::after\{[\s\S]*?--focus-ring-progress/);
+  assert.match(index,/function updateFocusCountdownProgress\(next\)/);
   assert.match(index,/\.iqamah-time\{[\s\S]*?font-size:clamp\(24px,2\.5vw,38px\)!important/);
   assert.match(index,/\.dock-content-row\{[\s\S]*?51\.4fr[\s\S]*?48\.6fr/);
   assert.match(index,/assets\/focus-arch-overlay\.svg/);
   assert.match(index,/assets\/focus-calendar\.svg/);
+  assert.match(index,/assets\/focus-mosque\.svg/);
   assert.match(index,/assets\/aslima-mark\.svg/);
+  assert.match(index,/\.layout-toggle\{position:fixed;top:14vh/);
+  assert.match(index,/body\[data-display-layout="focus"\] \.layout-toggle\{top:3\.2vh!important/);
+  assert.match(admin,/displayLayoutUpdatedAt:firebase\.database\.ServerValue\.TIMESTAMP/);
 });

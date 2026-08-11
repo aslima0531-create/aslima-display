@@ -3946,8 +3946,9 @@ body[data-iqamah-schedule="hidden"] #prayerPanel .ptime-group{
 </style>
 
 <style id="aslima-focus-layout">
-.layout-toggle{position:fixed;top:2.2vh;right:3.2vw;z-index:100012;display:grid;grid-template-columns:1fr 1fr;padding:3px;border:1px solid rgba(241,189,101,.35);border-radius:999px;background:rgba(0,10,11,.76);box-shadow:0 10px 28px rgba(0,0,0,.25);backdrop-filter:blur(14px)}
+.layout-toggle{position:fixed;top:14vh;right:2.4vw;z-index:100012;display:grid;grid-template-columns:1fr 1fr;padding:3px;border:1px solid rgba(241,189,101,.48);border-radius:999px;background:rgba(0,10,11,.88);box-shadow:0 10px 28px rgba(0,0,0,.34);backdrop-filter:blur(14px)}
 .layout-toggle button{min-width:74px;min-height:32px;padding:5px 13px;border:0;border-radius:999px;background:transparent;color:rgba(255,241,210,.62);font-size:11px;font-weight:750;letter-spacing:.035em}
+.layout-toggle button:focus{outline:none}.layout-toggle button:focus-visible{outline:2px solid rgba(241,189,101,.86);outline-offset:1px}
 .layout-toggle button[aria-pressed="true"]{background:linear-gradient(135deg,rgba(241,189,101,.24),rgba(241,189,101,.08));box-shadow:inset 0 0 0 1px rgba(241,189,101,.64),0 0 18px rgba(241,189,101,.13);color:#ffd88f}
 .jumuah-pill-times{display:none}
 body[data-display-layout="focus"] .app{display:block;padding:0;background:linear-gradient(180deg,rgba(0,10,11,.02),rgba(0,8,9,.26) 66%,rgba(0,6,7,.58)),linear-gradient(90deg,rgba(0,0,0,.24),transparent 38%,rgba(0,0,0,.18)),url("assets/aslima-premium-bg.png") center/cover no-repeat}
@@ -4004,6 +4005,8 @@ body[data-display-layout="focus"] .supp-ticker-name{font-size:clamp(13px,1.15vw,
 body[data-display-layout="focus"] .supp-ticker-time{font-size:clamp(11px,.9vw,15px)}
 body[data-display-layout="focus"] .supp-ticker-status{font-size:clamp(9px,.72vw,12px);white-space:nowrap}
 body[data-display-layout="focus"] .supp-reminder-status{font-size:clamp(8px,.62vw,10px)}
+body[data-display-layout="focus"] .supp-reminder-status{color:#e9b85f!important;background:rgba(241,189,101,.08)!important;border-color:rgba(241,189,101,.18)!important}
+body[data-display-layout="focus"] .supp-reminder-dot{box-shadow:0 0 8px rgba(241,189,101,.38)!important}
 body[data-display-layout="focus"] .supp-ticker-view{font-size:clamp(9px,.7vw,12px);white-space:nowrap}
 body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .dock-content-row{grid-template-columns:1fr!important}
 body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .dock-separator{display:none!important}
@@ -4036,11 +4039,11 @@ body[data-display-layout="focus"] .dock-content-row{position:relative!important;
 /* Approved Focus composition: preserve the live display DOM while matching the
    emerald, distance-readable reference layout. */
 body[data-display-layout="focus"] .app{
-  background-image:url("assets/focus-arch-overlay.svg"),radial-gradient(ellipse at 50% 20%,rgba(7,55,50,.58),transparent 50%),linear-gradient(180deg,#001817 0%,#001313 62%,#000b0d 100%)!important;
-  background-position:center!important;background-size:cover!important;background-blend-mode:screen,screen,normal!important;
+  background-image:url("assets/focus-arch-overlay.svg"),radial-gradient(ellipse at 50% 19%,rgba(8,47,43,.43),transparent 48%),linear-gradient(180deg,#001817 0%,#001211 62%,#00090b 100%)!important;
+  background-position:center!important;background-size:cover!important;background-blend-mode:normal,screen,normal!important;
 }
-body[data-display-layout="focus"] .app::before{inset:1vh .75vw 1.2vh!important;border:0!important;border-radius:1.7vw!important;background:linear-gradient(rgba(2,25,24,.25),rgba(0,15,17,.35));box-shadow:inset 0 0 0 1px rgba(241,189,101,.17)!important}
-body[data-display-layout="focus"] .app::after{background:radial-gradient(ellipse at 50% 22%,rgba(9,74,65,.38),transparent 51%),linear-gradient(180deg,rgba(0,15,15,.08),rgba(0,7,9,.44))!important}
+body[data-display-layout="focus"] .app::before{inset:1vh .75vw 1.2vh!important;border:1px solid rgba(241,189,101,.36)!important;border-radius:1.7vw!important;background:linear-gradient(rgba(1,21,20,.16),rgba(0,12,14,.32));box-shadow:inset 0 0 0 1px rgba(255,222,151,.055),0 0 24px rgba(0,0,0,.22)!important}
+body[data-display-layout="focus"] .app::after{background:radial-gradient(ellipse at 50% 21%,rgba(8,58,51,.25),transparent 49%),linear-gradient(180deg,rgba(0,12,13,.03),rgba(0,5,7,.5))!important}
 body[data-display-layout="focus"] .kalima,body[data-display-layout="focus"] .timing-health,body[data-display-layout="focus"] .timing-masjid-name{display:none!important}
 body[data-display-layout="focus"] .top{position:static!important;inset:auto!important;width:0!important;height:0!important;transform:none!important}
 body[data-display-layout="focus"] .brand-mark{display:flex!important;align-items:center;gap:.75vw;position:fixed!important;left:2.2vw!important;right:auto!important;top:2.35vh!important;bottom:auto!important;z-index:100013!important;padding:0!important;border:0!important;background:transparent!important;color:#f5c86b!important;font:650 clamp(20px,2vw,32px)/1 Inter,system-ui,sans-serif!important;letter-spacing:.19em!important;transform:none!important;text-shadow:0 0 18px rgba(241,189,101,.14)!important}
@@ -4056,12 +4059,12 @@ body[data-display-layout="focus"] .clock{position:absolute!important;left:50%!im
 body[data-display-layout="focus"] .clock .ampm{font-size:.2em!important;letter-spacing:0!important;margin-left:.7vw!important}
 body[data-display-layout="focus"] .divider{position:absolute!important;left:50%!important;top:24.2vh!important;width:40%!important;height:1px!important;margin:0!important;transform:translateX(-50%)!important;background:linear-gradient(90deg,transparent,rgba(241,189,101,.55) 18%,rgba(241,189,101,.55) 82%,transparent)!important}
 body[data-display-layout="focus"] .divider::after{content:"◇";position:absolute;left:50%;top:50%;padding:0 .8vw;transform:translate(-50%,-53%);background:#042221;color:#f1bd65;font-size:clamp(13px,1.25vw,20px)}
-body[data-display-layout="focus"] .left::before{content:"";position:absolute;right:6.45%!important;top:10.15vh!important;width:clamp(150px,16vw,240px)!important;aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(from -10deg,rgba(244,192,89,.92) 0 1deg,transparent 1deg 3.2deg);padding:clamp(2px,.22vw,4px);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;opacity:.82;pointer-events:none}
-body[data-display-layout="focus"] .left::after{content:"";position:absolute;right:7%!important;top:10.7vh!important;width:clamp(142px,15vw,226px)!important;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 0deg,rgba(250,208,111,.98) 0 43%,rgba(241,189,101,.16) 43% 100%);padding:clamp(5px,.55vw,8px);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;filter:drop-shadow(0 0 8px rgba(241,189,101,.42));pointer-events:none}
+body[data-display-layout="focus"] .left::before{content:"";position:absolute;right:6.25%!important;top:9.65vh!important;width:clamp(154px,16.25vw,244px)!important;aspect-ratio:1;border-radius:50%;background:repeating-conic-gradient(from -90deg,rgba(248,202,105,1) 0 1.15deg,transparent 1.15deg 3.25deg);padding:clamp(2px,.24vw,4px);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;opacity:1;filter:drop-shadow(0 0 7px rgba(241,189,101,.32));pointer-events:none}
+body[data-display-layout="focus"] .left::after{content:"";position:absolute;right:6.85%!important;top:10.35vh!important;width:clamp(143px,15.05vw,226px)!important;aspect-ratio:1;border-radius:50%;background:conic-gradient(from -90deg,rgba(255,216,128,1) 0 var(--focus-ring-progress,43%),rgba(241,189,101,.17) var(--focus-ring-progress,43%) 100%);padding:clamp(5px,.58vw,9px);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;filter:drop-shadow(0 0 9px rgba(241,189,101,.58));pointer-events:none}
 body[data-display-layout="focus"] .next-label,body[data-display-layout="focus"] .next-name,body[data-display-layout="focus"] .next-time,body[data-display-layout="focus"] .remaining{right:7%!important;width:15%!important;z-index:2!important;text-align:center!important}
 body[data-display-layout="focus"] .next-label{top:22.1vh!important;font-size:clamp(15px,1.45vw,23px)!important;font-weight:620!important;letter-spacing:.06em!important;color:#fff0d8!important}
-body[data-display-layout="focus"] .next-label::before{content:"";position:absolute;left:50%;top:-5vh;transform:translateX(-50%);width:clamp(22px,2.1vw,32px);height:clamp(22px,2.1vw,32px);background:url("assets/aslima-mark.svg") center/contain no-repeat}
-body[data-display-layout="focus"] .next-label::after{content:"✦";position:absolute;left:50%;top:-12.1vh;transform:translateX(-50%);color:#ffe39b;font-size:clamp(13px,1.2vw,19px);text-shadow:0 0 10px #ffd064,0 0 22px rgba(255,208,100,.8)}
+body[data-display-layout="focus"] .next-label::before{content:"";position:absolute;left:50%;top:-5.25vh;transform:translateX(-50%);width:clamp(22px,2.15vw,34px);height:clamp(22px,2.15vw,34px);background:url("assets/focus-mosque.svg") center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(241,189,101,.42))}
+body[data-display-layout="focus"] .next-label::after{content:"✦";position:absolute;left:50%;top:-12.75vh;transform:translateX(-50%);color:#ffe7a2;font-size:clamp(17px,1.5vw,24px);text-shadow:0 0 8px #ffd064,0 0 18px #ffc44d,0 0 30px rgba(255,198,58,.78)}
 body[data-display-layout="focus"] .next-name{display:none!important}
 body[data-display-layout="focus"] .next-time{display:none!important}
 body[data-display-layout="focus"] .remaining{top:26.3vh!important;font-size:clamp(24px,2.6vw,42px)!important;font-weight:520!important;line-height:1!important;color:#e8b85f!important;white-space:nowrap!important}
@@ -4071,8 +4074,8 @@ body[data-display-layout="focus"] .date{top:36vh!important;left:50vw!important;t
 body[data-display-layout="focus"] .hijri-date{top:42.4vh!important;left:50vw!important;transform:translateX(-50%)!important;font-size:clamp(17px,1.75vw,28px)!important;font-weight:520!important;color:#d7a84e!important}
 body[data-display-layout="focus"] .right{top:47vh!important;left:6.55vw!important;width:86.9vw!important;height:33.2vh!important}
 body[data-display-layout="focus"] .prayer-panel{gap:1vw!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important}
-body[data-display-layout="focus"] #prayerPanel .row{padding:1.8vh 1vw 1.45vh!important;border:1px solid rgba(226,231,207,.57)!important;border-radius:2vw!important;background:linear-gradient(155deg,rgba(9,54,49,.9),rgba(0,28,31,.86))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 28px rgba(0,0,0,.25)!important;gap:.6vh!important}
-body[data-display-layout="focus"] #prayerPanel .row.active{border-color:#ffe09a!important;background:linear-gradient(155deg,rgba(91,72,27,.68),rgba(10,46,40,.92))!important;box-shadow:inset 0 0 0 1px rgba(255,235,176,.5),0 0 15px rgba(241,189,101,.48),0 14px 30px rgba(0,0,0,.3)!important}
+body[data-display-layout="focus"] #prayerPanel .row{padding:1.8vh 1vw 1.45vh!important;border:1px solid rgba(218,177,96,.52)!important;border-radius:2vw!important;background:linear-gradient(155deg,rgba(2,38,36,.95),rgba(0,20,23,.94))!important;box-shadow:inset 0 1px 0 rgba(255,236,188,.05),0 14px 28px rgba(0,0,0,.3)!important;gap:.6vh!important}
+body[data-display-layout="focus"] #prayerPanel .row.active{border-color:#ffe09a!important;background:linear-gradient(155deg,rgba(76,59,20,.76),rgba(4,31,29,.97))!important;box-shadow:inset 0 0 0 1px rgba(255,235,176,.52),0 0 18px rgba(241,189,101,.5),0 14px 30px rgba(0,0,0,.34)!important}
 body[data-display-layout="focus"] #prayerPanel .pname{font-size:clamp(18px,1.7vw,28px)!important;font-weight:680!important;color:#fff1dc!important}
 body[data-display-layout="focus"] #prayerPanel .row.active .pname{color:#f7cc72!important}
 body[data-display-layout="focus"] .ptime-group{grid-template-rows:1.18fr .92fr!important;gap:.35vh!important}
@@ -4511,7 +4514,9 @@ const BURN_IN_OFFSETS=[
 const $=id=>document.getElementById(id);
 const audio=$('athan');
 const DISPLAY_LAYOUT_KEY='aslima_display_layout';
+const DISPLAY_LAYOUT_LOCAL_AT_KEY='aslima_display_layout_local_at';
 let displayLayout='classic';
+let displayLayoutLocalChangedAt=0;
 function normalizedDisplayLayout(value){return value==='focus'?'focus':'classic';}
 function renderDisplayLayout(){
   document.body.dataset.displayLayout=displayLayout;
@@ -4519,14 +4524,17 @@ function renderDisplayLayout(){
 }
 function setDisplayLayout(value,options){
   const next=normalizedDisplayLayout(value),changed=next!==displayLayout;
+  const localChange=!options||options.sync!==false;
+  if(localChange){displayLayoutLocalChangedAt=Date.now();try{localStorage.setItem(DISPLAY_LAYOUT_LOCAL_AT_KEY,String(displayLayoutLocalChangedAt));}catch(_error){}}
   displayLayout=next;renderDisplayLayout();
   try{localStorage.setItem(DISPLAY_LAYOUT_KEY,displayLayout);}catch(_error){}
-  if((!options||options.sync!==false)&&window.aslimaRemoteRef)window.aslimaRemoteRef.child('displayLayout').set(displayLayout).catch(()=>{});
+  if(localChange&&window.aslimaRemoteRef)window.aslimaRemoteRef.child('displayLayout').set(displayLayout).catch(()=>showToast((displayLayout==='focus'?'Focus':'Classic')+' kept on this tablet'));
   if(changed&&(!options||!options.quiet))showToast(displayLayout==='focus'?'Focus layout':'Classic layout');
   if(changed&&window.publishAslimaHealth)window.publishAslimaHealth('layout-changed');
   return displayLayout;
 }
-function loadDisplayLayout(){try{displayLayout=normalizedDisplayLayout(localStorage.getItem(DISPLAY_LAYOUT_KEY));}catch(_error){displayLayout='classic';}renderDisplayLayout();}
+function applyRemoteDisplayLayout(data){if(!data||typeof data.displayLayout!=='string')return false;const next=normalizedDisplayLayout(data.displayLayout),remoteChangedAt=Math.max(0,Number(data.displayLayoutUpdatedAt)||0);if(next!==displayLayout&&displayLayoutLocalChangedAt&&remoteChangedAt<displayLayoutLocalChangedAt)return false;if(remoteChangedAt>=displayLayoutLocalChangedAt){displayLayoutLocalChangedAt=0;try{localStorage.removeItem(DISPLAY_LAYOUT_LOCAL_AT_KEY)}catch(_error){}}setDisplayLayout(next,{sync:false,quiet:true});return true;}
+function loadDisplayLayout(){try{displayLayout=normalizedDisplayLayout(localStorage.getItem(DISPLAY_LAYOUT_KEY));displayLayoutLocalChangedAt=Math.max(0,Number(localStorage.getItem(DISPLAY_LAYOUT_LOCAL_AT_KEY))||0);}catch(_error){displayLayout='classic';displayLayoutLocalChangedAt=0;}renderDisplayLayout();}
 function bindDisplayLayoutControls(){document.querySelectorAll('[data-display-layout-choice]').forEach(button=>button.addEventListener('click',()=>setDisplayLayout(button.dataset.displayLayoutChoice)));}
 window.setDisplayLayout=setDisplayLayout;
 const savedAzaanVolume=parseFloat(localStorage.getItem('aslima_azaan_volume')||'0.70');
@@ -6179,9 +6187,19 @@ function updateProgress(){
   document.documentElement.style.setProperty('--progress',pct+'%');
 }
 
+function updateFocusCountdownProgress(next){
+  if(!next||next.unavailable){document.documentElement.style.setProperty('--focus-ring-progress','0%');return;}
+  const index=PRAYER_ORDER.indexOf(next.name),previous=PRAYER_ORDER[(index-1+PRAYER_ORDER.length)%PRAYER_ORDER.length];
+  let interval=index===0?mins(timings.Fajr)+1440-mins(timings.Isha):mins(timings[next.name])-mins(timings[previous]);
+  if(!Number.isFinite(interval)||interval<=0)interval=360;
+  const elapsed=Math.max(0,interval-next.seconds/60),pct=Math.max(0,Math.min(100,elapsed/interval*100));
+  document.documentElement.style.setProperty('--focus-ring-progress',pct+'%');
+}
+
 function render(){
   updateClock();
   const next=getNext();
+  updateFocusCountdownProgress(next);
   applyPrayerTheme(next.name);
   if(next.unavailable){
     document.querySelector('.next-label').textContent='NEXT PRAYER';
@@ -6319,7 +6337,7 @@ function aslimaRemoteCleanTimings(input){
 function applyAslimaRemoteSettings(data){
   if(!data || typeof data!=='object')return;
   try{
-    if(typeof data.displayLayout==='string')setDisplayLayout(data.displayLayout,{sync:false,quiet:true});
+    applyRemoteDisplayLayout(data);
     const remoteTimings=aslimaRemoteCleanTimings(data.timings||{});
     const remoteHome=normalizeHomeLocation(data.homeLocation);
     const currentHome=normalizeHomeLocation(CONFIG.homeLocation);
@@ -8194,7 +8212,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=985').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=986').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

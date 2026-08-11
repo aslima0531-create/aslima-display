@@ -318,7 +318,7 @@ function initializeAuthorizedRemote(){
  voiceRef.on('value',voiceSnap=>{const id=voiceSnap.val();if(typeof id==='string'&&AZAAN_VOICES[id]){state.muezzin=id;render();}});
  ref.on('value',snap=>{setStatus('Live','ok');const v=snap.val();if(v){state={...DEFAULT,...v,timings:{...DEFAULT.timings,...(v.timings||{})},iqamah:{...DEFAULT.iqamah,...(v.iqamah||{})},azaanEnabled:{...DEFAULT.azaanEnabled,...(v.azaanEnabled||{})},azaanDays:{...DEFAULT.azaanDays,...(v.azaanDays||{})},azaanSchedule:normalizedAzaanSchedule(v.azaanSchedule,v.azaanEnabled,v.azaanDays),prayerVolumes:{...DEFAULT.prayerVolumes,...(v.prayerVolumes||{})}};applyTabletResolvedSchedule();render();}},()=>setStatus('Access denied','bad'));
  const pushPatch=(patch,label)=>ref.update({...patch,updatedAt:new Date().toISOString()}).then(()=>{if(label)toast(label)}).catch(()=>toast('Sync failed'));
- const selectTabletLayout=async layout=>{if(!['classic','focus'].includes(layout))return;state.displayLayout=layout;render();$('layoutCurrent').textContent=(layout==='focus'?'Focus':'Classic')+' view · applying';try{await ref.update({displayLayout:layout,updatedAt:new Date().toISOString()});if(await waitForTabletLayout(layout)){render();toast((layout==='focus'?'Focus':'Classic')+' view is active');return}if(tabletOnline()){toast('Updating tablet display…');await sendTabletCommand('reloadDisplay',{},'Update tablet display');return}render();toast('Saved — tablet will apply when it reconnects')}catch(_error){render();toast('Layout change failed')}};
+ const selectTabletLayout=async layout=>{if(!['classic','focus'].includes(layout))return;state.displayLayout=layout;render();$('layoutCurrent').textContent=(layout==='focus'?'Focus':'Classic')+' view · applying';try{await ref.update({displayLayout:layout,displayLayoutUpdatedAt:firebase.database.ServerValue.TIMESTAMP,updatedAt:new Date().toISOString()});if(await waitForTabletLayout(layout)){render();toast((layout==='focus'?'Focus':'Classic')+' view is active');return}if(tabletOnline()){toast('Updating tablet display…');await sendTabletCommand('reloadDisplay',{},'Update tablet display');return}render();toast('Saved — tablet will apply when it reconnects')}catch(_error){render();toast('Layout change failed')}};
  $('layoutClassic').onclick=()=>selectTabletLayout('classic');
  $('layoutFocus').onclick=()=>selectTabletLayout('focus');
  const debounce=(fn,ms=250)=>{let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),ms)}};
@@ -345,7 +345,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('signOut').hidden=true;return;}
    showAuthError('');$('lock').style.display='none';$('signOut').hidden=false;initializeAuthorizedRemote();
  });
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=985').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=986').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>
