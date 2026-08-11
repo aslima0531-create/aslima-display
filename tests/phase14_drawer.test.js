@@ -158,3 +158,15 @@ test('Focus matches the approved centered clock, complete cards, progress ring, 
   assert.match(index,/body\[data-display-layout="focus"\] \.layout-toggle\{top:3\.2vh!important/);
   assert.match(admin,/displayLayoutUpdatedAt:firebase\.database\.ServerValue\.TIMESTAMP/);
 });
+
+test('Focus fidelity layer preserves complete live content at both tablet aspect ratios',()=>{
+  const fidelity=fs.readFileSync(path.join(root,'assets/focus-fidelity-v987.css'),'utf8');
+  assert.match(index,/assets\/focus-fidelity-v987\.css/);
+  assert.match(fidelity,/text-transform:uppercase!important/);
+  assert.match(fidelity,/\.pname::after[\s\S]*?\.ptime:first-child::after/);
+  assert.match(fidelity,/\.jumuah-pill\{[\s\S]*?grid-template-columns:auto auto auto minmax\(0,1fr\) auto!important/);
+  assert.match(fidelity,/\.supp-status-prefix\{display:inline!important\}/);
+  assert.match(fidelity,/@media \(max-aspect-ratio:5\/3\)/);
+  assert.match(index,/class="aslima-persistent-handle"[^>]*><span><\/span><span><\/span><span><\/span>/);
+  assert.match(index,/if\(!entries\.length\)[\s\S]*?CONFIG\.jumuah/);
+});

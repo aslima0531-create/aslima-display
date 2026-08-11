@@ -233,9 +233,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=986'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=986'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='986'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=987'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=987'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='987'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -488,7 +488,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v968 service-worker upgrade removes older caches and precaches runtime, discovery, and audio assets',async()=>{
+test('v987 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -506,6 +506,7 @@ test('v968 service-worker upgrade removes older caches and precaches runtime, di
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v960.js'));
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
   assert.ok(precache.includes('./assets/js/masjid-discovery-v962.js'));
+  assert.ok(precache.includes('./assets/focus-fidelity-v987.css'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
 });
 
@@ -691,8 +692,15 @@ test('calculated and manual modes hide missing congregation data while verified 
   assert.match(html,/body\[data-iqamah-schedule="hidden"\] #prayerPanel \.ptime-group/);
 });
 
+test('home-area calculations retain today’s VRIC congregation schedule without leaking it to another masjid',()=>{
+  assert.match(html,/const mayUseVricSchedule=!\(CONFIG\.selectedMasjid&&CONFIG\.selectedMasjid\.id&&CONFIG\.selectedMasjid\.officialProvider!==['"]vric['"]\)/);
+  assert.match(html,/if\(mayUseVricSchedule\)\{try\{await fetchSameOriginVricMirror\(\)/);
+  assert.match(html,/allowVricSchedule=\!\(CONFIG\.selectedMasjid&&CONFIG\.selectedMasjid\.id&&CONFIG\.selectedMasjid\.officialProvider!==['"]vric['"]\)/);
+});
+
 test('VRIC mode keeps its verified Jumuah schedule visible',()=>{
-  assert.match(html,/hasJumuah&&\(CONFIG\.timingSource==='vric'\|\|officialSelected\)/);
+  assert.match(html,/hasJumuah&&\(CONFIG\.timingSource==='vric'\|\|officialSelected\|\|retainedVric\)/);
+  assert.match(html,/timingDataset\.runtimeStatus==='hybrid'/);
 });
 
 test('calculated failure falls back and unavailable state still permits Manual mode',()=>{

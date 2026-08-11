@@ -4114,6 +4114,7 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .dock-content-r
 body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wrap{max-width:none!important}
 @media(max-height:650px){body[data-display-layout="focus"] .date{top:36vh!important}body[data-display-layout="focus"] .hijri-date{top:42.4vh!important}body[data-display-layout="focus"] .right{top:47vh!important;height:33.2vh!important}body[data-display-layout="focus"] .bottom{bottom:5.25vh!important;height:9.55vh!important}}
 </style>
+<link rel="stylesheet" href="./assets/focus-fidelity-v987.css">
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -4526,7 +4527,7 @@ function setDisplayLayout(value,options){
   const next=normalizedDisplayLayout(value),changed=next!==displayLayout;
   const localChange=!options||options.sync!==false;
   if(localChange){displayLayoutLocalChangedAt=Date.now();try{localStorage.setItem(DISPLAY_LAYOUT_LOCAL_AT_KEY,String(displayLayoutLocalChangedAt));}catch(_error){}}
-  displayLayout=next;renderDisplayLayout();
+  displayLayout=next;renderDisplayLayout();updateClock();
   try{localStorage.setItem(DISPLAY_LAYOUT_KEY,displayLayout);}catch(_error){}
   if(localChange&&window.aslimaRemoteRef)window.aslimaRemoteRef.child('displayLayout').set(displayLayout).catch(()=>showToast((displayLayout==='focus'?'Focus':'Classic')+' kept on this tablet'));
   if(changed&&(!options||!options.quiet))showToast(displayLayout==='focus'?'Focus layout':'Classic layout');
@@ -5634,6 +5635,12 @@ async function loadTimes(options){
           }
         }
       }else{
+        // Home-area calculations still represent the ASLIMA/VRIC display. Load
+        // today's official congregation schedule first so calculated Adhan does
+        // not erase Iqamah and Jumu'ah. A separately selected masjid never
+        // inherits VRIC congregation times.
+        const mayUseVricSchedule=!(CONFIG.selectedMasjid&&CONFIG.selectedMasjid.id&&CONFIG.selectedMasjid.officialProvider!=='vric');
+        if(mayUseVricSchedule){try{await fetchSameOriginVricMirror();}catch(_scheduleError){}}
         await syncConfiguredTimingSource();
       }
       if(options.userInitiated){
@@ -5945,12 +5952,14 @@ function iqamahScheduleAvailable(){
   if(CONFIG.timingSource==='vric')return true;
   const officialSelected=CONFIG.timingSource==='calculated-location'&&CONFIG.selectedMasjid&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus);
   const completeIqamah=TIMING_IQAMAH_PRAYERS.every(key=>canonicalTimingValue(timingDataset&&timingDataset.iqamah&&timingDataset.iqamah[key]));
-  return !!(officialSelected&&completeIqamah);
+  const retainedVric=timingDataset&&(timingDataset.runtimeStatus==='hybrid'||timingDataset.source&&timingDataset.source.kind==='calculated-with-vric-schedule');
+  return !!((officialSelected||retainedVric)&&completeIqamah);
 }
 function jumuahScheduleAvailable(){
   const hasJumuah=!!(timingDataset&&Array.isArray(timingDataset.jumuah)&&timingDataset.jumuah.length);
   const officialSelected=CONFIG.timingSource==='calculated-location'&&CONFIG.selectedMasjid&&timingDataset&&['official','cached'].includes(timingDataset.runtimeStatus);
-  return !!(hasJumuah&&(CONFIG.timingSource==='vric'||officialSelected));
+  const retainedVric=timingDataset&&(timingDataset.runtimeStatus==='hybrid'||timingDataset.source&&timingDataset.source.kind==='calculated-with-vric-schedule');
+  return !!(hasJumuah&&(CONFIG.timingSource==='vric'||officialSelected||retainedVric));
 }
 
 function renderJumuahPanel(){
@@ -5968,9 +5977,15 @@ function renderJumuahPanel(){
     syncDockDetailState();
     return;
   }
-  const entries=(timingDataset&&Array.isArray(timingDataset.jumuahSchedule)?timingDataset.jumuahSchedule:[]).filter(item=>item&&(item.adhan||item.iqamah));
+  let entries=(timingDataset&&Array.isArray(timingDataset.jumuahSchedule)?timingDataset.jumuahSchedule:[]).filter(item=>item&&(item.adhan||item.iqamah));
+  // Older cached datasets can contain the verified compact Jumu'ah array
+  // without the richer paired schedule. Keep the dock complete in that case.
+  if(!entries.length){
+    const compact=(timingDataset&&Array.isArray(timingDataset.jumuah)&&timingDataset.jumuah.length?timingDataset.jumuah:CONFIG.jumuah)||[];
+    entries=compact.map(time=>({adhan:'',iqamah:canonicalTimingValue(time)})).filter(item=>item.iqamah);
+  }
   const compactTimes=$('jumuahPillTimes');
-  if(compactTimes)compactTimes.textContent=entries.map(item=>item.iqamah||item.adhan).filter(Boolean).join(' · ');
+  if(compactTimes)compactTimes.textContent=entries.map(item=>item.adhan||item.iqamah).filter(Boolean).join(' · ');
   const ordinals=['1st','2nd','3rd','4th'];
   list.style.setProperty('--jumuah-count',String(Math.max(1,entries.length)));
   list.innerHTML=entries.length?entries.map((entry,i)=>`<div class="jumuah-row has-slots${entry.adhan&&!entry.iqamah?' single-slot':''}"><span class="jumuah-row-label">${ordinals[i]||`${i+1}th`} Jumu’ah</span>${entry.adhan?`<span class="jumuah-row-slot"><small>Azaan</small><strong>${entry.adhan}</strong></span>`:''}${entry.iqamah?`<span class="jumuah-row-slot"><small>Iqamah</small><strong>${entry.iqamah}</strong></span>`:''}</div>`).join(''):'<div class="jumuah-row"><span class="jumuah-row-label">Schedule</span><span class="jumuah-row-time">Unavailable</span></div>';
@@ -6161,15 +6176,18 @@ function updateClock(){
   const ap=h>=12?'PM':'AM';
   h=h%12||12;
   $('clock').innerHTML=`${h}:${m}<span class="ampm">${ap}</span>`;
+  const focusLayout=document.body.dataset.displayLayout==='focus';
   try{
-    $('dateLine').textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(d).toUpperCase();
+    const gregorian=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(d);
+    $('dateLine').textContent=focusLayout?gregorian:gregorian.toUpperCase();
   }catch(e){
-    $('dateLine').textContent=d.toDateString().toUpperCase();
+    const gregorian=d.toDateString();
+    $('dateLine').textContent=focusLayout?gregorian:gregorian.toUpperCase();
   }
   const hijriLine=$('hijriDateLine');
   if(hijriLine){
     const hijri=formatAslimaHijriDate(d);
-    hijriLine.textContent=hijri||'ISLAMIC DATE UNAVAILABLE';
+    hijriLine.textContent=focusLayout?hijri.replace(/\s+AH$/,''):(hijri||'ISLAMIC DATE UNAVAILABLE');
     hijriLine.hidden=!hijri;
   }
 }
@@ -7726,7 +7744,7 @@ try{
   </div>
 </div>
 
-<button type="button" id="aslimaPersistentHandle" class="aslima-persistent-handle" aria-label="Open Azaan controls"><span></span><span></span></button>
+<button type="button" id="aslimaPersistentHandle" class="aslima-persistent-handle" aria-label="Open Azaan controls"><span></span><span></span><span></span></button>
 
 <style id="aslima-v918-separated-drawer-actions">
 /* ASLIMA V9.1.8 — separate tablet drawer tasks and fix kiosk dropdown issue */
@@ -8212,7 +8230,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=986').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=987').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
