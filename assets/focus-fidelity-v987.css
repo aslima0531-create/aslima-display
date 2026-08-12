@@ -44,13 +44,13 @@ body[data-display-layout="focus"] .brand-mark::before{
   filter:drop-shadow(0 0 5px rgba(239,184,79,.16))!important;
 }
 html body[data-display-layout="focus"] .left .clock{
-  left:49%!important;top:4.6vh!important;width:40%!important;
-  font-family:Georgia,"Times New Roman",serif!important;font-size:clamp(92px,10.7vw,166px)!important;font-weight:600!important;
+  left:50%!important;top:4.2vh!important;width:46%!important;
+  font-family:Georgia,"Times New Roman",serif!important;font-size:clamp(112px,12.5vw,194px)!important;font-weight:600!important;
   line-height:.86!important;letter-spacing:-.045em!important;text-align:center!important;
   color:#eee0c5!important;-webkit-text-stroke:clamp(.8px,.085vw,1.35px) rgba(151,99,35,.92)!important;
   text-shadow:-2px -2px 0 rgba(0,10,10,.9),1px 1px 0 rgba(255,241,209,.4),3px 4px 0 rgba(55,31,9,.82),0 8px 15px rgba(0,0,0,.5)!important;
 }
-html body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{left:48%!important;font-size:clamp(82px,9.35vw,145px)!important;letter-spacing:-.055em!important}
+html body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{left:50%!important;font-size:clamp(100px,11vw,170px)!important;letter-spacing:-.055em!important}
 html body[data-display-layout="focus"] .left .clock .ampm{
   display:inline-block!important;margin-left:.9vw!important;font-family:Georgia,"Times New Roman",serif!important;font-size:.19em!important;font-weight:600!important;vertical-align:baseline!important;
   color:#f5e8d1!important;-webkit-text-stroke:0!important;text-shadow:0 2px 4px rgba(0,0,0,.68)!important;transform:none!important;
@@ -201,8 +201,8 @@ body[data-display-layout="focus"] .aslima-persistent-handle span{
   html body[data-display-layout="focus"] .layout-toggle{top:2.8vh!important;right:3vw!important}
   html body[data-display-layout="focus"] .layout-toggle button{min-width:66px!important;min-height:28px!important;font-size:11px!important}
   body[data-display-layout="focus"] .brand-mark{top:2.5vh!important;left:2.6vw!important;font-size:clamp(19px,1.8vw,26px)!important}
-  html body[data-display-layout="focus"] .clock{font-size:clamp(88px,10vw,144px)!important}
-  html body[data-display-layout="focus"] .clock[data-wide-hour="true"]{font-size:clamp(76px,8.65vw,126px)!important}
+  html body[data-display-layout="focus"] .clock{font-size:clamp(104px,11.5vw,164px)!important}
+  html body[data-display-layout="focus"] .clock[data-wide-hour="true"]{font-size:clamp(94px,10.2vw,148px)!important}
   body[data-display-layout="focus"] .date{font-size:clamp(21px,2.25vw,34px)!important}
   body[data-display-layout="focus"] .hijri-date{font-size:clamp(16px,1.55vw,24px)!important}
   body[data-display-layout="focus"] #prayerPanel .row{border-radius:1.55vw!important;padding-left:.8vw!important;padding-right:.8vw!important}
