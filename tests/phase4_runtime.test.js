@@ -233,9 +233,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=1008'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=1008'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='1008'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=1009'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=1009'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='1009'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -499,7 +499,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v1008 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
+test('v1009 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -517,7 +517,7 @@ test('v1008 service-worker upgrade removes older caches and precaches runtime, F
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v960.js'));
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
   assert.ok(precache.includes('./assets/js/masjid-discovery-v962.js'));
-  assert.ok(precache.includes('./assets/focus-fidelity-v987.css?v=1008'));
+  assert.ok(precache.includes('./assets/focus-fidelity-v987.css?v=1009'));
   assert.ok(precache.includes('./assets/aslima-focus-background-v1.png'));
   assert.ok(precache.includes('./assets/focus-bell.svg'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
