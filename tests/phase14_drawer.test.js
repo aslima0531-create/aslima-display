@@ -172,7 +172,8 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1006/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1007/);
+  assert.match(fidelity,/\.layout-toggle button\{[\s\S]*?clip-path:polygon\(8% 0,92% 0,100% 20%/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
   assert.match(fidelity,/\.focus-progress-ring\{[\s\S]*?overflow:visible/);
   assert.match(fidelity,/\.focus-ring-ticks\{[\s\S]*?stroke-dasharray/);
