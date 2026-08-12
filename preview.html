@@ -4115,7 +4115,7 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wr
 @media(max-height:650px){body[data-display-layout="focus"] .date{top:36vh!important}body[data-display-layout="focus"] .hijri-date{top:42.4vh!important}body[data-display-layout="focus"] .right{top:47vh!important;height:33.2vh!important}body[data-display-layout="focus"] .bottom{bottom:5.25vh!important;height:9.55vh!important}}
 </style>
 <style id="aslima-focus-ring-visibility-guard">body:not([data-display-layout="focus"]) .focus-progress-ring{display:none!important}</style>
-<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1007">
+<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1008">
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -6188,6 +6188,7 @@ function updateClock(){
   const m=String(d.getMinutes()).padStart(2,'0');
   const ap=h>=12?'PM':'AM';
   h=h%12||12;
+  $('clock').dataset.wideHour=String(h).length>1?'true':'false';
   $('clock').innerHTML=`${h}:${m}<span class="ampm">${ap}</span>`;
   const focusLayout=document.body.dataset.displayLayout==='focus';
   try{
@@ -8244,7 +8245,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1007').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1008').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');
