@@ -44,13 +44,13 @@ body[data-display-layout="focus"] .brand-mark::before{
   filter:drop-shadow(0 0 5px rgba(239,184,79,.16))!important;
 }
 html body[data-display-layout="focus"] .left .clock{
-  left:40.5%!important;top:4.6vh!important;width:47%!important;
+  left:49%!important;top:4.6vh!important;width:40%!important;
   font-family:Georgia,"Times New Roman",serif!important;font-size:clamp(92px,10.7vw,166px)!important;font-weight:600!important;
   line-height:.86!important;letter-spacing:-.045em!important;text-align:center!important;
   color:#eee0c5!important;-webkit-text-stroke:clamp(.8px,.085vw,1.35px) rgba(151,99,35,.92)!important;
   text-shadow:-2px -2px 0 rgba(0,10,10,.9),1px 1px 0 rgba(255,241,209,.4),3px 4px 0 rgba(55,31,9,.82),0 8px 15px rgba(0,0,0,.5)!important;
 }
-html body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{left:39.5%!important;font-size:clamp(82px,9.35vw,145px)!important;letter-spacing:-.055em!important}
+html body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{left:48%!important;font-size:clamp(82px,9.35vw,145px)!important;letter-spacing:-.055em!important}
 html body[data-display-layout="focus"] .left .clock .ampm{
   display:inline-block!important;margin-left:.9vw!important;font-family:Georgia,"Times New Roman",serif!important;font-size:.19em!important;font-weight:600!important;vertical-align:baseline!important;
   color:#f5e8d1!important;-webkit-text-stroke:0!important;text-shadow:0 2px 4px rgba(0,0,0,.68)!important;transform:none!important;

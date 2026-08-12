@@ -172,7 +172,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1009/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1010/);
   assert.match(fidelity,/\.clock\[data-wide-hour="true"\]/);
   assert.match(index,/clock'\)\.dataset\.wideHour=String\(h\)\.length>1/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
@@ -183,7 +183,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/\.focus-ring-side-shine\{[\s\S]*?stroke-linecap:round/);
   assert.match(fidelity,/\.brand-mark\{[\s\S]*?letter-spacing:\.22em!important/);
   assert.match(fidelity,/\.brand-mark::before\{[\s\S]*?3\.05vw/);
-  assert.match(fidelity,/\.left \.clock\{[\s\S]*?font-family:Georgia[\s\S]*?-webkit-text-stroke/);
+  assert.match(fidelity,/\.left \.clock\{[\s\S]*?left:49%!important[\s\S]*?width:40%!important[\s\S]*?font-family:Georgia[\s\S]*?-webkit-text-stroke/);
   assert.match(fidelity,/\.left \.clock \.ampm\{[\s\S]*?font-size:\.19em!important/);
   assert.match(index,/endpoint\.setAttribute\('transform','rotate\('\+angle\+' 120 120\)'\)/);
   assert.match(fidelity,/text-transform:uppercase!important/);
