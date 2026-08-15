@@ -132,6 +132,13 @@ test('phone admin uses a stable mobile-first hierarchy without cramped prayer ca
   assert.ok(admin.indexOf('<nav class="tabs"')<admin.indexOf('<section class="hero">'));
 });
 
+test('phone admin uses the compact weekly checkmark matrix',()=>{
+  assert.match(admin,/class="phone-azaan-head"><span>Day<\/span>/);
+  assert.match(admin,/class="phone-azaan-row"/);
+  assert.match(admin,/input:checked\+span::after\{content:'✓'/);
+  assert.doesNotMatch(admin,/class="phone-azaan-day-toggle"/);
+});
+
 test('Classic and Focus reuse the complete tablet display and sync from phone',()=>{
   assert.match(index,/id="aslima-focus-layout"/);
   assert.match(index,/data-display-layout-choice="classic"/);
