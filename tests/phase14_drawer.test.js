@@ -99,7 +99,7 @@ test('phone admin always presents the complete daily prayer schedule',()=>{
   assert.match(admin,/id="dailyScheduleGrid" aria-live="polite"/);
   assert.match(admin,/function renderDailySchedule\(nextPrayer\)/);
   assert.match(admin,/PRAYERS\.map\(prayer=>/);
-  assert.match(admin,/sunrise\?'Sunrise · no Azaan'/);
+  assert.match(admin,/sunrise\?'Sunrise'/);
   assert.match(admin,/data-actionable="\$\{!sunrise\}"/);
   assert.match(admin,/class="schedulePrayer\$\{prayer===nextPrayer\?' next':''\}"/);
   assert.match(admin,/function displayTime\(value\)/);
@@ -137,6 +137,13 @@ test('phone admin uses the compact weekly checkmark matrix',()=>{
   assert.match(admin,/class="phone-azaan-row"/);
   assert.match(admin,/input:checked\+span::after\{content:'✓'/);
   assert.doesNotMatch(admin,/class="phone-azaan-day-toggle"/);
+});
+
+test('today prayer schedule uses a premium unified table hierarchy',()=>{
+  assert.match(admin,/class="scheduleTableHead"[^>]*><span>Prayer<\/span><span>Adhan<\/span><span>Iqamah<\/span><span>Status<\/span>/);
+  assert.match(admin,/\.dailyScheduleGrid\{display:block;overflow:hidden;border:/);
+  assert.match(admin,/\.schedulePrayer\.next\{[^}]*box-shadow:inset 3px 0 0 var\(--gold\)/);
+  assert.match(admin,/class="iqamah\$\{iqamah\?'':' empty'\}"/);
 });
 
 test('Classic and Focus reuse the complete tablet display and sync from phone',()=>{
