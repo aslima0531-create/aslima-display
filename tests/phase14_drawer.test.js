@@ -198,3 +198,16 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(index,/class="aslima-persistent-handle"[^>]*><span><\/span><span><\/span><span><\/span>/);
   assert.match(index,/if\(!entries\.length\)[\s\S]*?CONFIG\.jumuah/);
 });
+
+test('always-on refinements improve glanceability and protect the tablet display',()=>{
+  assert.match(index,/id="aslima-always-on-refinements"/);
+  assert.match(index,/DRAWER_IDLE_MS=120000/);
+  assert.match(index,/editing\|\|playback\|\|document\.body\.classList\.contains\('global-timing-open'\)/);
+  assert.match(index,/Controls closed after inactivity/);
+  assert.match(index,/const start=Number\.isFinite\(isha\)\?\(isha\+45\)%1440/);
+  assert.match(index,/const end=Number\.isFinite\(fajr\)\?\(fajr\+1440-45\)%1440/);
+  assert.match(index,/body\.night-dim:not\(\.azaan-playing\):not\(\.adhan-playing\) \.app/);
+  assert.match(index,/background-size:103\.5% 103\.5%!important/);
+  assert.match(index,/--burn-glow-opacity/);
+  assert.match(index,/\.supp-ticker-name\{font-size:clamp\(16px,1\.25vw,20px\)!important/);
+});

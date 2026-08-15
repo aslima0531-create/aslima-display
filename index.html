@@ -4776,6 +4776,7 @@ function applyBurnInShift(){
   document.documentElement.style.setProperty('--burn-y',o.y+'px');
   document.documentElement.style.setProperty('--burn-bg-x',o.bx);
   document.documentElement.style.setProperty('--burn-bg-y',o.by);
+  document.documentElement.style.setProperty('--burn-glow-opacity',String(.88+(burnInIndex%4)*.025));
 }
 
 function showToast(text){
@@ -8255,6 +8256,114 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
 <script src="./assets/js/azaan-scheduler-v953.js?v=961"></script>
 <script src="./assets/js/runtime-recovery-v959.js?v=961"></script>
 
+
+<style id="aslima-tablet-ux-hardening">
+/* Touch-first affordances for an always-on landscape tablet. The visible
+   controls stay restrained while their hit areas meet a 44px minimum. */
+.layout-toggle button{min-height:44px!important;padding-block:9px!important}
+html body[data-display-layout="focus"] .layout-toggle button{height:44px!important;min-height:44px!important}
+html body[data-display-layout="focus"] .layout-toggle button[aria-pressed="true"]{
+  background:rgba(241,189,101,.105)!important;
+  box-shadow:inset 0 0 0 1px rgba(241,189,101,.28)!important;
+}
+.aslima-persistent-handle{overflow:visible!important}
+.aslima-persistent-handle::after{
+  content:"";
+  position:absolute;
+  top:50%;right:0;
+  width:44px;height:max(88px,100%);
+  transform:translateY(-50%);
+}
+
+/* Focus is the across-the-room schedule view, so its persistent dock avoids
+   secondary-caption sizing even when all supplementary details are present. */
+html body[data-display-layout="focus"] .jumuah-pill-times{font-size:clamp(17px,1.38vw,22px)!important}
+html body[data-display-layout="focus"] .supp-ticker-name{font-size:clamp(16px,1.25vw,20px)!important;font-weight:700!important}
+html body[data-display-layout="focus"] .supp-ticker-time{font-size:clamp(14px,1.08vw,17px)!important}
+html body[data-display-layout="focus"] .supp-ticker-status{font-size:clamp(12px,.88vw,14px)!important}
+html body[data-display-layout="focus"] .supp-ticker-view-text::after{font-size:clamp(12px,.98vw,15px)!important}
+
+/* Preserve room for slow background drift and gently vary the decorative
+   glow. Text and controls continue to move as one aligned layer. */
+:root{--burn-glow-opacity:.94}
+.app{background-size:103.5% 103.5%!important}
+html body[data-display-layout="focus"] .app{background-position:var(--burn-bg-x) var(--burn-bg-y)!important;background-size:103.5% 103.5%!important}
+.app::after{opacity:var(--burn-glow-opacity);transition:opacity 12s ease-in-out}
+
+/* Prayer-aware overnight dimming lowers sustained luminance without hiding
+   essential information. A live Azaan always returns to full visibility. */
+.app{transition:background-position 1400ms ease-in-out,filter 1800ms ease-in-out}
+body.night-dim:not(.azaan-playing):not(.adhan-playing) .app{filter:brightness(.72) saturate(.82)}
+body.night-dim:not(.azaan-playing):not(.adhan-playing) .layout-toggle,
+body.night-dim:not(.azaan-playing):not(.adhan-playing) .aslima-persistent-handle{opacity:.68}
+</style>
+
+<script id="aslima-always-on-refinements">
+(function(){
+  const DRAWER_IDLE_MS=120000;
+  let drawerIdleTimer=0;
+
+  function minuteValue(value){
+    const match=String(value||'').trim().match(/^(\d{1,2}):(\d{2})(?:\s*([AP]M))?$/i);
+    if(!match)return NaN;
+    let hour=Number(match[1]),minute=Number(match[2]);
+    if(match[3]){hour%=12;if(match[3].toUpperCase()==='PM')hour+=12;}
+    return hour>=0&&hour<24&&minute>=0&&minute<60?hour*60+minute:NaN;
+  }
+  function inWrappedRange(now,start,end){return start<=end?now>=start&&now<end:now>=start||now<end;}
+  function updateNightDim(now){
+    const date=now instanceof Date?now:new Date();
+    const minute=date.getHours()*60+date.getMinutes();
+    const schedule=typeof timings==='object'&&timings?timings:{};
+    const isha=minuteValue(schedule.Isha);
+    const fajr=minuteValue(schedule.Fajr);
+    const start=Number.isFinite(isha)?(isha+45)%1440:22*60+30;
+    const end=Number.isFinite(fajr)?(fajr+1440-45)%1440:5*60;
+    const active=inWrappedRange(minute,start,end);
+    document.body.classList.toggle('night-dim',active);
+    document.body.dataset.nightDim=active?'active':'inactive';
+    return active;
+  }
+  window.aslimaUpdateNightDim=updateNightDim;
+
+  function drawerIsOpen(){
+    const drawer=document.getElementById('azaanDrawer');
+    return !!(drawer&&(drawer.classList.contains('open')||document.body.classList.contains('azaan-drawer-open')||document.body.classList.contains('drawer-open')));
+  }
+  function resetDrawerIdle(delay){
+    clearTimeout(drawerIdleTimer);
+    if(!drawerIsOpen())return;
+    const timeoutMs=Number.isFinite(delay)?Math.max(0,delay):DRAWER_IDLE_MS;
+    drawerIdleTimer=setTimeout(function(){
+      const drawer=document.getElementById('azaanDrawer');
+      const editing=drawer&&drawer.contains(document.activeElement)&&/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);
+      const playback=window.aslimaPlaybackState&&window.aslimaPlaybackState.phase!=='idle';
+      if(editing||playback||document.body.classList.contains('global-timing-open')){resetDrawerIdle();return;}
+      if(typeof window.aslimaSetAzaanDrawerOpen==='function')window.aslimaSetAzaanDrawerOpen(false);
+      else if(typeof window.closeAzaanDrawer==='function')window.closeAzaanDrawer();
+      if(typeof window.showToast==='function')window.showToast('Controls closed after inactivity');
+    },timeoutMs);
+  }
+  window.aslimaResetDrawerIdle=resetDrawerIdle;
+
+  function bindAlwaysOnRefinements(){
+    const drawer=document.getElementById('azaanDrawer');
+    const handle=document.getElementById('aslimaPersistentHandle');
+    if(drawer&&!drawer.__alwaysOnBound){
+      drawer.__alwaysOnBound=true;
+      ['pointerdown','touchstart','keydown','input','change','click'].forEach(type=>drawer.addEventListener(type,resetDrawerIdle,{passive:type==='touchstart'}));
+      new MutationObserver(resetDrawerIdle).observe(drawer,{attributes:true,attributeFilter:['class']});
+    }
+    if(handle&&!handle.__alwaysOnBound){handle.__alwaysOnBound=true;handle.addEventListener('click',()=>setTimeout(resetDrawerIdle,0));}
+    updateNightDim();
+  }
+
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateNightDim();resetDrawerIdle();}});
+  window.addEventListener('load',bindAlwaysOnRefinements);
+  setInterval(updateNightDim,60000);
+  setTimeout(bindAlwaysOnRefinements,250);
+})();
+</script>
 
 <!-- Prayer-guidance warning addon intentionally disabled in v9.1.48.
      Its free-floating placement was unstable on landscape tablets. -->
