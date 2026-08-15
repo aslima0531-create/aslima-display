@@ -237,7 +237,8 @@ test('always-on refinements improve glanceability and protect the tablet display
   assert.match(index,/body\.night-dim:not\(\.azaan-playing\):not\(\.adhan-playing\) \.app/);
   assert.match(index,/background-size:103\.5% 103\.5%!important/);
   assert.match(index,/--burn-glow-opacity/);
-  assert.match(index,/\.supp-ticker-name\{min-width:0!important;max-width:100%!important;overflow:hidden!important;font-size:clamp\(14px,1\.12vw,18px\)!important/);
-  assert.match(index,/\.supp-ticker-name\{[^}]*white-space:normal!important;overflow-wrap:break-word!important/);
+  assert.match(index,/\.supp-ticker\{grid-template-columns:2\.8vw 3\.05vw minmax\(0,10vw\)/);
+  assert.match(index,/\.supp-ticker-name\{min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:clamp\(14px,1\.08vw,17px\)!important/);
+  assert.match(index,/\.supp-ticker-name\{[^}]*white-space:nowrap!important/);
   assert.match(index,/\.supp-context-item-name\{[^}]*text-overflow:ellipsis!important;white-space:nowrap!important/);
 });
