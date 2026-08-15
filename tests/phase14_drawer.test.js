@@ -99,12 +99,26 @@ test('phone admin always presents the complete daily prayer schedule',()=>{
   assert.match(admin,/id="dailyScheduleGrid" aria-live="polite"/);
   assert.match(admin,/function renderDailySchedule\(nextPrayer\)/);
   assert.match(admin,/PRAYERS\.map\(prayer=>/);
-  assert.match(admin,/prayer==='Sunrise'\?'No Azaan'/);
+  assert.match(admin,/sunrise\?'Sunrise · no Azaan'/);
+  assert.match(admin,/data-actionable="\$\{!sunrise\}"/);
   assert.match(admin,/class="schedulePrayer\$\{prayer===nextPrayer\?' next':''\}"/);
   assert.match(admin,/function displayTime\(value\)/);
   assert.match(admin,/id="time_\$\{p\}"/);
   assert.match(admin,/badge\.textContent=active\?'Selected':'Not selected'/);
   assert.doesNotMatch(admin,/#lock\{display:none!important\}/);
+});
+
+test('phone admin secondary refinements remain readable and contextual',()=>{
+  assert.match(admin,/\.page:not\(#todayPage\) \.card\{[^}]*box-shadow:none[^}]*backdrop-filter:none/);
+  assert.match(admin,/id="recentActivityCard"><h2>Commands From This Phone<\/h2>/);
+  assert.match(admin,/\$\('stop'\)\.hidden=!playing/);
+  assert.match(admin,/role="status" aria-live="polite" aria-atomic="true"/);
+  assert.match(admin,/setTimeout\(\(\)=>el\.classList\.remove\('show'\),5000\)/);
+  assert.match(admin,/id="themeSystem"/);assert.match(admin,/id="themeLight"/);
+  assert.match(admin,/const PHONE_THEME_KEY='aslima_phone_theme'/);
+  assert.match(admin,/@media\(max-height:640px\)/);
+  assert.match(admin,/window\.visualViewport\.addEventListener\('resize',updatePhoneViewport\)/);
+  assert.match(admin,/font-size:\.75rem!important/);
 });
 
 test('phone admin uses a stable mobile-first hierarchy without cramped prayer cards',()=>{
