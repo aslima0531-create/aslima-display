@@ -8038,6 +8038,11 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   const a=document.getElementById('athan');
   if(!a)return;
   const VOICES=window.AZAAN_VOICES||{};
+  function resetRestoredMedia(){try{a.pause();a.currentTime=0;a.removeAttribute('src');a.load();}catch(_error){}}
+  /* Android WebView may restore an audio element after Fully Kiosk is closed.
+     Clear that media before any controller state is created so a stale dua
+     cannot resume outside a new, explicit playback session. */
+  resetRestoredMedia();
 
   const COPY={
     takbir:{ar:'الله أكبر',en:'Allah is the Greatest'},
@@ -8123,6 +8128,12 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
     cancelAll:()=>{state.generation+=1;state.token=state.generation;clearPending();clearMediaListeners();}
   };
   window.ASLIMAAzaanPlaybackController=controller;
+  function suspendPlaybackForLifecycle(){
+    controller.cancelAll();++azaanAudioFallbackGeneration;clearVisual();resetRestoredMedia();state.prayer='';state.source='';state.occurrenceKey='';state.schedulerAttemptGeneration=0;state.stage='';overlay(false);setPhase('idle');
+  }
+  window.addEventListener('pagehide',suspendPlaybackForLifecycle,{passive:true});
+  window.addEventListener('pageshow',event=>{if(event.persisted||state.phase==='idle')resetRestoredMedia()},{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)suspendPlaybackForLifecycle()},{passive:true});
   function visualLines(prayer,id){return (prayer==='Fajr'&&normalize(id)==='doha'?FAJR_VISUAL_SEQUENCE:VISUAL_SEQUENCE).map(key=>({key,...COPY[key]}));}
   function boundaries(id,count,duration,prayer){
     const normalized=normalize(id);

@@ -142,13 +142,15 @@ function controllerHarness(){
   const elements=new Map();
   ['athan','adhanOverlay','azaanDrawerTab','azaanArabic','azaanEnglish','overlayPrayer'].forEach(id=>elements.set(id,new FakeElement()));
   const body=new FakeElement(),root={dataset:{}};
-  const document={body,documentElement:root,getElementById:id=>elements.get(id)||null};
+  const listeners={window:new Map(),document:new Map()};
+  const on=(target,type,fn)=>{if(!listeners[target].has(type))listeners[target].set(type,[]);listeners[target].get(type).push(fn)};
+  const document={body,documentElement:root,hidden:false,getElementById:id=>elements.get(id)||null,addEventListener:(type,fn)=>on('document',type,fn)};
   const localStorage=storage();
   const cancelled=[];let raf=0;
-  const window={document,localStorage,AZAAN_VOICES:{azaan1:{id:'azaan1',url:'./assets/audio/azaan-1.mp3'}},normalizeAzaanVoiceId:()=> 'azaan1',resolveAzaanPrayer:p=>p||'Dhuhr',isAzaanEnabled:()=>true,bindAzaanAudioControls(){},bindAzaanVoiceControls(){},forceMuezzinUiSync(){},ASLIMAAzaanScheduler:{cancelOccurrence:(...args)=>{cancelled.push(args);return true;}}};
+  const window={document,localStorage,addEventListener:(type,fn)=>on('window',type,fn),AZAAN_VOICES:{azaan1:{id:'azaan1',url:'./assets/audio/azaan-1.mp3'}},normalizeAzaanVoiceId:()=> 'azaan1',resolveAzaanPrayer:p=>p||'Dhuhr',isAzaanEnabled:()=>true,bindAzaanAudioControls(){},bindAzaanVoiceControls(){},forceMuezzinUiSync(){},ASLIMAAzaanScheduler:{cancelOccurrence:(...args)=>{cancelled.push(args);return true;}}};
   const context={window,document,localStorage,navigator:{},console,showToast(){},azaanAudioFallbackGeneration:0,requestAnimationFrame:fn=>{raf++;return raf;},cancelAnimationFrame(){},setTimeout,clearTimeout};
   vm.runInNewContext(controllerSource,context,{filename:'inline-controller.js'});
-  return {window,audio:elements.get('athan'),elements,body,cancelled};
+  return {window,document,audio:elements.get('athan'),elements,body,cancelled,emit:(target,type,event={})=>(listeners[target].get(type)||[]).forEach(fn=>fn(event))};
 }
 
 function diagnosticsHarness(seed,storageOverride){
@@ -383,6 +385,19 @@ test('Stop cancels post-Azaan dua audio and closes the shared overlay',async()=>
   assert.equal(h.audio.paused,true);
   assert.equal(h.audio.src,'');
   assert.equal(h.body.classList.values.has('azaan-playing'),false);
+});
+
+test('closing or hiding Fully Kiosk cannot resume a restored dua',async()=>{
+  const h=controllerHarness();h.audio.readyState=1;
+  await h.window.playPostAzaanDua();
+  assert.equal(h.window.aslimaPlaybackState.phase,'dua-playing');
+  h.document.hidden=true;h.emit('document','visibilitychange');
+  assert.equal(h.window.aslimaPlaybackState.phase,'idle');
+  assert.equal(h.window.aslimaPlaybackState.stage,'');
+  assert.equal(h.audio.paused,true);
+  assert.equal(h.audio.src,'');
+  assert.equal(h.body.classList.values.has('azaan-playing'),false);
+  assert.equal(h.cancelled.length,0);
 });
 
 test('completed post-Azaan dua returns the playback controller to idle',async()=>{
