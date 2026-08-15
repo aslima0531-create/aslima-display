@@ -216,7 +216,8 @@ test('phone admin can save ZIP or rounded phone location for the tablet',()=>{
   assert.match(admin,/id="homeZipForm"/);
   assert.match(admin,/id="usePhoneLocation"/);
   assert.match(admin,/Math\.round\(latitude\*1000\)\/1000/);
-  assert.match(admin,/window\.ref\.update\(\{homeLocation:home,mode:'calculated-location'/);
+  assert.match(admin,/window\.ref\.update\(\{homeLocation:home,updatedAt:/);
+  assert.doesNotMatch(admin,/window\.ref\.update\(\{homeLocation:home,mode:'calculated-location'/);
   assert.match(admin,/navigator\.geolocation\.getCurrentPosition/);
   assert.match(admin,/HOME_LOCATION_PROXY/);
 });

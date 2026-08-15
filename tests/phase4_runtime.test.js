@@ -637,7 +637,7 @@ test('phone health view reads only status and expires stale online heartbeats',(
 test('phone admin keeps diagnostics secondary and removes manual Jumuah editing',()=>{
   assert.match(admin,/<details class="systemDetails" id="systemDetails">/);
   assert.match(admin,/id="systemSummaryState"/);
-  assert.equal((admin.match(/class="tabBtn/g)||[]).length,3);
+  assert.equal((admin.match(/class="tabBtn/g)||[]).length,4);
   assert.match(admin,/id="manualTimesCard" hidden/);
   assert.doesNotMatch(admin,/id="jumuahPage"|id="jum[123]"|Jumu’ah times updated/);
 });

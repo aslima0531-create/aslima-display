@@ -103,17 +103,17 @@ test('phone admin always presents the complete daily prayer schedule',()=>{
   assert.match(admin,/class="schedulePrayer\$\{prayer===nextPrayer\?' next':''\}"/);
   assert.match(admin,/function displayTime\(value\)/);
   assert.match(admin,/id="time_\$\{p\}"/);
-  assert.match(admin,/badge\.textContent=active\?'Active':'Select'/);
+  assert.match(admin,/badge\.textContent=active\?'Selected':'Not selected'/);
   assert.doesNotMatch(admin,/#lock\{display:none!important\}/);
 });
 
 test('phone admin uses a stable mobile-first hierarchy without cramped prayer cards',()=>{
-  assert.match(admin,/<body data-active-tab="timesPage">/);
+  assert.match(admin,/<body data-active-tab="todayPage">/);
   assert.match(admin,/@media\(max-width:520px\)/);
   assert.match(admin,/\.dailyScheduleGrid\{grid-template-columns:1fr/);
   assert.match(admin,/\.schedulePrayerTime\{font-size:14px;white-space:nowrap\}/);
-  assert.match(admin,/\.phone-azaan-head,\.phone-azaan-row\{grid-template-columns:52px repeat\(5,minmax\(0,1fr\)\);min-width:0\}/);
-  assert.match(admin,/body:not\(\[data-active-tab="timesPage"\]\) \.hero\{display:none\}/);
+  assert.match(admin,/\.dayPrayerSwitches label\{min-height:48px\}/);
+  assert.match(admin,/body\[data-active-tab="todayPage"\] \.hero\{display:block\}/);
   assert.match(admin,/function switchTab\(id\)\{document\.body\.dataset\.activeTab=id/);
   assert.ok(admin.indexOf('<nav class="tabs"')<admin.indexOf('<section class="hero">'));
 });
