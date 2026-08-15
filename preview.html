@@ -8289,10 +8289,12 @@ html body[data-display-layout="focus"] .layout-toggle button[aria-pressed="true"
 /* Focus is the across-the-room schedule view, so its persistent dock avoids
    secondary-caption sizing even when all supplementary details are present. */
 html body[data-display-layout="focus"] .jumuah-pill-times{font-size:clamp(17px,1.38vw,22px)!important}
-html body[data-display-layout="focus"] .supp-ticker-name{font-size:clamp(16px,1.25vw,20px)!important;font-weight:700!important}
+html body[data-display-layout="focus"] .supp-ticker-name{min-width:0!important;max-width:100%!important;overflow:hidden!important;font-size:clamp(14px,1.12vw,18px)!important;font-weight:700!important;line-height:1.05!important;white-space:normal!important;overflow-wrap:break-word!important}
 html body[data-display-layout="focus"] .supp-ticker-time{font-size:clamp(14px,1.08vw,17px)!important}
 html body[data-display-layout="focus"] .supp-ticker-status{font-size:clamp(12px,.88vw,14px)!important}
 html body[data-display-layout="focus"] .supp-ticker-view-text::after{font-size:clamp(12px,.98vw,15px)!important}
+html body[data-display-layout="focus"] .supp-context-item-title{min-width:0!important;max-width:100%!important}
+html body[data-display-layout="focus"] .supp-context-item-name{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 
 /* Preserve room for slow background drift and gently vary the decorative
    glow. Text and controls continue to move as one aligned layer. */
