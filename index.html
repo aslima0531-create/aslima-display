@@ -4115,7 +4115,12 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wr
 @media(max-height:650px){body[data-display-layout="focus"] .date{top:36vh!important}body[data-display-layout="focus"] .hijri-date{top:42.4vh!important}body[data-display-layout="focus"] .right{top:47vh!important;height:33.2vh!important}body[data-display-layout="focus"] .bottom{bottom:5.25vh!important;height:9.55vh!important}}
 </style>
 <style id="aslima-focus-ring-visibility-guard">body:not([data-display-layout="focus"]) .focus-progress-ring{display:none!important}</style>
-<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1011">
+<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1012">
+<style id="aslima-focus-supplementary-spacing-guard">
+html body[data-display-layout="focus"] #suppViewAllBtn.supp-ticker{grid-template-columns:2.4vw max-content minmax(0,1fr) auto max-content minmax(52px,auto) max-content max-content!important;column-gap:clamp(4px,.38vw,7px)!important;row-gap:0!important;padding:.4vh clamp(8px,.65vw,10px)!important}
+html body[data-display-layout="focus"] #suppPrimaryTime.supp-ticker-time{min-width:max-content!important}
+html body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-status{min-width:52px!important}
+</style>
 </head>
 <body>
 <button class="admin-hotspot" id="adminHotspot" aria-label="Admin menu" hidden></button>
@@ -8257,7 +8262,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1011').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1012').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

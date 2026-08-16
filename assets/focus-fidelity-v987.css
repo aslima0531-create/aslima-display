@@ -159,16 +159,17 @@ body[data-display-layout="focus"] .jumuah-pill-times{min-width:0!important;overf
 body[data-display-layout="focus"] .jumuah-chevron{justify-self:end!important;transform:none!important;color:#e6a83e!important;font-size:clamp(16px,1.25vw,20px)!important}
 
 body[data-display-layout="focus"] .supp-ticker{
-  grid-template-columns:2.8vw 3.05vw minmax(0,7.2vw) .8vw minmax(0,8.5vw) minmax(0,6vw) 4.4vw 3.8vw!important;
-  gap:0!important;padding:.4vh .75vw .4vh 1.8vw!important;
+  grid-template-columns:2.4vw max-content minmax(0,1fr) auto max-content minmax(52px,auto) max-content max-content!important;
+  column-gap:clamp(4px,.38vw,7px)!important;row-gap:0!important;
+  padding:.4vh clamp(8px,.65vw,10px)!important;
 }
 body[data-display-layout="focus"] .supp-ticker-icon{min-width:20px!important;color:#e7a83e!important;font-size:clamp(21px,1.8vw,27px)!important}
 body[data-display-layout="focus"] .supp-ticker-label{color:#bfcfc0!important;font-size:clamp(7px,.55vw,9px)!important;font-weight:520!important;letter-spacing:.13em!important}
 body[data-display-layout="focus"] .supp-ticker-name{overflow:hidden!important;text-overflow:ellipsis!important;color:#fff0dc!important;font-size:clamp(12px,1.02vw,16px)!important;font-weight:580!important;white-space:nowrap!important}
 body[data-display-layout="focus"] .supp-ticker-separator{color:#d49c3c!important}
-body[data-display-layout="focus"] .supp-ticker-time{color:#fff0dc!important;font-size:clamp(10px,.9vw,14px)!important;font-weight:520!important;white-space:nowrap!important}
+body[data-display-layout="focus"] .supp-ticker-time{min-width:max-content!important;color:#fff0dc!important;font-size:clamp(10px,.9vw,14px)!important;font-weight:520!important;white-space:nowrap!important}
 body[data-display-layout="focus"] .supp-ticker-status{
-  display:grid!important;align-content:center!important;gap:.05vh!important;padding-left:.65vw!important;border-left:1px solid rgba(212,158,62,.32)!important;color:#e7eadf!important;font-size:clamp(9px,.7vw,11px)!important;line-height:1.05!important;white-space:nowrap!important;
+  min-width:52px!important;display:grid!important;align-content:center!important;gap:.05vh!important;padding-left:.65vw!important;border-left:1px solid rgba(212,158,62,.32)!important;color:#e7eadf!important;font-size:clamp(9px,.7vw,11px)!important;line-height:1.05!important;white-space:nowrap!important;
 }
 body[data-display-layout="focus"] .supp-status-prefix{display:block!important;color:#bdc9bc!important;font-size:.78em!important}
 body[data-display-layout="focus"] .supp-reminder-status{
@@ -209,5 +210,5 @@ body[data-display-layout="focus"] .aslima-persistent-handle span{
   body[data-display-layout="focus"] #prayerPanel .ptime{font-size:clamp(27px,3vw,43px)!important}
   body[data-display-layout="focus"] #prayerPanel .iqamah-time{font-size:clamp(22px,2.2vw,33px)!important}
   body[data-display-layout="focus"] .jumuah-pill{gap:.55vw!important;padding:0 1vw!important}
-  body[data-display-layout="focus"] .supp-ticker{gap:.38vw!important;padding-left:1vw!important;padding-right:.65vw!important}
+  body[data-display-layout="focus"] .supp-ticker{column-gap:clamp(4px,.38vw,7px)!important;padding-left:clamp(8px,.65vw,10px)!important;padding-right:clamp(8px,.65vw,10px)!important}
 }

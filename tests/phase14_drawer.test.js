@@ -200,7 +200,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1011/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1012/);
   assert.match(fidelity,/\.clock\[data-wide-hour="true"\]/);
   assert.match(index,/clock'\)\.dataset\.wideHour=String\(h\)\.length>1/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
@@ -221,6 +221,10 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/#jumuahPillTimes\{grid-column:4!important\}/);
   assert.match(fidelity,/\.bottom-dock\.detail-open\{overflow:visible!important\}/);
   assert.match(fidelity,/\.supp-status-prefix\{display:block!important/);
+  assert.match(fidelity,/\.supp-ticker\{[\s\S]*?grid-template-columns:2\.4vw max-content minmax\(0,1fr\) auto max-content minmax\(52px,auto\) max-content max-content!important/);
+  assert.match(fidelity,/\.supp-ticker-time\{min-width:max-content!important/);
+  assert.match(index,/id="aslima-focus-supplementary-spacing-guard"/);
+  assert.match(index,/#suppViewAllBtn\.supp-ticker\{grid-template-columns:2\.4vw max-content minmax\(0,1fr\)/);
   assert.match(fidelity,/focus-bell\.svg/);
   assert.match(fidelity,/@media \(max-aspect-ratio:5\/3\)/);
   assert.match(index,/class="aslima-persistent-handle"[^>]*><span><\/span><span><\/span><span><\/span>/);
