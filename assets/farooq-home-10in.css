@@ -1,0 +1,70 @@
+/* Farooq Home only: tuned for the 1280 x 800 landscape viewport reported by
+   the 10.1-inch tablet. Every rule is profile-scoped so the home tablet keeps
+   its existing layout. */
+@media (min-width:1180px) and (max-width:1366px) and (min-height:720px) and (max-height:900px) and (orientation:landscape){
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .brand-mark{
+    left:2.35vw!important;
+    top:2.7vh!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .layout-toggle{
+    right:2.85vw!important;
+    top:2.8vh!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .clock{
+    top:3.6vh!important;
+    width:43%!important;
+    font-size:clamp(112px,11.4vw,146px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{
+    font-size:clamp(102px,10.3vw,132px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .focus-progress-ring,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-label,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-name,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-time,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .remaining{
+    right:10.75%!important;
+    width:clamp(186px,15.6vw,202px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .remaining[data-connection-state="unavailable"]{
+    padding:0 18px!important;
+    font-size:clamp(17px,1.55vw,20px)!important;
+    line-height:1.08!important;
+    letter-spacing:.025em!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .date{top:36.6vh!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .hijri-date{top:42.7vh!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .right{
+    left:7.35vw!important;
+    top:47.5vh!important;
+    width:87%!important;
+    height:33.4vh!important;
+    gap:1vw!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .row{
+    min-width:0!important;
+    padding-left:.85vw!important;
+    padding-right:.85vw!important;
+    border-radius:20px!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .pname{
+    font-size:clamp(19px,1.7vw,22px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .ptime{
+    font-size:clamp(33px,3vw,39px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .iqamah-time{
+    font-size:clamp(25px,2.25vw,29px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .bottom{
+    left:4.2vw!important;
+    bottom:4.65vh!important;
+    width:92.2vw!important;
+    height:9.55vh!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .dock-content-row{
+    border-radius:18px!important;
+  }
+}
