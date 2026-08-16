@@ -459,7 +459,7 @@ try{
    if(!user){disconnectRemote();$('lock').style.display='grid';$('lock').setAttribute('aria-hidden','false');$('appShell').inert=true;$('appShell').setAttribute('aria-hidden','true');$('signOut').hidden=true;$('signIn').focus();return;}
    selectAdminProfile(user);showAuthError('');$('lock').style.display='none';$('lock').setAttribute('aria-hidden','true');$('appShell').inert=false;$('appShell').setAttribute('aria-hidden','false');$('signOut').hidden=false;initializeAuthorizedRemote();$('tabToday').focus();
  });
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1021').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
+ if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1022').then(()=>{$('appStatus').textContent='Offline access is ready.'}).catch(()=>{$('appStatus').textContent='Offline access could not be prepared.'});
 }catch(e){setStatus('Offline','bad');showAuthError('Firebase could not start. Please reload and try again.')}
 </script>
 </body>

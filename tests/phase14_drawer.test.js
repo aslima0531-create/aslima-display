@@ -175,7 +175,7 @@ test('display isolates the Farooq Home tablet from the original home profile',()
   assert.match(index,/localStorage\.setItem\(ASLIMA_DEVICE_PROFILE_KEY,deviceProfile\)/);
   assert.match(index,/path: `aslima\/devices\/\$\{deviceProfile\}\/settings`/);
   assert.match(index,/statusPath: `aslima\/devices\/\$\{deviceProfile\}\/status\/display`/);
-  assert.match(index,/assets\/farooq-home-10in\.css\?v=1021/);
+  assert.match(index,/assets\/farooq-home-10in\.css\?v=1022/);
   assert.match(farooqLayout,/@media \(min-width:1180px\) and \(max-width:1366px\)[\s\S]*?\(orientation:landscape\)/);
   assert.match(farooqLayout,/html\[data-device-profile="farooq-home"\] body\[data-display-layout="focus"\]/);
   assert.match(farooqLayout,/\.remaining\[data-connection-state="unavailable"\][\s\S]*?white-space:normal!important/);
@@ -218,7 +218,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1021/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1022/);
   assert.match(fidelity,/\.clock\[data-wide-hour="true"\]/);
   assert.match(index,/clock'\)\.dataset\.wideHour=String\(h\)\.length>1/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
