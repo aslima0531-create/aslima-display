@@ -175,11 +175,11 @@ test('display isolates the Farooq Home tablet from the original home profile',()
   assert.match(index,/localStorage\.setItem\(ASLIMA_DEVICE_PROFILE_KEY,deviceProfile\)/);
   assert.match(index,/path: `aslima\/devices\/\$\{deviceProfile\}\/settings`/);
   assert.match(index,/statusPath: `aslima\/devices\/\$\{deviceProfile\}\/status\/display`/);
-  assert.match(index,/assets\/farooq-home-10in\.css\?v=1019/);
+  assert.match(index,/assets\/farooq-home-10in\.css\?v=1020/);
   assert.match(farooqLayout,/@media \(min-width:1180px\) and \(max-width:1366px\)[\s\S]*?\(orientation:landscape\)/);
   assert.match(farooqLayout,/html\[data-device-profile="farooq-home"\] body\[data-display-layout="focus"\]/);
   assert.match(farooqLayout,/\.remaining\[data-connection-state="unavailable"\][\s\S]*?white-space:normal!important/);
-  assert.match(farooqLayout,/@media \(min-width:600px\) and \(max-width:1179px\)[\s\S]*?body:not\(\[data-display-layout="focus"\]\) \.supp-ticker/);
+  assert.match(farooqLayout,/@media \(max-width:1179px\) and \(max-height:719px\)[\s\S]*?body:not\(\[data-display-layout="focus"\]\) \.supp-ticker/);
   assert.match(farooqLayout,/body:not\(\[data-display-layout="focus"\]\) \.bottom\{[\s\S]*?padding-right:clamp\(58px,9vw,100px\)/);
   assert.match(farooqLayout,/body\[data-display-layout="focus"\] #suppViewAllBtn\.supp-ticker[\s\S]*?grid-template-columns:24px minmax\(0,1fr\) max-content max-content/);
   assert.match(farooqLayout,/body\[data-display-layout="focus"\] \.jumuah-pill[\s\S]*?grid-template-columns:24px max-content minmax\(0,1fr\) 12px/);
@@ -218,7 +218,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1019/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1020/);
   assert.match(fidelity,/\.clock\[data-wide-hour="true"\]/);
   assert.match(index,/clock'\)\.dataset\.wideHour=String\(h\)\.length>1/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
