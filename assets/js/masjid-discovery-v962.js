@@ -1,7 +1,7 @@
 (function(root){
   'use strict';
 
-  const VERSION=962;
+  const VERSION=963;
   const ENDPOINT='https://overpass-api.de/api/interpreter';
   const VRIC={latitude:32.9186,longitude:-96.9590};
   const VERIFIED_MASJIDS=[{
@@ -107,9 +107,18 @@
       proxyUrl.searchParams.set('lat',latitude.toFixed(6));
       proxyUrl.searchParams.set('lon',longitude.toFixed(6));
       proxyUrl.searchParams.set('radius',String(Math.max(1000,Math.min(50000,Number(opts.radiusMeters)||25000))));
-      const response=await fetchFn(proxyUrl.toString(),{method:'GET',headers:{'Accept':'application/json'},signal:opts.signal});
-      if(!response||!response.ok)throw new Error(`Nearby masjid search failed${response&&response.status?' (HTTP '+response.status+')':''}`);
-      return normalize(await response.json(),{latitude,longitude},opts.limit,opts.radiusMeters);
+      const requestedTimeout=Number(opts.timeoutMs)||0;
+      const controller=!opts.signal&&requestedTimeout>0&&typeof AbortController==='function'?new AbortController():null;
+      const timeoutMs=Math.max(3000,Math.min(15000,requestedTimeout||12000));
+      const timeout=controller?setTimeout(()=>controller.abort(),timeoutMs):null;
+      try{
+        const response=await fetchFn(proxyUrl.toString(),{method:'GET',headers:{'Accept':'application/json'},signal:opts.signal||(controller&&controller.signal)});
+        if(!response||!response.ok)throw new Error(`Nearby masjid search failed${response&&response.status?' (HTTP '+response.status+')':''}`);
+        return normalize(await response.json(),{latitude,longitude},opts.limit,opts.radiusMeters);
+      }catch(error){
+        if(error&&error.name==='AbortError')throw new Error('Nearby masjid search timed out — using ZIP-area timings');
+        throw error;
+      }finally{if(timeout)clearTimeout(timeout);}
     }
     const body='data='+encodeURIComponent(query(latitude,longitude,opts.radiusMeters));
     const controller=!opts.signal&&typeof AbortController==='function'?new AbortController():null;
@@ -138,8 +147,13 @@
     const response=await fetchFn(url.toString(),{method:'GET',headers:{'Accept':'application/json'},signal:opts.signal});
     if(!response||!response.ok)throw new Error(response&&response.status===404?'ZIP code was not found':'ZIP-code search is temporarily unavailable');
     const area=await response.json();
-    const results=await discover({...opts,latitude:area.latitude,longitude:area.longitude,fetchFn});
-    return {area,results};
+    let results=[],nearbyError='';
+    try{results=await discover({...opts,latitude:area.latitude,longitude:area.longitude,fetchFn});}
+    catch(error){
+      if(!opts.allowNearbyFailure)throw error;
+      nearbyError=String(error&&error.message||'Nearby masjid search is temporarily unavailable');
+    }
+    return {area,results,nearbyError};
   }
 
   root.ASLIMAMasjidDiscovery=Object.freeze({version:VERSION,endpoint:ENDPOINT,verifiedMasjids:VERIFIED_MASJIDS,distanceMiles,normalize,query,discover,discoverPostal});

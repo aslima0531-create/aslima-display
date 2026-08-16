@@ -4450,7 +4450,7 @@ html body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-status{min-w
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
-<script src="./assets/js/masjid-discovery-v962.js?v=962"></script>
+<script src="./assets/js/masjid-discovery-v962.js?v=963"></script>
 <script>
 const ASLIMA_DEVICE_PROFILE_KEY='aslima_device_profile';
 const ASLIMA_DEVICE_PROFILES=new Set(['home','farooq-home']);
@@ -7686,14 +7686,14 @@ setTimeout(applyBurnInShift,12000);
     const host=document.getElementById('nearbyMasjidResults');if(host)host.replaceChildren();
     try{
       if(!window.ASLIMAMasjidDiscovery)throw new Error('Discovery module unavailable');
-      const found=await window.ASLIMAMasjidDiscovery.discoverPostal({postalCode,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl});
+      const found=await window.ASLIMAMasjidDiscovery.discoverPostal({postalCode,radiusMeters:25000,limit:10,proxyEndpoint:CONFIG.masjidSearchProxyUrl,allowNearbyFailure:deviceProfile==='farooq-home',timeoutMs:deviceProfile==='farooq-home'?7000:0});
       applyHomeLocation({latitude:found.area.latitude,longitude:found.area.longitude,label:found.area.label,postalCode:found.area.postalCode||postalCode,source:'zip',updatedAt:Date.now()});
       renderSelected();
       const zipFallback={id:'postal-'+found.area.postalCode,name:'ZIP area '+found.area.label,latitude:Number(found.area.latitude),longitude:Number(found.area.longitude),address:'Calculated from ZIP-code location',distanceMiles:0,officialProvider:'',discoverySource:'zip-code'};
       results=[...(found.results||[]),zipFallback];
       if(found.results&&found.results.length)setStatus('Masjids near '+found.area.label+'. Select one, or use calculated times for the ZIP area.');
       else{
-        setStatus('No listed masjid was found near '+found.area.label+'. Applying calculated ZIP-area timings…');
+        setStatus((found.nearbyError?'Nearby search is slow. ':'No listed masjid was found nearby. ')+'Applying calculated ZIP-area timings for '+found.area.label+'…');
         renderResults(results);
         await choose(zipFallback);
         return;
@@ -8274,7 +8274,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1017').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1018').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

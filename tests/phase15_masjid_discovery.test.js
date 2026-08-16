@@ -145,6 +145,27 @@ test('ZIP discovery rejects malformed postal codes before a request',async()=>{
   assert.equal(called,false);
 });
 
+test('ZIP discovery preserves a valid area when optional nearby lookup fails',async()=>{
+  const api=load();
+  const fetchFn=async url=>{
+    if(url.includes('/geocode'))return {ok:true,json:async()=>({postalCode:'75062',label:'Irving, TX 75062',latitude:32.85,longitude:-97.01})};
+    throw new Error('nearby provider unavailable');
+  };
+  const found=await api.discoverPostal({postalCode:'75062',proxyEndpoint:'https://worker.example/nearby',fetchFn,allowNearbyFailure:true,timeoutMs:7000});
+  assert.equal(found.area.postalCode,'75062');
+  assert.equal(found.results.length,0);
+  assert.match(found.nearbyError,/nearby provider unavailable/);
+});
+
+test('original home profile keeps strict nearby lookup behavior',async()=>{
+  const api=load();
+  const fetchFn=async url=>{
+    if(url.includes('/geocode'))return {ok:true,json:async()=>({postalCode:'75062',label:'Irving, TX 75062',latitude:32.85,longitude:-97.01})};
+    throw new Error('nearby provider unavailable');
+  };
+  await assert.rejects(()=>api.discoverPostal({postalCode:'75062',proxyEndpoint:'https://worker.example/nearby',fetchFn}),/nearby provider unavailable/);
+});
+
 test('drawer integration is opt-in, attributed, and separates official from calculated data',()=>{
   assert.match(html,/id="findNearbyMasjids"/);
   assert.match(html,/#tabletManualTimingBox:not\(\[data-mode="calculated-location"\]\) \.nearby-masjid-card\{display:none!important;\}/);
