@@ -75,6 +75,71 @@
   }
 }
 
+/* Final Farooq profile contract: these geometry rules deliberately do not
+   depend on CSS-pixel breakpoints. Android WebView density varies by device
+   settings, but this profile must always fill the panel and keep both dock
+   halves horizontal. */
+html[data-device-profile="farooq-home"] body .app{
+  position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;
+  min-width:100vw!important;max-width:none!important;box-sizing:border-box!important;
+}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .bottom{
+  position:fixed!important;left:3.5vw!important;right:auto!important;bottom:3.5vh!important;
+  width:93vw!important;padding-right:clamp(58px,8vw,104px)!important;box-sizing:border-box!important;
+}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .bottom-dock{width:100%!important;max-width:none!important}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .brand-mark{
+  right:.8vw!important;bottom:4.1vh!important;font-size:13px!important;letter-spacing:.16em!important;
+}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn.supp-ticker{
+  display:grid!important;grid-template-columns:24px minmax(0,1fr) max-content max-content!important;
+  gap:clamp(4px,.55vw,7px)!important;min-height:28px!important;padding:.25vh .4vw!important;
+}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn .supp-ticker-label,
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn .supp-ticker-separator,
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn .supp-ticker-status,
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn .supp-reminder-status{display:none!important}
+html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) #suppViewAllBtn .supp-ticker-name{
+  min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .bottom{
+  position:fixed!important;left:3.5vw!important;right:auto!important;bottom:3.8vh!important;
+  width:93vw!important;height:9.5vh!important;padding:0!important;box-sizing:border-box!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .bottom-dock{width:100%!important;height:100%!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .dock-content-row{
+  display:grid!important;grid-template-columns:minmax(0,48%) 1px minmax(0,52%)!important;
+  width:100%!important;height:100%!important;padding:0 .55vw!important;box-sizing:border-box!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .jumuah-pill{
+  display:grid!important;grid-template-columns:24px max-content minmax(0,1fr) 12px!important;
+  gap:clamp(4px,.55vw,7px)!important;height:100%!important;min-width:0!important;padding:0 .7vw!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .jumuah-pill>.jumuah-icon{grid-column:1!important;width:22px!important;height:22px!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #jumuahPillLabel{grid-column:2!important;display:block!important;font-size:clamp(12px,1.45vw,15px)!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #jumuahPillBadge{display:none!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #jumuahPillTimes{
+  grid-column:3!important;display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  font-size:clamp(10px,1.15vw,12px)!important;white-space:nowrap!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #jumuahChevron{grid-column:4!important;font-size:14px!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn.supp-ticker{
+  display:grid!important;grid-template-columns:24px minmax(0,1fr) max-content max-content!important;
+  column-gap:clamp(4px,.55vw,7px)!important;height:100%!important;min-height:0!important;padding:0 .7vw!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-label,
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-separator,
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-status,
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-reminder-status{display:none!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-icon{grid-column:1!important;min-width:22px!important;width:22px!important;font-size:20px!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-name{
+  grid-column:2!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  font-size:clamp(12px,1.4vw,15px)!important;white-space:nowrap!important;
+}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppPrimaryTime{grid-column:3!important;min-width:max-content!important;font-size:clamp(9px,1.05vw,11px)!important;white-space:nowrap!important}
+html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-view{grid-column:4!important;min-width:max-content!important;padding-left:.45vw!important;transform:none!important}
+
 /* Android's enlarged Display Size / browser scale can expose only 720–1179
    CSS pixels on the same 1280 x 800 panel. Keep the collapsed Classic dock on
    one row and scale Focus against that effective viewport. */
