@@ -74,3 +74,71 @@
     border-radius:18px!important;
   }
 }
+
+/* Android's enlarged Display Size / browser scale can expose only 720–1179
+   CSS pixels on the same 1280 x 800 panel. Keep the collapsed Classic dock on
+   one row and scale Focus against that effective viewport. */
+@media (min-width:720px) and (max-width:1179px) and (min-height:450px) and (max-height:719px) and (orientation:landscape){
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .bottom{
+    padding-right:clamp(88px,13vw,132px)!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .bottom-dock{
+    padding:1.25vh .75vw .65vh!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .dock-progress-row{
+    margin-bottom:.55vh!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .dock-content-row{
+    min-height:34px!important;
+    grid-template-columns:minmax(0,1fr) 1px auto!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker{
+    grid-template-columns:26px minmax(0,1fr) max-content max-content!important;
+    gap:clamp(4px,.55vw,7px)!important;
+    min-height:32px!important;
+    padding:.25vh .4vw!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-label,
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-separator,
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-status,
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-reminder-status{
+    display:none!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-icon{
+    min-width:24px!important;width:24px!important;height:24px!important;min-height:24px!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-name{
+    min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+    font-size:clamp(12px,1.45vw,15px)!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-time,
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-ticker-view{
+    font-size:clamp(9px,1.05vw,11px)!important;white-space:nowrap!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .bottom-dock.detail-open .dock-detail-area{
+    max-height:18vh!important;padding:.5vh 0!important;margin-bottom:.45vh!important;
+  }
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .supp-context-list,
+  html[data-device-profile="farooq-home"] body:not([data-display-layout="focus"]) .jumuah-panel-list{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .brand-mark{font-size:20px!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .brand-mark::before{width:29px!important;height:38px!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .clock{
+    top:4.5vh!important;width:38%!important;font-size:clamp(82px,11vw,108px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .clock[data-wide-hour="true"]{font-size:clamp(74px,10vw,98px)!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .focus-progress-ring,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-label,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-name,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .next-time,
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .left .remaining{
+    right:11.5%!important;width:clamp(124px,15vw,154px)!important;
+  }
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .right{left:7%!important;width:86%!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .pname{font-size:clamp(14px,1.85vw,18px)!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .ptime{font-size:clamp(23px,3vw,31px)!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] #prayerPanel .iqamah-time{font-size:clamp(18px,2.35vw,24px)!important}
+  html[data-device-profile="farooq-home"] body[data-display-layout="focus"] .bottom{left:5%!important;width:90%!important}
+}
