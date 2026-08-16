@@ -4115,7 +4115,7 @@ body[data-display-layout="focus"][data-jumuah-schedule="hidden"] .supp-ticker-wr
 @media(max-height:650px){body[data-display-layout="focus"] .date{top:36vh!important}body[data-display-layout="focus"] .hijri-date{top:42.4vh!important}body[data-display-layout="focus"] .right{top:47vh!important;height:33.2vh!important}body[data-display-layout="focus"] .bottom{bottom:5.25vh!important;height:9.55vh!important}}
 </style>
 <style id="aslima-focus-ring-visibility-guard">body:not([data-display-layout="focus"]) .focus-progress-ring{display:none!important}</style>
-<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1012">
+<link rel="stylesheet" href="./assets/focus-fidelity-v987.css?v=1013">
 <style id="aslima-focus-supplementary-spacing-guard">
 html body[data-display-layout="focus"] #suppViewAllBtn.supp-ticker{grid-template-columns:2.4vw max-content minmax(0,1fr) auto max-content minmax(52px,auto) max-content max-content!important;column-gap:clamp(4px,.38vw,7px)!important;row-gap:0!important;padding:.4vh clamp(8px,.65vw,10px)!important}
 html body[data-display-layout="focus"] #suppPrimaryTime.supp-ticker-time{min-width:max-content!important}
@@ -4451,9 +4451,18 @@ html body[data-display-layout="focus"] #suppViewAllBtn .supp-ticker-status{min-w
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 <script src="./assets/js/masjid-discovery-v962.js?v=962"></script>
 <script>
+const ASLIMA_DEVICE_PROFILE_KEY='aslima_device_profile';
+const ASLIMA_DEVICE_PROFILES=new Set(['home','farooq-home']);
+const requestedDeviceProfile=new URLSearchParams(location.search).get('device');
+let savedDeviceProfile='';
+try{savedDeviceProfile=localStorage.getItem(ASLIMA_DEVICE_PROFILE_KEY)||''}catch(_error){}
+const deviceProfile=ASLIMA_DEVICE_PROFILES.has(requestedDeviceProfile)?requestedDeviceProfile:(ASLIMA_DEVICE_PROFILES.has(savedDeviceProfile)?savedDeviceProfile:'home');
+if(ASLIMA_DEVICE_PROFILES.has(requestedDeviceProfile)){try{localStorage.setItem(ASLIMA_DEVICE_PROFILE_KEY,deviceProfile)}catch(_error){}}
+document.documentElement.dataset.deviceProfile=deviceProfile;
 window.ASLIMA_REMOTE = {
-  path: 'aslima/devices/home/settings',
-  statusPath: 'aslima/devices/home/status/display',
+  deviceProfile,
+  path: `aslima/devices/${deviceProfile}/settings`,
+  statusPath: `aslima/devices/${deviceProfile}/status/display`,
   config: {
     apiKey: "AIzaSyBqe4PHKA3ZaiZuGuX65G9sh-I40yz_aOI",
     authDomain: "aslima-azaan.firebaseapp.com",
@@ -8262,7 +8271,7 @@ body:has(#adhanOverlay.show) .aslima-persistent-handle,
   if(window.bindAzaanAudioControls)window.bindAzaanAudioControls();
   if(window.bindAzaanVoiceControls)window.bindAzaanVoiceControls();
   if(window.forceMuezzinUiSync)window.forceMuezzinUiSync(state.voice);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1012').then(registration=>{
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=1013').then(registration=>{
     if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','registered',{version:'961',reason:registration.active?'active':'installing'});
   }).catch(error=>{if(window.ASLIMADiagnostics)window.ASLIMADiagnostics.record('service-worker','error',{message:error&&error.message||error});console.warn(error);});
   overlay(false);setPhase('idle');

@@ -24,6 +24,27 @@
               ".write": true
             }
           }
+        },
+        "farooq-home": {
+          "settings": {
+            ".read": true,
+            ".write": "auth != null && auth.token.email == 'azaantablet106@gmail.com'",
+            "volume": {
+              ".write": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1"
+            },
+            "muezzin": {
+              ".write": "newData.isString() && (newData.val() == 'doha' || newData.val() == 'azaan1' || newData.val() == 'azaan2' || newData.val() == 'azaan3' || newData.val() == 'azaan4' || newData.val() == 'azaan5')"
+            },
+            "displayLayout": {
+              ".write": "newData.isString() && (newData.val() == 'classic' || newData.val() == 'focus')"
+            }
+          },
+          "status": {
+            "display": {
+              ".read": "auth != null && auth.token.email == 'azaantablet106@gmail.com'",
+              ".write": true
+            }
+          }
         }
       }
     }

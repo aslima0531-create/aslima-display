@@ -168,6 +168,14 @@ test('Classic and Focus reuse the complete tablet display and sync from phone',(
   assert.match(admin,/selectTabletLayout\('focus'\)/);
 });
 
+test('display isolates the Farooq Home tablet from the original home profile',()=>{
+  assert.match(index,/const ASLIMA_DEVICE_PROFILES=new Set\(\['home','farooq-home'\]\)/);
+  assert.match(index,/new URLSearchParams\(location\.search\)\.get\('device'\)/);
+  assert.match(index,/localStorage\.setItem\(ASLIMA_DEVICE_PROFILE_KEY,deviceProfile\)/);
+  assert.match(index,/path: `aslima\/devices\/\$\{deviceProfile\}\/settings`/);
+  assert.match(index,/statusPath: `aslima\/devices\/\$\{deviceProfile\}\/status\/display`/);
+});
+
 test('Focus matches the approved centered clock, complete cards, progress ring, and unified dock',()=>{
   assert.match(index,/id="aslima-focus-layout-exact"/);
   assert.match(index,/\.clock\{[\s\S]*?left:50%!important[\s\S]*?transform:translateX\(-50%\)!important/);
@@ -200,7 +208,7 @@ test('Focus fidelity layer preserves complete live content at both tablet aspect
   assert.match(fidelity,/html body\[data-display-layout="focus"\] \.app::before\{[\s\S]*?background:transparent!important/);
   assert.match(fidelity,/background-size:cover!important/);
   assert.match(index,/id="aslima-focus-ring-visibility-guard"[^>]*>body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);
-  assert.match(index,/focus-fidelity-v987\.css\?v=1012/);
+  assert.match(index,/focus-fidelity-v987\.css\?v=1013/);
   assert.match(fidelity,/\.clock\[data-wide-hour="true"\]/);
   assert.match(index,/clock'\)\.dataset\.wideHour=String\(h\)\.length>1/);
   assert.match(fidelity,/body:not\(\[data-display-layout="focus"\]\) \.focus-progress-ring\{display:none!important\}/);

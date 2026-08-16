@@ -235,9 +235,9 @@ test('phone uses the tablet resolved Azaan timings as its authoritative schedule
   assert.match(html,/publishAslimaHealth\('timings-updated'\)/);
   assert.match(html,/addEventListener\('aslima:playback-state',[\s\S]*?publishAslimaHealth\('playback-state'\)/);
   assert.match(admin,/health\.playbackPhase==='playing'&&\['azaan','dua'\]\.includes\(stage\)/);
-  assert.match(html,/register\('\.\/sw\.js\?v=1012'\)/);
-  assert.match(admin,/register\('\.\/sw\.js\?v=1012'\)/);
-  assert.match(serviceWorkerSource,/const VERSION='1012'/);
+  assert.match(html,/register\('\.\/sw\.js\?v=1013'\)/);
+  assert.match(admin,/register\('\.\/sw\.js\?v=1013'\)/);
+  assert.match(serviceWorkerSource,/const VERSION='1013'/);
 });
 
 test('scheduler passes the exact occurrence key to automatic playback',async()=>{
@@ -514,7 +514,7 @@ test('expired cross-tab lease is recoverable after a crashed tab',async()=>{
   h.scheduler.stop();
 });
 
-test('v1012 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
+test('v1013 service-worker upgrade removes older caches and precaches runtime, Focus, discovery, and audio assets',async()=>{
   const source=fs.readFileSync(path.join(ROOT,'sw.js'),'utf8'),handlers={},deleted=[],precache=[],messages=[];let fallbackRefresh=null;
   const cache={addAll:async items=>precache.push(...items),put:async()=>{}};
   const caches={open:async()=>cache,keys:async()=>['aslima-v959-self-healing','aslima-v960-operational-alerts','aslima-v961-volume-sync'],delete:async key=>{deleted.push(key);return true;},match:async()=>null};
@@ -532,7 +532,7 @@ test('v1012 service-worker upgrade removes older caches and precaches runtime, F
   assert.ok(precache.includes('./assets/js/runtime-diagnostics-v960.js'));
   assert.ok(precache.includes('./assets/js/runtime-recovery-v959.js'));
   assert.ok(precache.includes('./assets/js/masjid-discovery-v962.js'));
-  assert.ok(precache.includes('./assets/focus-fidelity-v987.css?v=1012'));
+  assert.ok(precache.includes('./assets/focus-fidelity-v987.css?v=1013'));
   assert.ok(precache.includes('./assets/aslima-focus-background-v1.png'));
   assert.ok(precache.includes('./assets/focus-bell.svg'));
   assert.ok(precache.includes('./data/vric-prayer-times.json'));
@@ -629,8 +629,8 @@ test('remote volume application does not call tablet write-back and create a Fir
 });
 
 test('tablet health uses an isolated Firebase path and server-timestamped bounded heartbeat cadence',()=>{
-  assert.match(html,/path: 'aslima\/devices\/home\/settings'/);
-  assert.match(html,/statusPath: 'aslima\/devices\/home\/status\/display'/);
+  assert.match(html,/path: `aslima\/devices\/\$\{deviceProfile\}\/settings`/);
+  assert.match(html,/statusPath: `aslima\/devices\/\$\{deviceProfile\}\/status\/display`/);
   assert.match(html,/aslimaHealthRef=firebase\.database\(\)\.ref\(window\.ASLIMA_REMOTE\.statusPath\)/);
   assert.match(html,/ref\('\.info\/connected'\)\.on\('value'/);
   assert.match(html,/snapshot\.val\(\)!==true/);
@@ -641,7 +641,7 @@ test('tablet health uses an isolated Firebase path and server-timestamped bounde
 });
 
 test('phone health view reads only status and expires stale online heartbeats',()=>{
-  assert.match(admin,/const STATUS_PATH='aslima\/devices\/home\/status\/display'/);
+  assert.match(admin,/STATUS_PATH=`aslima\/devices\/\$\{activeAdminProfile\.id\}\/status\/display`/);
   assert.match(admin,/const statusRef=firebase\.database\(\)\.ref\(STATUS_PATH\)/);
   assert.match(admin,/statusRef\.on\('value'/);
   assert.match(admin,/health\.online!==false&&age<=150000/);
@@ -747,7 +747,9 @@ test('calculated failure falls back and unavailable state still permits Manual m
 
 test('admin remote uses Google authentication and contains no reusable PIN bypass',()=>{
   assert.match(admin,/firebase-auth-compat\.js/);
-  assert.match(admin,/const AUTHORIZED_ADMIN_EMAIL='aslima0531@gmail\.com'/);
+  assert.match(admin,/const ADMIN_PROFILES=\{/);
+  assert.match(admin,/'aslima0531@gmail\.com':\{id:'home',label:'Home'\}/);
+  assert.match(admin,/'azaantablet106@gmail\.com':\{id:'farooq-home',label:'Farooq Home'\}/);
   assert.match(admin,/auth\.signInWithPopup\(provider\)/);
   assert.match(admin,/auth\.onAuthStateChanged\(async user=>/);
   assert.doesNotMatch(admin,/7860|aslima_admin_unlocked|Enter admin PIN/);
@@ -758,7 +760,9 @@ test('Firebase database listeners initialize only after the exact admin account 
   const initStart=admin.indexOf('function initializeAuthorizedRemote()');
   const observerStart=admin.indexOf('auth.onAuthStateChanged(async user=>');
   assert.ok(authStart>0&&initStart>authStart&&observerStart>initStart);
-  assert.match(admin,/user\.email\.toLowerCase\(\)===AUTHORIZED_ADMIN_EMAIL/);
+  assert.match(admin,/function profileForAdmin\(user\)/);
+  assert.match(admin,/ADMIN_PROFILES\[user\.email\.toLowerCase\(\)\]/);
+  assert.match(admin,/PATH=`aslima\/devices\/\$\{activeAdminProfile\.id\}\/settings`/);
   assert.match(admin,/if\(user&&!isAuthorizedAdmin\(user\)\)[\s\S]*?await auth\.signOut\(\)/);
   assert.match(admin,/if\(!user\)[\s\S]*?return;[\s\S]*?initializeAuthorizedRemote\(\)/);
   assert.equal((admin.match(/firebase\.database\(\)\.ref\(PATH\)/g)||[]).length,1);
@@ -773,6 +777,7 @@ test('admin sign-out detaches settings, voice, and health listeners',()=>{
 test('database rules protect settings writes while preserving required tablet access',()=>{
   const rules=JSON.parse(fs.readFileSync(path.join(ROOT,'database.rules.json'),'utf8')).rules;
   const home=rules.aslima.devices.home;
+  const farooq=rules.aslima.devices['farooq-home'];
   assert.equal(rules['.read'],false);assert.equal(rules['.write'],false);
   assert.equal(home.settings['.read'],true);
   assert.match(home.settings['.write'],/auth != null/);
@@ -785,6 +790,10 @@ test('database rules protect settings writes while preserving required tablet ac
   assert.deepEqual(Object.keys(home.settings).sort(),['.read','.write','displayLayout','muezzin','volume']);
   assert.match(home.status.display['.read'],/auth\.token\.email/);
   assert.equal(home.status.display['.write'],true);
+  assert.equal(farooq.settings['.read'],true);
+  assert.match(farooq.settings['.write'],/auth\.token\.email == 'azaantablet106@gmail\.com'/);
+  assert.match(farooq.status.display['.read'],/azaantablet106@gmail\.com/);
+  assert.equal(farooq.status.display['.write'],true);
 });
 
 test('recovery coordinator performs soft wake and network recovery without duplicating listeners',async()=>{
