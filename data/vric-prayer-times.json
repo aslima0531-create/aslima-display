@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "prayerDate": "2026-10-20",
   "timezone": "America/Chicago",
-  "fetchedAt": "2026-10-20T15:37:30Z",
-  "generatedAt": "2026-10-20T15:37:30Z",
+  "fetchedAt": "2026-10-20T19:16:52Z",
+  "generatedAt": "2026-10-20T19:16:52Z",
   "source": {
     "id": "vric",
     "label": "Valley Ranch Islamic Center",
@@ -47,18 +47,18 @@
   ],
   "jumuahMeta": {
     "status": "verified",
-    "fetchedAt": "2026-10-20T15:37:30Z",
-    "checkedAt": "2026-10-20T15:37:30Z",
+    "fetchedAt": "2026-10-20T19:16:52Z",
+    "checkedAt": "2026-10-20T19:16:52Z",
     "source": "VRIC rendered official page"
   },
   "scheduleMeta": {
     "status": "verified",
     "prayerDate": "2026-10-20",
-    "fetchedAt": "2026-10-20T15:37:30Z",
+    "fetchedAt": "2026-10-20T19:16:52Z",
     "source": "VRIC"
   },
   "validation": {
     "valid": true,
-    "validatedAt": "2026-10-20T15:37:30Z"
+    "validatedAt": "2026-10-20T19:16:52Z"
   }
 }
